@@ -1,5 +1,5 @@
 //
-//  ViewModel.swift
+//  BoardViewModel.swift
 //  Whiteboard
 //
 //  Created by Andrew on 2017-11-15.
@@ -8,6 +8,6 @@
 
 import UIKit
 
-class ViewModel: NSObject {
+class BoardViewModel: NSObject {
 
 }
