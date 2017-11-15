@@ -9,5 +9,9 @@
 import UIKit
 
 class BoardViewModel: NSObject {
+    
+    public func startNewLine(){
+        
+    }
 
 }
