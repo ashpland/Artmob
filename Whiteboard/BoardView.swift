@@ -7,10 +7,21 @@
 //
 
 import UIKit
+import RxSwift
 
 class BoardView: UIView {
 
+    let currentLineObservable: Observable<CGPoint>
+    
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        let touch = touches.first
+        // start new line
+        // make first points
+        // add to line
+        // display
+        
         
     }
     
