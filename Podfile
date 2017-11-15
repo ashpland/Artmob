@@ -11,6 +11,7 @@ target 'Whiteboard' do
     inherit! :search_paths
 	pod 'RxSwift', '~> 4.0'
 	pod 'RxCocoa', '~> 4.0'
+	pod 'RxRealm', '~> 0.7'
     # Pods for testing
   end
 
