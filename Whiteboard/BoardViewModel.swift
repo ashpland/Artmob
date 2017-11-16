@@ -10,9 +10,15 @@ import UIKit
 import RxSwift
 
 class BoardViewModel: NSObject, lineMakingDelegate {
-    func startNewLine(source: PublishSubject<LineSegment>) {
+    func newLine(_: Line) {
         
     }
+    
+    
+    
+    
+    
+    
     
     
     
