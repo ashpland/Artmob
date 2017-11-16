@@ -10,9 +10,19 @@ import UIKit
 import RxSwift
 
 class BoardViewModel: NSObject, lineMakingDelegate {
-    func newLine(_: Line) {
+    func newLine(_ lineToAdd: Line) {
+        //
+    }
+    
+    func newEmoji(_ : String) {
         
     }
+    
+    
+    
+    
+    
+    
     
     /*
     Drawable Line
@@ -21,14 +31,6 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     Thickness
      
     */
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
