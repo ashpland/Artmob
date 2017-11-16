@@ -11,22 +11,27 @@ import UIKit
 class LineView: UIView {
     
     let lines : [LineElement]
-    let lineImageView : UIImageView
     
-    init(lines: [LineElement], lineImage: UIImage) {
+    init(lines: [LineElement], size: CGSize) {
         self.lines = lines
-        self.lineImageView = UIImageView(image: lineImage)
-        super.init(frame: CGRect(origin: CGPoint.zero, size: lineImage.size))
-        
-        self.addSubview(self.lineImageView)
+        super.init(frame: CGRect(origin: CGPoint.zero, size: size))
     }
-    
     
     required init?(coder aDecoder: NSCoder) {
         self.lines = []
-        self.lineImageView = UIImageView()
         super.init(coder: aDecoder)
     }
+    
+    
+    func getImage() -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(self.frame.size, false, 0.0)
+        self.layer.render(in: UIGraphicsGetCurrentContext()!)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image
+    }
+    
+    
     
     override func draw(_ rect: CGRect) {
         for currentLine in lines {
