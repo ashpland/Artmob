@@ -14,6 +14,8 @@ class BoardViewController: UIViewController {
     
     let viewModel = BoardViewModel()
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -23,17 +25,9 @@ class BoardViewController: UIViewController {
         
         
         
-        // Do any additional setup after loading the view, typically from a nib.
     }
 
-    
- 
-    
-    
-    
-    
-    
-    
-    
 }
+
+
 

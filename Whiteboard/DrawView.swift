@@ -13,6 +13,7 @@ class DrawView: UIView {
 
     var lineDelegate : lineMakingDelegate!
     var activeDrawingLine = Line()
+    let lineFormatSettings = LineFormatSettings.sharedInstance
     
  
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -34,9 +35,9 @@ class DrawView: UIView {
     
     override func draw(_ rect: CGRect) {
         let path = UIBezierPath()
-        path.lineWidth = 5.0
-        path.lineCapStyle = CGLineCap.round
-        UIColor.blue.setStroke()
+        path.lineWidth = lineFormatSettings.width
+        path.lineCapStyle = lineFormatSettings.cap
+        lineFormatSettings.color.setStroke()
         
         if !activeDrawingLine.segments.isEmpty {
             path.move(to: activeDrawingLine.segments.first!.firstPoint)
