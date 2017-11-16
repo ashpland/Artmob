@@ -30,7 +30,7 @@ class ElementModel {
     }
     private func addLine(_ newLine: LineElement) {
         self.lines.append(newLine)
-        self.viewModel.drawLine(newLine)
+        self.viewModel.drawLines([newLine])
     }
     
     private func processLabel(_ labelInstruction: Instruction) {

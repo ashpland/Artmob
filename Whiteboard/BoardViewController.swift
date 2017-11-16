@@ -7,13 +7,15 @@
 //
 
 import UIKit
+import RxSwift
 
 class BoardViewController: UIViewController {
 
     @IBOutlet weak var boardView: DrawView!
+    @IBOutlet weak var lineImageView: UIImageView!
     
     let viewModel = BoardViewModel()
-    
+    let disposeBag = DisposeBag()
     
     
     override func viewDidLoad() {
@@ -21,7 +23,11 @@ class BoardViewController: UIViewController {
         
         boardView.lineDelegate = viewModel
         
-        
+        self.viewModel.lineImage?.asObservable()
+            .subscribe(onNext: { lineImage in
+                self.lineImageView.image = lineImage
+            })
+            .disposed(by: disposeBag)
         
         
         
