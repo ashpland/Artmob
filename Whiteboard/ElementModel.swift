@@ -13,11 +13,14 @@ class ElementModel {
     
     static let sharedInstance = ElementModel()
     
-    var lines = [LineElement]()
+    // remove this later probably
+    public var viewModel : BoardViewModel!
     
-    var labels = [Stamp : LabelElement]()
+    private var lines = [LineElement]()
     
-    func recieveInstruction(_ instruction: Instruction) {
+    private var labels = [Stamp : LabelElement]()
+    
+    public func recieveInstruction(_ instruction: Instruction) {
         switch instruction.element {
         case .line (let newLine):
             self.addLine(newLine)
@@ -25,11 +28,12 @@ class ElementModel {
             processLabel(instruction)
         }
     }
-    func addLine(_ newLine: LineElement) {
+    private func addLine(_ newLine: LineElement) {
         self.lines.append(newLine)
+        self.viewModel.drawLine(newLine)
     }
     
-    func processLabel(_ labelInstruction: Instruction) {
+    private func processLabel(_ labelInstruction: Instruction) {
         
     }
     

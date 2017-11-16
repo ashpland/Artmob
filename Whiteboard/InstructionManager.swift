@@ -11,6 +11,7 @@ import Foundation
 class InstructionManager {
     
     static let sharedInstance = InstructionManager()
+    let elementModel = ElementModel()
     
     private var instructions = [Instruction]()
     //make this a subject later
@@ -25,7 +26,7 @@ class InstructionManager {
         let newInstruction = Instruction(type: type, element: element, stamp: stamp)
         self.instructions.append(newInstruction)
         
-        //send to EM
+        elementModel.recieveInstruction(newInstruction)
         
     }
     

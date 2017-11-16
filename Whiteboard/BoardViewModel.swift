@@ -14,6 +14,11 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     let instructionManager = InstructionManager.sharedInstance
     let settings = LineFormatSettings.sharedInstance
     
+    override init() {
+        super.init()
+        ElementModel.sharedInstance.viewModel = self
+    }
+    
     func newLine(_ lineToAdd: Line) {
         let newLineElement = LineElement(line: lineToAdd, width: settings.width, cap: settings.cap, color: settings.color)
         instructionManager.addLine(newLineElement)
@@ -23,7 +28,9 @@ class BoardViewModel: NSObject, lineMakingDelegate {
         
     }
     
-    
+    func drawLine(_ lineToDraw: LineElement) {
+        
+    }
     
     
     
