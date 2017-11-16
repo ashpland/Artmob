@@ -9,7 +9,7 @@
 import UIKit
 import RxSwift
 
-class BoardView: UIView {
+class DrawView: UIView {
 
     var lineDelegate : lineMakingDelegate!
     

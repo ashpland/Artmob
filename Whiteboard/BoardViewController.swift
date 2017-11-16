@@ -10,7 +10,7 @@ import UIKit
 
 class BoardViewController: UIViewController {
 
-    @IBOutlet weak var boardView: BoardView!
+    @IBOutlet weak var boardView: DrawView!
     
     let viewModel = BoardViewModel()
     
