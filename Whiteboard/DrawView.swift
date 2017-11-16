@@ -12,35 +12,26 @@ import RxSwift
 class DrawView: UIView {
 
     var lineDelegate : lineMakingDelegate!
+    var activeDrawingLine = Line()
     
-    var currentLineSubject : PublishSubject<LineSegment>!
-    
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        currentLineSubject = PublishSubject<LineSegment>()
-        self.lineDelegate.startNewLine(source: currentLineSubject)
-        
-    }
-    
+ 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
         let touch = touches.first
         if let first = touch?.previousLocation(in: self),
             let second = touch?.location(in: self) {
-            currentLineSubject.onNext(LineSegment(firstPoint: first, secondPoint: second))
+            let nextLineSegment = LineSegment(firstPoint: first, secondPoint: second)
+            activeDrawingLine.addSegment(nextLineSegment)
         }
-        
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        currentLineSubject.onCompleted()
+        self.lineDelegate.newLine(activeDrawingLine)
+        activeDrawingLine = Line()
     }
-    
-
 }
 
 
 
 protocol lineMakingDelegate {
-    func startNewLine(source: PublishSubject<LineSegment>)
+    func newLine(_: Line)
 }
