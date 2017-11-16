@@ -12,7 +12,7 @@ class InstructionManager {
     
     static let sharedInstance = InstructionManager()
     
-    var instructions = [Instruction]()
+    private var instructions = [Instruction]()
     
     func addLine(_ element: LineElement) {
         self.newInstruction(type: .new, element: .line(element))
