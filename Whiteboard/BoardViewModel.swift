@@ -29,22 +29,8 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     }
     
     func drawLine(_ lineToDraw: LineElement) {
+        let newView = LineView()
         
     }
-    
-    
-    
-    
-    
-    /*
-    Drawable Line
-    Line.segments)
-    Colour
-    Thickness
-     
-    */
-    
-    
-    
 
 }
