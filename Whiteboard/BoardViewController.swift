@@ -29,5 +29,13 @@ class BoardViewController: UIViewController {
 
 }
 
+class LineFormatSettings {
+    static let sharedInstance = LineFormatSettings()
+    
+    var width : CGFloat = 5.0
+    var cap = CGLineCap.round
+    var color = UIColor.blue
+}
+
 
 

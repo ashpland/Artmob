@@ -29,10 +29,3 @@ struct Stamp {
     let user : String
     let timestamp : Date
 }
-
-
-struct something {
-    let test = Instruction(type: .new,
-                           element: .line,
-                           stamp: Stamp(user: "yolo", timestamp: Date()))
-}
