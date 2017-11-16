@@ -10,6 +10,9 @@ import UIKit
 import RxSwift
 
 class BoardViewModel: NSObject, lineMakingDelegate {
+    
+    let instructionManager = InstructionManager.sharedInstance
+    
     func newLine(_ lineToAdd: Line) {
         //
     }
