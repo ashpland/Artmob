@@ -17,7 +17,24 @@ class ElementModel {
     
     var labels = [Stamp : LabelElement]()
     
+    func recieveInstruction(_ instruction: Instruction) {
+        switch instruction.element {
+        case .line (let newLine):
+            self.addLine(newLine)
+        case .emoji:
+            processLabel(instruction)
+        }
+    }
+    func addLine(_ newLine: LineElement) {
+        self.lines.append(newLine)
+    }
     
+    func processLabel(_ labelInstruction: Instruction) {
+        
+    }
+    
+        
+        
     
 }
 
