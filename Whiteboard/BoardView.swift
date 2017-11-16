@@ -17,28 +17,23 @@ class BoardView: UIView {
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
         currentLineSubject = PublishSubject<LineSegment>()
-        
-        
-        
-        let touch = touches.first
-        
-        
-        // start new line
-        // make first points
-        // add to line
-        // display
-        
+        self.lineDelegate.startNewLine(source: currentLineSubject)
         
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         
+        let touch = touches.first
+        if let first = touch?.previousLocation(in: self),
+            let second = touch?.location(in: self) {
+            currentLineSubject.onNext(LineSegment(firstPoint: first, secondPoint: second))
+        }
+        
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
+        currentLineSubject.onCompleted()
     }
     
 
@@ -47,5 +42,5 @@ class BoardView: UIView {
 
 
 protocol lineMakingDelegate {
-    func startNewLine()
+    func startNewLine(source: PublishSubject<LineSegment>)
 }
