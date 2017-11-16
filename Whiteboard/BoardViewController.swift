@@ -10,8 +10,19 @@ import UIKit
 
 class BoardViewController: UIViewController {
 
+    @IBOutlet weak var boardView: BoardView!
+    
+    let viewModel = BoardViewModel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        boardView.lineDelegate = viewModel
+        
+        
+        
+        
+        
         // Do any additional setup after loading the view, typically from a nib.
     }
 

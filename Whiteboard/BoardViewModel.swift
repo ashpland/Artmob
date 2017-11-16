@@ -8,9 +8,9 @@
 
 import UIKit
 
-class BoardViewModel: NSObject {
+class BoardViewModel: NSObject, lineMakingDelegate {
     
-    public func startNewLine(){
+    public func startNewLine(/* PublishSubject */){
         
     }
 
