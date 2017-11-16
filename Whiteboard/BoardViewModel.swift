@@ -14,6 +14,16 @@ class BoardViewModel: NSObject, lineMakingDelegate {
         
     }
     
+    /*
+    Drawable Line
+    Line.segments)
+    Colour
+    Thickness
+     
+    */
+    
+    
+    
     
     
     
