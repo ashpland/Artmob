@@ -7,13 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		494487B91FBCFF3B00AE2C2F /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494487B81FBCFF3B00AE2C2F /* ViewModel.swift */; };
+		494487B91FBCFF3B00AE2C2F /* BoardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494487B81FBCFF3B00AE2C2F /* BoardViewModel.swift */; };
 		4949DC1F1FBCFA430062691C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4949DC1E1FBCFA430062691C /* AppDelegate.swift */; };
-		4949DC211FBCFA430062691C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4949DC201FBCFA430062691C /* ViewController.swift */; };
-		4949DC241FBCFA430062691C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4949DC221FBCFA430062691C /* Main.storyboard */; };
+		4949DC211FBCFA430062691C /* BoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4949DC201FBCFA430062691C /* BoardViewController.swift */; };
+		4949DC241FBCFA430062691C /* Board.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4949DC221FBCFA430062691C /* Board.storyboard */; };
 		4949DC261FBCFA430062691C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4949DC251FBCFA430062691C /* Assets.xcassets */; };
 		4949DC291FBCFA430062691C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4949DC271FBCFA430062691C /* LaunchScreen.storyboard */; };
 		4949DC341FBCFA440062691C /* WhiteboardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4949DC331FBCFA440062691C /* WhiteboardTests.swift */; };
+		496B676F1FBD06FB0002A2F2 /* DrawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496B676E1FBD06FB0002A2F2 /* DrawView.swift */; };
+		496B67711FBD07840002A2F2 /* Lines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496B67701FBD07840002A2F2 /* Lines.swift */; };
 		A6B26FECBB0566E82F8AF0B1 /* Pods_WhiteboardTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 973BF740E19353D8DB6E5900 /* Pods_WhiteboardTests.framework */; };
 		E9F5CCEE84452B724BEB7A1A /* Pods_Whiteboard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DD0542E2ADE540B16AE2AFF /* Pods_Whiteboard.framework */; };
 /* End PBXBuildFile section */
@@ -31,17 +33,19 @@
 /* Begin PBXFileReference section */
 		1D9BB54B4A59AA7B16570116 /* Pods-WhiteboardTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WhiteboardTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-WhiteboardTests/Pods-WhiteboardTests.release.xcconfig"; sourceTree = "<group>"; };
 		265161800B2980D160228C20 /* Pods-WhiteboardTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WhiteboardTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WhiteboardTests/Pods-WhiteboardTests.debug.xcconfig"; sourceTree = "<group>"; };
-		494487B81FBCFF3B00AE2C2F /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		494487B81FBCFF3B00AE2C2F /* BoardViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardViewModel.swift; sourceTree = "<group>"; };
 		4949DC1B1FBCFA430062691C /* Whiteboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Whiteboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4949DC1E1FBCFA430062691C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4949DC201FBCFA430062691C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		4949DC231FBCFA430062691C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4949DC201FBCFA430062691C /* BoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardViewController.swift; sourceTree = "<group>"; };
+		4949DC231FBCFA430062691C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Board.storyboard; sourceTree = "<group>"; };
 		4949DC251FBCFA430062691C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4949DC281FBCFA430062691C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4949DC2A1FBCFA430062691C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4949DC2F1FBCFA430062691C /* WhiteboardTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhiteboardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4949DC331FBCFA440062691C /* WhiteboardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteboardTests.swift; sourceTree = "<group>"; };
 		4949DC351FBCFA440062691C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		496B676E1FBD06FB0002A2F2 /* DrawView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawView.swift; sourceTree = "<group>"; };
+		496B67701FBD07840002A2F2 /* Lines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lines.swift; sourceTree = "<group>"; };
 		7DD0542E2ADE540B16AE2AFF /* Pods_Whiteboard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Whiteboard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		973BF740E19353D8DB6E5900 /* Pods_WhiteboardTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WhiteboardTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEB5430F6C5942D0642A8EC4 /* Pods-Whiteboard.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Whiteboard.release.xcconfig"; path = "Pods/Target Support Files/Pods-Whiteboard/Pods-Whiteboard.release.xcconfig"; sourceTree = "<group>"; };
@@ -92,9 +96,11 @@
 			isa = PBXGroup;
 			children = (
 				4949DC1E1FBCFA430062691C /* AppDelegate.swift */,
-				4949DC201FBCFA430062691C /* ViewController.swift */,
-				494487B81FBCFF3B00AE2C2F /* ViewModel.swift */,
-				4949DC221FBCFA430062691C /* Main.storyboard */,
+				4949DC221FBCFA430062691C /* Board.storyboard */,
+				496B676E1FBD06FB0002A2F2 /* DrawView.swift */,
+				496B67701FBD07840002A2F2 /* Lines.swift */,
+				4949DC201FBCFA430062691C /* BoardViewController.swift */,
+				494487B81FBCFF3B00AE2C2F /* BoardViewModel.swift */,
 				4949DC251FBCFA430062691C /* Assets.xcassets */,
 				4949DC271FBCFA430062691C /* LaunchScreen.storyboard */,
 				4949DC2A1FBCFA430062691C /* Info.plist */,
@@ -222,7 +228,7 @@
 			files = (
 				4949DC291FBCFA430062691C /* LaunchScreen.storyboard in Resources */,
 				4949DC261FBCFA430062691C /* Assets.xcassets in Resources */,
-				4949DC241FBCFA430062691C /* Main.storyboard in Resources */,
+				4949DC241FBCFA430062691C /* Board.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,9 +289,20 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Whiteboard/Pods-Whiteboard-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
+				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
+				"${BUILT_PRODUCTS_DIR}/RxRealm/RxRealm.framework",
+				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxRealm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -350,8 +367,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4949DC211FBCFA430062691C /* ViewController.swift in Sources */,
-				494487B91FBCFF3B00AE2C2F /* ViewModel.swift in Sources */,
+				4949DC211FBCFA430062691C /* BoardViewController.swift in Sources */,
+				496B67711FBD07840002A2F2 /* Lines.swift in Sources */,
+				496B676F1FBD06FB0002A2F2 /* DrawView.swift in Sources */,
+				494487B91FBCFF3B00AE2C2F /* BoardViewModel.swift in Sources */,
 				4949DC1F1FBCFA430062691C /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -375,12 +394,12 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		4949DC221FBCFA430062691C /* Main.storyboard */ = {
+		4949DC221FBCFA430062691C /* Board.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				4949DC231FBCFA430062691C /* Base */,
 			);
-			name = Main.storyboard;
+			name = Board.storyboard;
 			sourceTree = "<group>";
 		};
 		4949DC271FBCFA430062691C /* LaunchScreen.storyboard */ = {
