@@ -11,12 +11,20 @@ import RxSwift
 
 class BoardView: UIView {
 
-    let currentLineObservable: Observable<CGPoint>
+    var lineDelegate : lineMakingDelegate!
+    
+    var currentLineSubject : PublishSubject<LineSegment>!
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
+        currentLineSubject = PublishSubject<LineSegment>()
+        
+        
+        
         let touch = touches.first
+        
+        
         // start new line
         // make first points
         // add to line
@@ -34,4 +42,10 @@ class BoardView: UIView {
     }
     
 
+}
+
+
+
+protocol lineMakingDelegate {
+    func startNewLine()
 }
