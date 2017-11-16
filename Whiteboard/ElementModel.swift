@@ -1,5 +1,5 @@
 //
-//  Elements.swift
+//  ElementModel.swift
 //  Whiteboard
 //
 //  Created by Andrew on 2017-11-16.
@@ -9,6 +9,20 @@
 import Foundation
 import UIKit
 
+class ElementModel {
+    
+    static let sharedInstance = ElementModel()
+    
+    var lines = [LineElement]()
+    
+    var labels = [Stamp : LabelElement]()
+    
+    
+    
+}
+
+
+
 struct LineElement {
     let line : Line
     let width : CGFloat
@@ -17,5 +31,6 @@ struct LineElement {
 }
 
 struct LabelElement {
-
+    let stamp : Stamp
+    
 }

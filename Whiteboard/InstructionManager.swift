@@ -13,6 +13,8 @@ class InstructionManager {
     static let sharedInstance = InstructionManager()
     
     private var instructions = [Instruction]()
+    //make this a subject later
+    
     
     func addLine(_ element: LineElement) {
         self.newInstruction(type: .new, element: .line(element))
@@ -22,6 +24,9 @@ class InstructionManager {
         let stamp = Stamp(user: "User", timestamp: Date())
         let newInstruction = Instruction(type: type, element: element, stamp: stamp)
         self.instructions.append(newInstruction)
+        
+        //send to EM
+        
     }
     
 }
@@ -43,7 +48,33 @@ enum InstructionPayload {
     case emoji (LabelElement)
 }
 
-struct Stamp {
+struct Stamp: Comparable, Hashable {
+    var hashValue: Int {
+        get {
+            let timeHash = self.timestamp.hashValue
+            let userHash = self.user.hashValue
+            return timeHash ^ userHash &* 16777619
+        }
+    }
+    
+    static func <(lhs: Stamp, rhs: Stamp) -> Bool {
+        if (lhs.timestamp < rhs.timestamp) {
+            return true
+        }
+        if (lhs.timestamp == rhs.timestamp && lhs.user < rhs.user) {
+            return true
+        }
+        return false
+    }
+    
+    static func ==(lhs: Stamp, rhs: Stamp) -> Bool {
+        return ((lhs.user == rhs.user) && (lhs.timestamp == rhs.timestamp))
+    }
+    
+    
+    
     let user : String
     let timestamp : Date
+    
+    
 }
