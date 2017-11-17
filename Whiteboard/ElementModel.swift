@@ -14,7 +14,7 @@ class ElementModel {
     static let sharedInstance = ElementModel()
     
     // remove this later probably
-    public var viewModel : BoardViewModel!
+    public var viewModel : BoardViewModel?
     
     private var lines = [LineElement]()
     
@@ -30,7 +30,7 @@ class ElementModel {
     }
     private func addLine(_ newLine: LineElement) {
         self.lines.append(newLine)
-        self.viewModel.drawLines([newLine])
+        self.viewModel?.drawLines([newLine])
     }
     
     private func processLabel(_ labelInstruction: Instruction) {
