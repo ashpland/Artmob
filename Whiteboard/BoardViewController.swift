@@ -20,6 +20,8 @@ class BoardViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        lineImageView.isHidden = true
+        boardView.clearsContextBeforeDrawing = true
         
         boardView.lineDelegate = viewModel
         
