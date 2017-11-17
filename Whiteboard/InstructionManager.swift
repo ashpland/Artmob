@@ -23,10 +23,10 @@ class InstructionManager {
     
     private func newInstruction(type: InstructionType, element: InstructionPayload) {
         let stamp = Stamp(user: "User", timestamp: Date())
-        let newInstruction = Instruction(type: type, element: element, stamp: stamp)
-        self.instructions.append(newInstruction)
+        let madeInstruction = Instruction(type: type, element: element, stamp: stamp)
+        self.instructions.append(madeInstruction)
         
-        elementModel.recieveInstruction(newInstruction)
+        elementModel.recieveInstruction(madeInstruction)
         
     }
     

@@ -13,7 +13,9 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     
     let instructionManager = InstructionManager.sharedInstance
     let settings = LineFormatSettings.sharedInstance
-    var lineImage : Variable<UIImage>?
+    //var lineImage : Variable<UIImage>?
+    var lineImage : UIImage?
+    var bvc : UIImageView?
     
     let tempCanvasSize = UIScreen.main.bounds.size
     
@@ -47,14 +49,18 @@ class BoardViewModel: NSObject, lineMakingDelegate {
         let newLines = LineView(lines: linesToDraw, size: tempCanvasSize).getImage()
         
         UIGraphicsBeginImageContext(tempCanvasSize)
-        if let oldLines = self.lineImage?.value {
+        //if let oldLines = self.lineImage?.value {
+        if let oldLines = self.lineImage {
             oldLines.draw(at: CGPoint.zero)
         }
         newLines?.draw(at: CGPoint.zero)
         if let newImage = UIGraphicsGetImageFromCurrentImageContext() {
-            self.lineImage?.value = newImage
+            //self.lineImage?.value = newImage
+            self.lineImage = newImage
+            
         }
         UIGraphicsEndImageContext()
+        bvc?.image = self.lineImage
     }
     
 

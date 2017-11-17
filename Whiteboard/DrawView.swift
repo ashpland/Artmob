@@ -27,7 +27,7 @@ class DrawView: UIView {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //self.lineDelegate.newLine(activeDrawingLine)
+        self.lineDelegate.newLine(activeDrawingLine)
         activeDrawingLine = Line()
         self.setNeedsDisplay()
     }
@@ -35,12 +35,12 @@ class DrawView: UIView {
     override func draw(_ rect: CGRect) {
         
         let path = UIBezierPath()
-        
+        path.lineWidth = lineFormatSettings.width
+        path.lineCapStyle = lineFormatSettings.cap
+        lineFormatSettings.color.setStroke()
         
         if !activeDrawingLine.segments.isEmpty {
-            path.lineWidth = lineFormatSettings.width
-            path.lineCapStyle = lineFormatSettings.cap
-            lineFormatSettings.color.setStroke()
+            
             path.move(to: activeDrawingLine.segments.first!.firstPoint)
             
             for segment in activeDrawingLine.segments {
