@@ -50,40 +50,6 @@ class BoardViewModel: NSObject, lineMakingDelegate {
         
     }
     
-    
-    // Displaying
-    /*
-    func compositeImage(image1: UIImage, image2: UIImage) -> UIImage {
-        
-        let bounds1 = CGRect(x: 0, y: 0, width: image1.size.width, height: image1.size.height)
-        let bounds2 = CGRect(x: 0, y: 0, width: image2.size.width, height: image2.size.height)
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedFirst.rawValue)
-        
-        if let cgImage1 = image1.cgImage {
-            
-            guard let ctx = CGContext(data: nil,
-                                      width: cgImage1.width,
-                                      height: cgImage1.height,
-                                      bitsPerComponent: cgImage1.bitsPerComponent,
-                                      bytesPerRow: cgImage1.bytesPerRow,
-                                      space: colorSpace,
-                                      bitmapInfo: bitmapInfo.rawValue)
-                else {fatalError("CGContext failed")}
-            ctx.scaleBy(x: UIScreen.main.scale, y: UIScreen.main.scale)
-            ctx.draw(cgImage1, in: bounds1)
-            ctx.setBlendMode(.normal)
-            if let cgImage2 = image2.cgImage {
-                ctx.draw(cgImage2, in: bounds2)
-            }
-            
-            guard let returnImage = ctx.makeImage() else {fatalError("make image failed")}
-            return UIImage(cgImage: returnImage)
-            
-        }
-        return image1
-    }
-    */
     // TODO: have this triggered by sequence subscription
     func drawLines(_ linesToDraw: [LineElement]) {
         lineImage = drawLineOnImage(img: lineImage, lines: linesToDraw)
