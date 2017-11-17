@@ -14,7 +14,7 @@ class InstructionManager {
     let elementModel = ElementModel()
     
     private var instructions = [Instruction]()
-    //make this a subject later
+    // TODO: make this a subject
     
     
     func addLine(_ element: LineElement) {

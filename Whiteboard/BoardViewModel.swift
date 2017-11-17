@@ -20,12 +20,17 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     override init() {
         super.init()
         ElementModel.sharedInstance.viewModel = self
+        // TODO: initialize lineImage here with a transparent image
     }
     
     // Creating
     
     func newLine(_ lineToAdd: Line) {
         let newLineElement = LineElement(line: lineToAdd, width: settings.width, cap: settings.cap, color: settings.color)
+       
+       
+       // TODO: have this sent by sequence? 
+       // Maybe add class method to instruction manager that starts it subscribing to a new sequence
         instructionManager.addLine(newLineElement)
     }
     
@@ -36,6 +41,8 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     
     // Displaying
     
+    
+    // TODO: have this triggered by sequence subscription
     func drawLines(_ linesToDraw: [LineElement]) {
         let newLines = LineView(lines: linesToDraw, size: tempCanvasSize).getImage()
         
