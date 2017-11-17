@@ -51,10 +51,9 @@ class BoardViewModel: NSObject, lineMakingDelegate {
             oldLines.draw(at: CGPoint.zero)
         }
         newLines?.draw(at: CGPoint.zero)
-        guard let newImage = UIGraphicsGetImageFromCurrentImageContext() else {
-            fatalError("Can't get UIImage from LineView")
+        if let newImage = UIGraphicsGetImageFromCurrentImageContext() {
+            self.lineImage?.value = newImage
         }
-        self.lineImage?.value = newImage
         UIGraphicsEndImageContext()
     }
     

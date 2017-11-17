@@ -18,9 +18,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k2k-vt-RbJ">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="k2k-vt-RbJ">
+                                <rect key="frame" x="0.5" y="0.5" width="375" height="667"/>
                             </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gmm-FH-6rc" customClass="DrawView" customModule="Whiteboard" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
@@ -28,9 +27,13 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="k2k-vt-RbJ" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="XRj-Xd-zeH"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="gmm-FH-6rc" secondAttribute="bottom" id="YtE-ha-tjr"/>
                             <constraint firstItem="gmm-FH-6rc" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="eCv-kU-23u"/>
                             <constraint firstItem="gmm-FH-6rc" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="h1F-SM-grI"/>
+                            <constraint firstItem="k2k-vt-RbJ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="oAb-E2-Qan"/>
+                            <constraint firstItem="k2k-vt-RbJ" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="oTe-z0-QLf"/>
+                            <constraint firstItem="k2k-vt-RbJ" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="qow-qb-mVG"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="gmm-FH-6rc" secondAttribute="trailing" id="xNx-JA-oHQ"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
