@@ -9,7 +9,31 @@
 import UIKit
 
 class LineView: UIView {
-    
+    class func getImage(img: UIImage, lines: [LineElement]) -> UIImage{
+        UIGraphicsBeginImageContextWithOptions(img.size, false, 0.0)
+        img.draw(at: CGPoint(x: 0, y: 0))
+        //self.layer.render(in: UIGraphicsGetCurrentContext()!)
+        for lineToDraw in lines {
+            let path = UIBezierPath()
+            path.lineWidth = lineToDraw.width
+            path.lineCapStyle = lineToDraw.cap
+            lineToDraw.color.setStroke()
+            
+            if !lineToDraw.line.segments.isEmpty {
+                path.move(to: lineToDraw.line.segments.first!.firstPoint)
+                
+                for segment in lineToDraw.line.segments {
+                    path.addLine(to: segment.firstPoint)
+                    path.addLine(to: segment.secondPoint)
+                }
+                path.stroke()
+            }
+        }
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image!
+    }
+    /*
     let lines : [LineElement]
     
     init(lines: [LineElement], size: CGSize) {
@@ -23,13 +47,16 @@ class LineView: UIView {
     }
     
     
-    func getImage() -> UIImage? {
+    func getImageOld() -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(self.frame.size, false, 0.0)
+        self.layer.backgroundColor = UIColor.clear.cgColor
         self.layer.render(in: UIGraphicsGetCurrentContext()!)
+        
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         return image
     }
+    
     
     
     
@@ -62,5 +89,5 @@ class LineView: UIView {
     }
     
     
-
+*/
 }

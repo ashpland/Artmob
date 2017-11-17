@@ -77,13 +77,21 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     
     // TODO: have this triggered by sequence subscription
     func drawLines(_ linesToDraw: [LineElement]) {
-        let newLines = LineView(lines: linesToDraw, size: tempCanvasSize).getImage()
-
-        if lineImage == nil{
-            lineImage = newLines
-        } else if newLines != nil{
-             lineImage = compositeImage(image1: lineImage!, image2: newLines!)
+        //let newLines = LineView(lines: linesToDraw, size: tempCanvasSize).getImage()
+        if lineImage == nil {
+            UIGraphicsBeginImageContextWithOptions(UIScreen.main.bounds.size, false, 0.0)
+            UIColor.clear.setFill()
+            UIRectFill(UIScreen.main.bounds)
+            lineImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
         }
+        lineImage = LineView.getImage(img: lineImage!, lines: linesToDraw)
+
+//        if lineImage == nil{
+//            lineImage = newLines
+//        } else if newLines != nil{
+//            lineImage = compositeImage(image1: lineImage!, image2: newLines)
+//        }
         bvc?.image = lineImage
 
         //
