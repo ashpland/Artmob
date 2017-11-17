@@ -62,3 +62,6 @@ class DrawView: UIView {
 protocol lineMakingDelegate {
     func newLine(_: Line)
 }
+
+
+
