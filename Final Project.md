@@ -45,3 +45,5 @@
 
 #### Detail Menu
 ![](http://ashp.land/scratch/whiteboard3.jpg)
+
+

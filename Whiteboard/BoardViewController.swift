@@ -21,15 +21,19 @@ class BoardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        boardView.clearsContextBeforeDrawing = true
+        
         boardView.lineDelegate = viewModel
         
-        self.viewModel.lineImage?.asObservable()
-            .subscribe(onNext: { lineImage in
-                self.lineImageView.image = lineImage
-            })
-            .disposed(by: disposeBag)
+        viewModel.bvc = lineImageView
         
-        
+//        self.viewModel.lineImage?.asObservable()
+//            .subscribe(onNext: { lineImage in
+//                self.lineImageView.image = lineImage
+//            })
+//            .disposed(by: disposeBag)
+//
+//
         
     }
 
