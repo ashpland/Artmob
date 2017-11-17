@@ -11,7 +11,7 @@ import Foundation
 class InstructionManager {
     
     static let sharedInstance = InstructionManager()
-    let elementModel = ElementModel()
+    let elementModel = ElementModel.sharedInstance
     
     private var instructions = [Instruction]()
     //make this a subject later
