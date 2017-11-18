@@ -11,7 +11,6 @@ import RxSwift
 
 class BoardViewModel: NSObject, lineMakingDelegate {
     
-    let instructionManager = InstructionManager.sharedInstance
     let settings = LineFormatSettings.sharedInstance
     let disposeBag = DisposeBag()
     
@@ -46,7 +45,7 @@ class BoardViewModel: NSObject, lineMakingDelegate {
        
        // TODO: have this sent by sequence? 
        // Maybe add class method to instruction manager that starts it subscribing to a new sequence
-        instructionManager.addLine(newLineElement)
+        InstructionManager.sharedInstance.addLine(newLineElement)
     }
     
     func newEmoji(_ : String) {

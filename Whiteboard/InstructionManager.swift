@@ -7,14 +7,16 @@
 //
 
 import Foundation
+import RxSwift
 
 class InstructionManager {
     
     static let sharedInstance = InstructionManager()
-    let elementModel = ElementModel.sharedInstance
     
-    private var instructions = [Instruction]()
-    // TODO: make this a subject
+//    let elementModel = ElementModel.sharedInstance
+    
+    private var instructionStore = [Instruction]()
+    let instructionBroadcast = PublishSubject<Instruction>()
     
     
     func addLine(_ element: LineElement) {
@@ -24,9 +26,11 @@ class InstructionManager {
     private func newInstruction(type: InstructionType, element: InstructionPayload) {
         let stamp = Stamp(user: "User", timestamp: Date())
         let madeInstruction = Instruction(type: type, element: element, stamp: stamp)
-        self.instructions.append(madeInstruction)
+        self.instructionStore.append(madeInstruction)
         
-        elementModel.recieveInstruction(madeInstruction)
+        self.instructionBroadcast.onNext(madeInstruction)
+        
+//        elementModel.recieveInstruction(madeInstruction)
         
     }
     

@@ -18,6 +18,37 @@ class ElementModel {
     
     private var labels = [Stamp : LabelElement]()
     
+    
+    
+    init() {
+        self.setupSubscriptions()
+    }
+    
+    
+    func setupSubscriptions() {
+        let _ = InstructionManager.sharedInstance.instructionBroadcast
+            .subscribe { event in
+                switch event{
+                case .next(let instruction):
+                    switch instruction.element {
+                    case .line(let lineToDraw):
+                        self.lineSubject.onNext([lineToDraw])
+                    case .emoji(_):
+                        self.processLabel(instruction)
+                    }
+                    
+                case .error(let error):
+                    fatalError(error.localizedDescription)
+                case .completed:
+                    print("BoardViewModel Lines Subscription ended")
+
+                }
+        }
+    }
+    
+
+    
+    
     public func recieveInstruction(_ instruction: Instruction) {
         switch instruction.element {
         case .line (let lineToDraw):
