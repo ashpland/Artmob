@@ -13,6 +13,8 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     
     let instructionManager = InstructionManager.sharedInstance
     let settings = LineFormatSettings.sharedInstance
+    let disposeBag = DisposeBag()
+    
     lazy var lineImage : Variable<UIImage> = Variable<UIImage>(makeClearImage())
     
     // TODO: Change once screen size is dynamic
@@ -21,7 +23,10 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     override init() {
         super.init()
         ElementModel.sharedInstance.viewModel = self
+        setupSubscriptions()
     }
+    
+    
     
     func makeClearImage() -> UIImage {
         UIGraphicsBeginImageContextWithOptions(UIScreen.main.bounds.size, false, 0.0)
@@ -54,6 +59,24 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     
     
     // MARK: - Displaying Elements
+    
+    
+    func setupSubscriptions() {
+        let _ = ElementModel.sharedInstance.lineSubject
+            .subscribe { event in
+                switch event{
+                case .next(let lines):
+                    self.drawLines(lines)
+                case .error(let error):
+                    fatalError(error.localizedDescription)
+                case .completed:
+                    print("BoardViewModel Lines Subscription ended")
+                }
+        }
+    }
+    
+    
+    
     
     // TODO: have this triggered by sequence subscription
     func drawLines(_ linesToDraw: [LineElement]) {
