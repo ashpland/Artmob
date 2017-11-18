@@ -13,8 +13,9 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     
     let instructionManager = InstructionManager.sharedInstance
     let settings = LineFormatSettings.sharedInstance
-    //var lineImage : Variable<UIImage>?
-    lazy var lineImage : UIImage = {
+    lazy var lineImage : Variable<UIImage> = Variable<UIImage>(makeClearImage())
+
+    lazy var lineImageOld : UIImage = {
         UIGraphicsBeginImageContextWithOptions(UIScreen.main.bounds.size, false, 0.0)
         UIColor.clear.setFill()
         UIRectFill(UIScreen.main.bounds)
@@ -32,10 +33,22 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     override init() {
         super.init()
         ElementModel.sharedInstance.viewModel = self
-        // TODO: initialize lineImage here with a transparent image
+        
+
     }
     
-    // Creating
+    func makeClearImage() -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(UIScreen.main.bounds.size, false, 0.0)
+        UIColor.clear.setFill()
+        UIRectFill(UIScreen.main.bounds)
+        guard let lineImage = UIGraphicsGetImageFromCurrentImageContext() else {
+            fatalError("Clear Image the size of the screen not created")
+        }
+        UIGraphicsEndImageContext()
+        return lineImage
+    }
+    
+    // MARK: - Creating Elements
     
     func newLine(_ lineToAdd: Line) {
         let newLineElement = LineElement(line: lineToAdd, width: settings.width, cap: settings.cap, color: settings.color)
@@ -50,15 +63,16 @@ class BoardViewModel: NSObject, lineMakingDelegate {
         
     }
     
-    // TODO: have this triggered by sequence subscription
+    // MARK: - Displaying Elements
+    
+        // TODO: have this triggered by sequence subscription
     func drawLines(_ linesToDraw: [LineElement]) {
-        lineImage = drawLineOnImage(img: lineImage, lines: linesToDraw)
-        bvc?.image = lineImage
+        self.lineImage.value = drawLineOnImage(existingImage: self.lineImage.value, lines: linesToDraw)
     }
     
-    func drawLineOnImage(img: UIImage, lines: [LineElement]) -> UIImage{
-        UIGraphicsBeginImageContextWithOptions(img.size, false, 0.0)
-        img.draw(at: CGPoint(x: 0, y: 0))
+    func drawLineOnImage(existingImage: UIImage, lines: [LineElement]) -> UIImage{
+        UIGraphicsBeginImageContextWithOptions(existingImage.size, false, 0.0)
+        existingImage.draw(at: CGPoint(x: 0, y: 0))
         for lineToDraw in lines {
             let path = UIBezierPath()
             path.lineWidth = lineToDraw.width

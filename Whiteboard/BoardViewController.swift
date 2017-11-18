@@ -27,13 +27,13 @@ class BoardViewController: UIViewController {
         
         viewModel.bvc = lineImageView
         
-//        self.viewModel.lineImage?.asObservable()
-//            .subscribe(onNext: { lineImage in
-//                self.lineImageView.image = lineImage
-//            })
-//            .disposed(by: disposeBag)
-//
-//
+        self.viewModel.lineImage.asObservable()
+            .subscribe(onNext: { lineImage in
+                self.lineImageView.image = lineImage
+            })
+            .disposed(by: disposeBag)
+
+
         
     }
 
