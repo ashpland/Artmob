@@ -64,9 +64,7 @@ class BoardViewModel {
     private func setupInstructionBroadcast() {
         InstructionManager.subscribeToInstructionsFrom(self.submitInstruction)
     }
-    
-    
-    
+   
     
     // MARK: - Displaying Elements
     

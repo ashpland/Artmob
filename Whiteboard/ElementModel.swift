@@ -45,7 +45,7 @@ class ElementModel {
     
     private func processLabel(_ labelInstruction: Instruction) {
         
-    }   
+    }
 }
 
 // MARK: - Lines

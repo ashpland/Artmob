@@ -26,7 +26,6 @@ class InstructionManager {
         }).disposed(by: InstructionManager.sharedInstance.disposeBag)
     }
     
-    
     private func newInstruction(_ newInstruction: Instruction) {
         // TODO: Instruction sequence processing happens here
         self.instructionStore.append(newInstruction)
