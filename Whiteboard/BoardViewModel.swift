@@ -71,7 +71,7 @@ class BoardViewModel: NSObject, lineMakingDelegate {
                 case .completed:
                     print("BoardViewModel Lines Subscription ended")
                 }
-        }
+        }.disposed(by: disposeBag)
     }
  
     func drawLines(_ linesToDraw: [LineElement]) {

@@ -17,6 +17,9 @@ class InstructionManager {
     let instructionBroadcast = PublishSubject<Instruction>()
     
     
+    
+    
+    
     func addLine(_ element: LineElement) {
         self.newInstruction(type: .new, element: .line(element))
     }

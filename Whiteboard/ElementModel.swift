@@ -16,7 +16,8 @@ class ElementModel {
     
     let lineSubject = PublishSubject<[LineElement]>()
     private var labels = [Stamp : LabelElement]()
-
+    private let disposeBag = DisposeBag()
+    
     init() {
         self.setupSubscriptions()
     }
@@ -39,7 +40,7 @@ class ElementModel {
                     print("BoardViewModel Lines Subscription ended")
 
                 }
-        }
+        }.disposed(by: disposeBag)
     }
     
     private func processLabel(_ labelInstruction: Instruction) {
