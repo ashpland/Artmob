@@ -22,7 +22,6 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     
     override init() {
         super.init()
-        ElementModel.sharedInstance.viewModel = self
         setupSubscriptions()
     }
     
@@ -62,11 +61,12 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     
     
     func setupSubscriptions() {
-        let _ = ElementModel.sharedInstance.lineSubject
+        
+        let _ /* New Lines Subscription */ = ElementModel.sharedInstance.lineSubject
             .subscribe { event in
                 switch event{
-                case .next(let lines):
-                    self.drawLines(lines)
+                case .next(let newLines):
+                    self.drawLines(newLines)
                 case .error(let error):
                     fatalError(error.localizedDescription)
                 case .completed:
@@ -74,11 +74,7 @@ class BoardViewModel: NSObject, lineMakingDelegate {
                 }
         }
     }
-    
-    
-    
-    
-    // TODO: have this triggered by sequence subscription
+ 
     func drawLines(_ linesToDraw: [LineElement]) {
         self.lineImage.value = drawLineOnImage(existingImage: self.lineImage.value, lines: linesToDraw)
     }
