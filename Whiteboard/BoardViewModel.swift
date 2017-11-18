@@ -9,11 +9,11 @@
 import UIKit
 import RxSwift
 
-class BoardViewModel: NSObject, lineMakingDelegate {
+class BoardViewModel {
     
     let settings = LineFormatSettings.sharedInstance
     let disposeBag = DisposeBag()
-    
+        
     let submitInstruction = PublishSubject<Instruction>()
     
     lazy var lineImage : Variable<UIImage> = Variable<UIImage>(makeClearImage())
@@ -21,12 +21,10 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     // TODO: Change once screen size is dynamic
     let tempCanvasSize = UIScreen.main.bounds.size
     
-    override init() {
-        super.init()
-        setupSubscriptions()
+    init(){
+        setupDisplaySubscriptions()
         setupInstructionBroadcast()
     }
-    
     
     func makeClearImage() -> UIImage {
         UIGraphicsBeginImageContextWithOptions(UIScreen.main.bounds.size, false, 0.0)
@@ -40,6 +38,13 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     }
     
     // MARK: - Creating Elements
+    
+    func recieveLine(_ subject: PublishSubject<LineSegment>) {
+        let _ = subject.reduce(Line(), accumulator: {
+            currentLine, nextSegment in
+            return currentLine + nextSegment
+        }).subscribe(onNext: { self.newLine($0) })
+    }
     
     func newLine(_ lineToAdd: Line) {
         let newLineElement = LineElement(line: lineToAdd, width: settings.width, cap: settings.cap, color: settings.color)
@@ -65,9 +70,8 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     
     // MARK: - Displaying Elements
     
+    func setupDisplaySubscriptions() {
     
-    func setupSubscriptions() {
-        
         let _ /* New Lines Subscription */ = ElementModel.sharedInstance.lineSubject
             .subscribe { event in
                 switch event{

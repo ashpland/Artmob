@@ -11,29 +11,23 @@ import RxSwift
 
 class BoardViewController: UIViewController {
 
-    @IBOutlet weak var boardView: DrawView!
+    @IBOutlet weak var drawView: DrawView!
     @IBOutlet weak var lineImageView: UIImageView!
     
     let viewModel = BoardViewModel()
     let disposeBag = DisposeBag()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        boardView.clearsContextBeforeDrawing = true
-        boardView.lineDelegate = viewModel
+        drawView.clearsContextBeforeDrawing = true
+        drawView.viewModel = self.viewModel
         
         self.viewModel.lineImage.asObservable()
             .subscribe(onNext: { lineImage in
                 self.lineImageView.image = lineImage
             })
             .disposed(by: disposeBag)
-
-
-        
     }
-
 }
 
 class LineFormatSettings {

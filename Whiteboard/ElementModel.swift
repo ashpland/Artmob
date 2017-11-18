@@ -45,11 +45,7 @@ class ElementModel {
     
     private func processLabel(_ labelInstruction: Instruction) {
         
-    }
-    
-        
-        
-    
+    }   
 }
 
 // MARK: - Lines
@@ -63,9 +59,16 @@ struct LineElement {
 }
 
 struct Line {
-    var segments = [LineSegment]()
-    mutating func addSegment(_ newSegment: LineSegment){
-        self.segments.append(newSegment)
+    let segments : [LineSegment]
+    
+    init() {self.segments = [LineSegment]()}
+    
+    init(with line: Line = Line(), and newSegment: LineSegment) {
+        self.segments = line.segments + [newSegment]
+    }
+    
+    static func +(left: Line, right: LineSegment) -> Line {
+        return Line(with: left, and: right)
     }
 }
 
@@ -75,7 +78,6 @@ struct LineSegment {
 }
 
 // MARK: - Labels
-
 
 struct LabelElement {
     let stamp : Stamp
