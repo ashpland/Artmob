@@ -14,7 +14,8 @@ class InstructionManager {
     static let sharedInstance = InstructionManager()
     
     private var instructionStore = [Instruction]()
-    let instructionBroadcast = PublishSubject<Instruction>()
+    let newInstructions = PublishSubject<Instruction>()
+    let broadcastInstructions = PublishSubject<Instruction>()
     private let disposeBag = DisposeBag()
     
     
@@ -27,10 +28,38 @@ class InstructionManager {
     }
     
     private func newInstruction(_ newInstruction: Instruction) {
-        // TODO: Instruction sequence processing happens here
-        self.instructionStore.append(newInstruction)
-        self.instructionBroadcast.onNext(newInstruction)
+        
+        if (self.instructionStore.isEmpty ||
+            newInstruction.stamp > self.instructionStore.last!.stamp) {
+            self.instructionStore.append(newInstruction)
+            self.newInstructions.onNext(newInstruction)
+            self.broadcastInstructions.onNext(newInstruction)
+            return
+        } else {
+            for (index, currentInstruction) in self.instructionStore.lazy.reversed().enumerated() {
+                guard newInstruction.stamp != currentInstruction.stamp else {
+                    return
+                }
+                if newInstruction.stamp > currentInstruction.stamp {
+                    self.instructionStore.insert(newInstruction, at: self.instructionStore.count - index)
+                    self.broadcastInstructions.onNext(newInstruction)
+
+                    switch newInstruction.element {
+                    case .line(_):
+                        self.refreshLines()
+                    case .emoji(_):
+                        return
+                    }
+                }
+            }
+        }
     }
+    
+    private func refreshLines() {
+        
+    }
+    
+    
 }
 
 

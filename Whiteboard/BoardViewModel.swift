@@ -78,6 +78,10 @@ class BoardViewModel {
                 case .error(let error):
                     fatalError(error.localizedDescription)
                 case .completed:
+                    // clear existing image
+                    // resubscribe
+                    
+                    
                     print("BoardViewModel Lines Subscription ended")
                 }
         }.disposed(by: disposeBag)
