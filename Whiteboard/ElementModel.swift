@@ -43,6 +43,7 @@ class ElementModel {
     
 }
 
+// MARK: - Lines
 
 
 struct LineElement {
@@ -51,6 +52,21 @@ struct LineElement {
     let cap : CGLineCap
     let color : UIColor
 }
+
+struct Line {
+    var segments = [LineSegment]()
+    mutating func addSegment(_ newSegment: LineSegment){
+        self.segments.append(newSegment)
+    }
+}
+
+struct LineSegment {
+    let firstPoint : CGPoint
+    let secondPoint : CGPoint
+}
+
+// MARK: - Labels
+
 
 struct LabelElement {
     let stamp : Stamp
