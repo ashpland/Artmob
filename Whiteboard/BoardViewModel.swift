@@ -21,8 +21,6 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     override init() {
         super.init()
         ElementModel.sharedInstance.viewModel = self
-        
-
     }
     
     func makeClearImage() -> UIImage {
