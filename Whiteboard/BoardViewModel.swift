@@ -14,20 +14,8 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     let instructionManager = InstructionManager.sharedInstance
     let settings = LineFormatSettings.sharedInstance
     lazy var lineImage : Variable<UIImage> = Variable<UIImage>(makeClearImage())
-
-    lazy var lineImageOld : UIImage = {
-        UIGraphicsBeginImageContextWithOptions(UIScreen.main.bounds.size, false, 0.0)
-        UIColor.clear.setFill()
-        UIRectFill(UIScreen.main.bounds)
-        guard let lineImage = UIGraphicsGetImageFromCurrentImageContext() else {
-            fatalError("Clear Image the size of the screen not created")
-        }
-        UIGraphicsEndImageContext()
-        return lineImage
-    }()
     
-    var bvc : UIImageView?
-    
+    // TODO: Change once screen size is dynamic
     let tempCanvasSize = UIScreen.main.bounds.size
     
     override init() {
@@ -63,9 +51,13 @@ class BoardViewModel: NSObject, lineMakingDelegate {
         
     }
     
+    
+    
+    
+    
     // MARK: - Displaying Elements
     
-        // TODO: have this triggered by sequence subscription
+    // TODO: have this triggered by sequence subscription
     func drawLines(_ linesToDraw: [LineElement]) {
         self.lineImage.value = drawLineOnImage(existingImage: self.lineImage.value, lines: linesToDraw)
     }

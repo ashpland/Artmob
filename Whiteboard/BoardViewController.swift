@@ -22,10 +22,7 @@ class BoardViewController: UIViewController {
         super.viewDidLoad()
         
         boardView.clearsContextBeforeDrawing = true
-        
         boardView.lineDelegate = viewModel
-        
-        viewModel.bvc = lineImageView
         
         self.viewModel.lineImage.asObservable()
             .subscribe(onNext: { lineImage in
