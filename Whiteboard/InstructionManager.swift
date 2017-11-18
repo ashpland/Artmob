@@ -12,9 +12,7 @@ import RxSwift
 class InstructionManager {
     
     static let sharedInstance = InstructionManager()
-    
-//    let elementModel = ElementModel.sharedInstance
-    
+        
     private var instructionStore = [Instruction]()
     let instructionBroadcast = PublishSubject<Instruction>()
     
@@ -27,11 +25,7 @@ class InstructionManager {
         let stamp = Stamp(user: "User", timestamp: Date())
         let madeInstruction = Instruction(type: type, element: element, stamp: stamp)
         self.instructionStore.append(madeInstruction)
-        
         self.instructionBroadcast.onNext(madeInstruction)
-        
-//        elementModel.recieveInstruction(madeInstruction)
-        
     }
     
 }

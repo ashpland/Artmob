@@ -15,15 +15,11 @@ class ElementModel {
     static let sharedInstance = ElementModel()
     
     let lineSubject = PublishSubject<[LineElement]>()
-    
     private var labels = [Stamp : LabelElement]()
-    
-    
-    
+
     init() {
         self.setupSubscriptions()
     }
-    
     
     func setupSubscriptions() {
         let _ = InstructionManager.sharedInstance.instructionBroadcast
@@ -43,18 +39,6 @@ class ElementModel {
                     print("BoardViewModel Lines Subscription ended")
 
                 }
-        }
-    }
-    
-
-    
-    
-    public func recieveInstruction(_ instruction: Instruction) {
-        switch instruction.element {
-        case .line (let lineToDraw):
-            self.lineSubject.onNext([lineToDraw])
-        case .emoji:
-            self.processLabel(instruction)
         }
     }
     
