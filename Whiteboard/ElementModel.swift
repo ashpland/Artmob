@@ -23,7 +23,7 @@ class ElementModel {
     }
     
     func setupSubscriptions() {
-        let _ = InstructionManager.sharedInstance.instructionBroadcast
+        let _  = InstructionManager.sharedInstance.instructionBroadcast
             .subscribe { event in
                 switch event{
                 case .next(let instruction):

@@ -14,6 +14,8 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     let settings = LineFormatSettings.sharedInstance
     let disposeBag = DisposeBag()
     
+    let submitInstruction = PublishSubject<Instruction>()
+    
     lazy var lineImage : Variable<UIImage> = Variable<UIImage>(makeClearImage())
     
     // TODO: Change once screen size is dynamic
@@ -22,8 +24,8 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     override init() {
         super.init()
         setupSubscriptions()
+        setupInstructionBroadcast()
     }
-    
     
     
     func makeClearImage() -> UIImage {
@@ -41,17 +43,22 @@ class BoardViewModel: NSObject, lineMakingDelegate {
     
     func newLine(_ lineToAdd: Line) {
         let newLineElement = LineElement(line: lineToAdd, width: settings.width, cap: settings.cap, color: settings.color)
-       
-       
-       // TODO: have this sent by sequence? 
-       // Maybe add class method to instruction manager that starts it subscribing to a new sequence
-        InstructionManager.sharedInstance.addLine(newLineElement)
+        let newInstruction = self.buildInstruction(type: .new, from: .line(newLineElement))
+        self.submitInstruction.onNext(newInstruction)
     }
     
     func newEmoji(_ : String) {
         
     }
     
+    private func buildInstruction(type: InstructionType, from payload: InstructionPayload) -> Instruction {
+        let stamp = Stamp(user: "User", timestamp: Date())
+        return Instruction(type: type, element: payload, stamp: stamp)
+    }
+    
+    private func setupInstructionBroadcast() {
+        InstructionManager.subscribeToInstructionsFrom(self.submitInstruction)
+    }
     
     
     

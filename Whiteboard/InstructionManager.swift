@@ -12,26 +12,30 @@ import RxSwift
 class InstructionManager {
     
     static let sharedInstance = InstructionManager()
-        
+    
     private var instructionStore = [Instruction]()
     let instructionBroadcast = PublishSubject<Instruction>()
+    private let disposeBag = DisposeBag()
     
     
+    // MARK: - Methods
     
-    
-    
-    func addLine(_ element: LineElement) {
-        self.newInstruction(type: .new, element: .line(element))
+    class func subscribeToInstructionsFrom(_ newPublishSubject: PublishSubject<Instruction>) {
+        newPublishSubject.subscribe(onNext: { instruction in
+            InstructionManager.sharedInstance.newInstruction(instruction)
+        }).disposed(by: InstructionManager.sharedInstance.disposeBag)
     }
     
-    private func newInstruction(type: InstructionType, element: InstructionPayload) {
-        let stamp = Stamp(user: "User", timestamp: Date())
-        let madeInstruction = Instruction(type: type, element: element, stamp: stamp)
-        self.instructionStore.append(madeInstruction)
-        self.instructionBroadcast.onNext(madeInstruction)
-    }
     
+    private func newInstruction(_ newInstruction: Instruction) {
+        // TODO: Instruction sequence processing happens here
+        self.instructionStore.append(newInstruction)
+        self.instructionBroadcast.onNext(newInstruction)
+    }
 }
+
+
+// MARK: - Instruction components
 
 struct Instruction {
     let type : InstructionType
