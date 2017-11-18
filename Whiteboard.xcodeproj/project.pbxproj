@@ -17,6 +17,11 @@
 		495F109B1FBE2F4800BF33FE /* InstructionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495F109A1FBE2F4800BF33FE /* InstructionManager.swift */; };
 		495F109D1FBE3C1200BF33FE /* ElementModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495F109C1FBE3C1200BF33FE /* ElementModel.swift */; };
 		496B676F1FBD06FB0002A2F2 /* DrawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496B676E1FBD06FB0002A2F2 /* DrawView.swift */; };
+
+		496B67711FBD07840002A2F2 /* Lines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496B67701FBD07840002A2F2 /* Lines.swift */; };
+		9393855E1FBFAE75002F7486 /* MultipeerConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9393855D1FBFAE75002F7486 /* MultipeerConnectivity.framework */; };
+		939385601FBFAEB7002F7486 /* MPCHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9393855F1FBFAEB6002F7486 /* MPCHandler.swift */; };
+
 		A6B26FECBB0566E82F8AF0B1 /* Pods_WhiteboardTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 973BF740E19353D8DB6E5900 /* Pods_WhiteboardTests.framework */; };
 		E9F5CCEE84452B724BEB7A1A /* Pods_Whiteboard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DD0542E2ADE540B16AE2AFF /* Pods_Whiteboard.framework */; };
 /* End PBXBuildFile section */
@@ -49,6 +54,8 @@
 		495F109C1FBE3C1200BF33FE /* ElementModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementModel.swift; sourceTree = "<group>"; };
 		496B676E1FBD06FB0002A2F2 /* DrawView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawView.swift; sourceTree = "<group>"; };
 		7DD0542E2ADE540B16AE2AFF /* Pods_Whiteboard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Whiteboard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9393855D1FBFAE75002F7486 /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
+		9393855F1FBFAEB6002F7486 /* MPCHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MPCHandler.swift; sourceTree = "<group>"; };
 		973BF740E19353D8DB6E5900 /* Pods_WhiteboardTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WhiteboardTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEB5430F6C5942D0642A8EC4 /* Pods-Whiteboard.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Whiteboard.release.xcconfig"; path = "Pods/Target Support Files/Pods-Whiteboard/Pods-Whiteboard.release.xcconfig"; sourceTree = "<group>"; };
 		E490EA6EA1C9CA18D6EE944D /* Pods-Whiteboard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Whiteboard.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Whiteboard/Pods-Whiteboard.debug.xcconfig"; sourceTree = "<group>"; };
@@ -59,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9393855E1FBFAE75002F7486 /* MultipeerConnectivity.framework in Frameworks */,
 				E9F5CCEE84452B724BEB7A1A /* Pods_Whiteboard.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -104,6 +112,7 @@
 				494487B81FBCFF3B00AE2C2F /* BoardViewModel.swift */,
 				495F109A1FBE2F4800BF33FE /* InstructionManager.swift */,
 				495F109C1FBE3C1200BF33FE /* ElementModel.swift */,
+				9393855F1FBFAEB6002F7486 /* MPCHandler.swift */,
 				4949DC251FBCFA430062691C /* Assets.xcassets */,
 				4949DC271FBCFA430062691C /* LaunchScreen.storyboard */,
 				4949DC2A1FBCFA430062691C /* Info.plist */,
@@ -134,6 +143,7 @@
 		FA0E58E7447C3B8C14D3706B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9393855D1FBFAE75002F7486 /* MultipeerConnectivity.framework */,
 				7DD0542E2ADE540B16AE2AFF /* Pods_Whiteboard.framework */,
 				973BF740E19353D8DB6E5900 /* Pods_WhiteboardTests.framework */,
 			);
@@ -365,6 +375,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				495F109D1FBE3C1200BF33FE /* ElementModel.swift in Sources */,
+				939385601FBFAEB7002F7486 /* MPCHandler.swift in Sources */,
 				495F109B1FBE2F4800BF33FE /* InstructionManager.swift in Sources */,
 				4949DC211FBCFA430062691C /* BoardViewController.swift in Sources */,
 				496B676F1FBD06FB0002A2F2 /* DrawView.swift in Sources */,
