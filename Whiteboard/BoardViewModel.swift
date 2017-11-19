@@ -68,7 +68,7 @@ class BoardViewModel {
     
     // MARK: - Displaying Elements
     
-    func setupDisplaySubscriptions() {
+    public func setupDisplaySubscriptions() {
     
         let _ /* New Lines Subscription */ = ElementModel.sharedInstance.lineSubject
             .subscribe { event in
@@ -80,7 +80,10 @@ class BoardViewModel {
                 case .completed:
                     print("BoardViewModel Lines Subscription ended")
                     self.lineImage.value = self.makeClearImage()
-                    self.setupDisplaySubscriptions()
+                    DispatchQueue.main.async {
+                        self.setupDisplaySubscriptions()
+                    }
+                    
                 }
         }.disposed(by: disposeBag)
     }

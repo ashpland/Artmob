@@ -42,7 +42,7 @@ class ElementModel {
                 }
         }.disposed(by: disposeBag)
     }
-
+    
     public func refreshLines(from lineInstructions: [Instruction]) {
         let lineElements = lineInstructions.map{ return $0.element.lineElement! }
         self.lineSubject.onCompleted()

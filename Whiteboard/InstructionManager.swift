@@ -29,6 +29,18 @@ class InstructionManager {
     
     private func newInstruction(_ newInstruction: Instruction) {
         
+        // test code
+        
+        if self.instructionStore.count >= 5 {
+            self.instructionStore = Array(self.instructionStore.prefix(upTo: 2))
+            self.refreshLines()
+            return
+        }
+        
+        // test code
+        
+        
+        
         if (self.instructionStore.isEmpty ||
             newInstruction.stamp > self.instructionStore.last!.stamp) {
             self.instructionStore.append(newInstruction)
@@ -47,6 +59,7 @@ class InstructionManager {
                     switch newInstruction.element {
                     case .line(_):
                         self.refreshLines()
+                        return
                     case .emoji(_):
                         return
                     }
