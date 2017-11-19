@@ -56,7 +56,8 @@ class InstructionManager {
     }
     
     private func refreshLines() {
-        
+        let lineInstructions = self.instructionStore.filter{ if case .line = $0.element { return true }; return false}
+        ElementModel.sharedInstance.refreshLines(from: lineInstructions)
     }
     
     
@@ -80,6 +81,16 @@ enum InstructionType {
 enum InstructionPayload {
     case line (LineElement)
     case emoji (LabelElement)
+    
+    var lineElement: LineElement? {
+        guard case .line(let value) = self else {
+            return nil
+        }
+        return value
+    }
+    
+    
+    
 }
 
 struct Stamp: Comparable, Hashable {

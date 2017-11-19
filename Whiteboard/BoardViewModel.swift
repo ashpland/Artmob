@@ -78,14 +78,14 @@ class BoardViewModel {
                 case .error(let error):
                     fatalError(error.localizedDescription)
                 case .completed:
-                    // clear existing image
-                    // resubscribe
-                    
-                    
                     print("BoardViewModel Lines Subscription ended")
+                    self.lineImage.value = self.makeClearImage()
+                    self.setupDisplaySubscriptions()
                 }
         }.disposed(by: disposeBag)
     }
+    
+    
  
     func drawLines(_ linesToDraw: [LineElement]) {
         self.lineImage.value = drawLineOnImage(existingImage: self.lineImage.value, lines: linesToDraw)
@@ -116,4 +116,6 @@ class BoardViewModel {
         UIGraphicsEndImageContext()
         return image
     }
+    
+    
 }
