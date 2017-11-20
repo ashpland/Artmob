@@ -41,7 +41,7 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
-                        <outlet property="boardView" destination="gmm-FH-6rc" id="r21-B9-xrM"/>
+                        <outlet property="drawView" destination="gmm-FH-6rc" id="r21-B9-xrM"/>
                         <outlet property="lineImageView" destination="k2k-vt-RbJ" id="vdU-t0-qZH"/>
                     </connections>
                 </viewController>

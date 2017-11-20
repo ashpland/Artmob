@@ -8,41 +8,47 @@
 
 import Foundation
 import UIKit
+import RxSwift
 
 class ElementModel {
     
     static let sharedInstance = ElementModel()
     
-    // TODO: remove this later probably
-    public var viewModel : BoardViewModel?
-    
-    private var lines = [LineElement]()
-    
+    let lineSubject = PublishSubject<[LineElement]>()
     private var labels = [Stamp : LabelElement]()
+    private let disposeBag = DisposeBag()
     
-    public func recieveInstruction(_ instruction: Instruction) {
-        switch instruction.element {
-        case .line (let newLine):
-            self.addLine(newLine)
-        case .emoji:
-            processLabel(instruction)
-        }
+    init() {
+        self.setupSubscriptions()
     }
-    private func addLine(_ newLine: LineElement) {
-    self.lines.append(newLine)
-    // TODO: remove drawLines call and have LineElements sent by sequence
-    self.viewModel?.drawLines([newLine])
+    
+    func setupSubscriptions() {
+        let _  = InstructionManager.sharedInstance.instructionBroadcast
+            .subscribe { event in
+                switch event{
+                case .next(let instruction):
+                    switch instruction.element {
+                    case .line(let lineToDraw):
+                        self.lineSubject.onNext([lineToDraw])
+                    case .emoji(_):
+                        self.processLabel(instruction)
+                    }
+                    
+                case .error(let error):
+                    fatalError(error.localizedDescription)
+                case .completed:
+                    print("BoardViewModel Lines Subscription ended")
+
+                }
+        }.disposed(by: disposeBag)
     }
     
     private func processLabel(_ labelInstruction: Instruction) {
         
     }
-    
-        
-        
-    
 }
 
+// MARK: - Lines
 
 
 struct LineElement {
@@ -51,6 +57,27 @@ struct LineElement {
     let cap : CGLineCap
     let color : UIColor
 }
+
+struct Line {
+    let segments : [LineSegment]
+    
+    init() {self.segments = [LineSegment]()}
+    
+    init(with line: Line = Line(), and newSegment: LineSegment) {
+        self.segments = line.segments + [newSegment]
+    }
+    
+    static func +(left: Line, right: LineSegment) -> Line {
+        return Line(with: left, and: right)
+    }
+}
+
+struct LineSegment {
+    let firstPoint : CGPoint
+    let secondPoint : CGPoint
+}
+
+// MARK: - Labels
 
 struct LabelElement {
     let stamp : Stamp
