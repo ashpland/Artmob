@@ -110,14 +110,81 @@ struct Stamp: Comparable, Hashable {
     let user: String
     let timestamp: Date
 }
+
 //MARK: Instruction to data
 
 class lineMessage:NSObject, NSCoding{
+    var segmentsData = Array<Array<CGPoint>>()
+    var color = Int()
+    var cap = Int()
+    var width = CGFloat()
+    var user = String()
+    var timestamp = String()
+    
     func fromInstruction(instruction: Instruction){
-        
+        guard let lineElement = instruction.element.lineElement else {
+            //bad things
+        }
+        for segment:LineSegment in lineElement.line.segments{
+            segmentsData.append([segment.firstPoint, segment.secondPoint])
+        }
+        switch lineElement.color{
+        case UIColor.black:
+            color = 1
+            break
+        case UIColor.blue:
+            color = 2
+            break
+        default:
+            color = 0
+        }
+        switch lineElement.cap{
+        case .butt:
+            cap = 0
+        case .round:
+            cap = 1
+        case .square:
+            cap = 2
+        }
+        width = lineElement.width
+        user = instruction.stamp.user
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        timestamp = formatter.string(from: instruction.stamp.timestamp)
     }
     func toInstruction() -> Instruction{
-        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let date = formatter.date(from: timestamp)
+        var line = Line()
+        for segment:Array<CGPoint> in segmentsData{
+            line = Line(and: LineSegment(firstPoint: segment.first!, secondPoint: segment.last!))
+        }
+        var elementColor = UIColor()
+        switch color{
+        case 1:
+            elementColor = UIColor.black
+            break
+        case 2:
+            elementColor = UIColor.blue
+            break
+        default:
+            elementColor = UIColor.white
+        }
+        var elementCap = CGLineCap(rawValue: 0)
+        switch cap{
+        case 0:
+            elementCap = .butt
+        case 1:
+            elementCap = .round
+        case 2:
+            elementCap = .square
+        default:
+            elementCap = .round
+        }
+        let lineElement = LineElement(line: line, width: width, cap: elementCap!, color: elementColor)
+        let payload:InstructionPayload = .line(lineElement)
+        return Instruction(type: .new, element: payload, stamp: Stamp(user: user, timestamp: date!))
     }
     func encode(with aCoder: NSCoder) {
         <#code#>
