@@ -114,54 +114,55 @@ struct Stamp: Comparable, Hashable {
 //MARK: Instruction to data
 
 class lineMessage:NSObject, NSCoding{
-    var segmentsData = Array<Array<CGPoint>>()
-    var color = Int()
-    var cap = Int()
-    var width = CGFloat()
-    var user = String()
-    var timestamp = String()
+    var segmentsData:Array<Array<CGPoint>>!
+    var colorData:Int!
+    var capData:Int!
+    var widthData:CGFloat!
+    var userData:String!
+    var timestampData:String!
     
     func fromInstruction(instruction: Instruction){
         guard let lineElement = instruction.element.lineElement else {
             //bad things
+            return
         }
         for segment:LineSegment in lineElement.line.segments{
             segmentsData.append([segment.firstPoint, segment.secondPoint])
         }
         switch lineElement.color{
         case UIColor.black:
-            color = 1
+            colorData = 1
             break
         case UIColor.blue:
-            color = 2
+            colorData = 2
             break
         default:
-            color = 0
+            colorData = 0
         }
         switch lineElement.cap{
         case .butt:
-            cap = 0
+            capData = 0
         case .round:
-            cap = 1
+            capData = 1
         case .square:
-            cap = 2
+            capData = 2
         }
-        width = lineElement.width
-        user = instruction.stamp.user
+        widthData = lineElement.width
+        userData = instruction.stamp.user
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        timestamp = formatter.string(from: instruction.stamp.timestamp)
+        timestampData = formatter.string(from: instruction.stamp.timestamp)
     }
     func toInstruction() -> Instruction{
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        let date = formatter.date(from: timestamp)
+        let date = formatter.date(from: timestampData)
         var line = Line()
         for segment:Array<CGPoint> in segmentsData{
             line = Line(and: LineSegment(firstPoint: segment.first!, secondPoint: segment.last!))
         }
         var elementColor = UIColor()
-        switch color{
+        switch colorData{
         case 1:
             elementColor = UIColor.black
             break
@@ -172,7 +173,7 @@ class lineMessage:NSObject, NSCoding{
             elementColor = UIColor.white
         }
         var elementCap = CGLineCap(rawValue: 0)
-        switch cap{
+        switch capData{
         case 0:
             elementCap = .butt
         case 1:
@@ -182,17 +183,24 @@ class lineMessage:NSObject, NSCoding{
         default:
             elementCap = .round
         }
-        let lineElement = LineElement(line: line, width: width, cap: elementCap!, color: elementColor)
+        let lineElement = LineElement(line: line, width: widthData, cap: elementCap!, color: elementColor)
         let payload:InstructionPayload = .line(lineElement)
-        return Instruction(type: .new, element: payload, stamp: Stamp(user: user, timestamp: date!))
+        return Instruction(type: .new, element: payload, stamp: Stamp(user: userData, timestamp: date!))
     }
     func encode(with aCoder: NSCoder) {
-        <#code#>
+        aCoder.encode(self.segmentsData, forKey: "segments")
+        aCoder.encode(self.colorData, forKey: "color")
+        aCoder.encode(self.capData, forKey: "cap")
+        aCoder.encode(self.widthData, forKey: "width")
+        aCoder.encode(self.userData, forKey: "user")
+        aCoder.encode(self.timestampData, forKey: "timestamp")
     }
-    
     required init?(coder aDecoder: NSCoder) {
-        <#code#>
+        segmentsData = aDecoder.decodeObject(forKey: "segments") as! Array<Array<CGPoint>>
+        colorData = aDecoder.decodeObject(forKey: "color") as! Int
+        capData = aDecoder.decodeObject(forKey: "cap") as! Int
+        widthData = aDecoder.decodeObject(forKey: "width") as! CGFloat
+        userData = aDecoder.decodeObject(forKey: "user") as! String
+        timestampData = aDecoder.decodeObject(forKey: "timestamp") as! String
     }
-    
-    
 }
