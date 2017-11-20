@@ -110,3 +110,22 @@ struct Stamp: Comparable, Hashable {
     let user: String
     let timestamp: Date
 }
+//MARK: Instruction to data
+
+class lineMessage:NSObject, NSCoding{
+    func fromInstruction(instruction: Instruction){
+        
+    }
+    func toInstruction() -> Instruction{
+        
+    }
+    func encode(with aCoder: NSCoder) {
+        <#code#>
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        <#code#>
+    }
+    
+    
+}
