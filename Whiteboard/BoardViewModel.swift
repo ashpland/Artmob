@@ -68,7 +68,7 @@ class BoardViewModel {
     
     // MARK: - Displaying Elements
     
-    func setupDisplaySubscriptions() {
+    public func setupDisplaySubscriptions() {
     
         let _ /* New Lines Subscription */ = ElementModel.sharedInstance.lineSubject
             .subscribe { event in
@@ -79,9 +79,16 @@ class BoardViewModel {
                     fatalError(error.localizedDescription)
                 case .completed:
                     print("BoardViewModel Lines Subscription ended")
+                    self.lineImage.value = self.makeClearImage()
+                    DispatchQueue.main.async {
+                        self.setupDisplaySubscriptions()
+                    }
+                    
                 }
         }.disposed(by: disposeBag)
     }
+    
+    
  
     func drawLines(_ linesToDraw: [LineElement]) {
         self.lineImage.value = drawLineOnImage(existingImage: self.lineImage.value, lines: linesToDraw)
@@ -112,4 +119,6 @@ class BoardViewModel {
         UIGraphicsEndImageContext()
         return image
     }
+    
+    
 }

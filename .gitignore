@@ -2,3 +2,4 @@
 xcuserdata/
 project.xcworkspace/xcuserdata/
 Pods/
+.swiftlint.yml
