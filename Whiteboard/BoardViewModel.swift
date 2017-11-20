@@ -11,22 +11,22 @@ import RxSwift
 
 class BoardViewModel {
     
-    let settings = LineFormatSettings.sharedInstance
-    let disposeBag = DisposeBag()
+    fileprivate let settings = LineFormatSettings.sharedInstance
+    fileprivate let disposeBag = DisposeBag()
         
     let submitInstruction = PublishSubject<Instruction>()
     
-    lazy var lineImage : Variable<UIImage> = Variable<UIImage>(makeClearImage())
+    internal lazy var lineImage : Variable<UIImage> = Variable<UIImage>(makeClearImage())
     
     // TODO: Change once screen size is dynamic
-    let tempCanvasSize = UIScreen.main.bounds.size
+    fileprivate let tempCanvasSize = UIScreen.main.bounds.size
     
     init(){
         setupDisplaySubscriptions()
         setupInstructionBroadcast()
     }
     
-    func makeClearImage() -> UIImage {
+    fileprivate func makeClearImage() -> UIImage {
         UIGraphicsBeginImageContextWithOptions(UIScreen.main.bounds.size, false, 0.0)
         UIColor.clear.setFill()
         UIRectFill(UIScreen.main.bounds)
@@ -39,36 +39,39 @@ class BoardViewModel {
     
     // MARK: - Creating Elements
     
-    func recieveLine(_ subject: PublishSubject<LineSegment>) {
+    internal func recieveLine(_ subject: PublishSubject<LineSegment>) {
         let _ = subject.reduce(Line(), accumulator: {
             currentLine, nextSegment in
             return currentLine + nextSegment
-        }).subscribe(onNext: { self.newLine($0) })
+        }).subscribe(onNext: { line in
+            let newInstruction = self.makeInstruction(for: line)
+            self.submitInstruction.onNext(newInstruction)
+        })
     }
     
-    func newLine(_ lineToAdd: Line) {
-        let newLineElement = LineElement(line: lineToAdd, width: settings.width, cap: settings.cap, color: settings.color)
+    fileprivate func makeInstruction(for line: Line) -> Instruction {
+        let newLineElement = LineElement(line: line, width: settings.width, cap: settings.cap, color: settings.color)
         let newInstruction = self.buildInstruction(type: .new, from: .line(newLineElement))
-        self.submitInstruction.onNext(newInstruction)
+        return newInstruction
     }
     
-    func newEmoji(_ : String) {
+    fileprivate func newEmoji(_ : String) {
         
     }
     
-    private func buildInstruction(type: InstructionType, from payload: InstructionPayload) -> Instruction {
+    fileprivate func buildInstruction(type: InstructionType, from payload: InstructionPayload) -> Instruction {
         let stamp = Stamp(user: "User", timestamp: Date())
         return Instruction(type: type, element: payload, stamp: stamp)
     }
     
-    private func setupInstructionBroadcast() {
+    fileprivate func setupInstructionBroadcast() {
         InstructionManager.subscribeToInstructionsFrom(self.submitInstruction)
     }
    
     
     // MARK: - Displaying Elements
     
-    public func setupDisplaySubscriptions() {
+    fileprivate func setupDisplaySubscriptions() {
     
         let _ /* New Lines Subscription */ = ElementModel.sharedInstance.lineSubject
             .subscribe { event in
@@ -90,11 +93,11 @@ class BoardViewModel {
     
     
  
-    func drawLines(_ linesToDraw: [LineElement]) {
+   fileprivate func drawLines(_ linesToDraw: [LineElement]) {
         self.lineImage.value = drawLineOnImage(existingImage: self.lineImage.value, lines: linesToDraw)
     }
     
-    func drawLineOnImage(existingImage: UIImage, lines: [LineElement]) -> UIImage{
+    fileprivate func drawLineOnImage(existingImage: UIImage, lines: [LineElement]) -> UIImage{
         UIGraphicsBeginImageContextWithOptions(existingImage.size, false, 0.0)
         existingImage.draw(at: CGPoint(x: 0, y: 0))
         for lineToDraw in lines {

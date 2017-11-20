@@ -8,27 +8,32 @@
 
 import XCTest
 import RxSwift
+import RxTest
 @testable import Whiteboard
 
 class WhiteboardTests: XCTestCase {
     
-    let viewModel = BoardViewModel()
-    let instructionManager = InstructionManager()
-    let elementModel = ElementModel()
+    var scheduler: TestScheduler!
+    var subscription: Disposable!
     
-    var lineStream : PublishSubject<LineSegment>!
+    var boardViewModel: BoardViewModel!
+    var instructionManager: InstructionManager!
+    var elementModel: ElementModel!
+    
+    var lineStream: PublishSubject<LineSegment>!
  
+    
     
     fileprivate func generateLines(numberOfLines: Int, pointsPerLine: Int) {
         self.lineStream = PublishSubject<LineSegment>()
         
         //generate lines
-        for _ in 0...numberOfLines {
+        for _ in 1...numberOfLines {
             
-            self.viewModel.recieveLine(self.lineStream)
+            self.boardViewModel.recieveLine(self.lineStream)
             
             //generate random line segments
-            for _ in 0...pointsPerLine {
+            for _ in 1...pointsPerLine {
                 let firstX = Int(arc4random_uniform(UInt32(UIScreen.main.bounds.width)))
                 let firstY = Int(arc4random_uniform(UInt32(UIScreen.main.bounds.height)))
                 let firstPoint = CGPoint(x: firstX, y: firstY)
@@ -47,22 +52,59 @@ class WhiteboardTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
+        boardViewModel = BoardViewModel()
+        instructionManager = InstructionManager()
+        elementModel = ElementModel()
+        scheduler = TestScheduler(initialClock: 0)
         
-        let numberOfLines = 10
-        let pointsPerLine = 10
-        
-        generateLines(numberOfLines: numberOfLines, pointsPerLine: pointsPerLine)
-        
-        
-        // Put setup code here. This method is called before the invocation of each test method in the class.
     }
     
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        scheduler.scheduleAt(1000) {
+            self.subscription.dispose()
+        }
+        
         super.tearDown()
     }
     
-    func testExample() {
+    
+    func testBoardViewModelCreatesInstructions() {
+        let disposeBag = DisposeBag()
+        
+        let expect = expectation(description: #function)
+
+        let expectedCount = 10
+
+        var result = [Instruction]()
+        
+        self.boardViewModel.submitInstruction
+            .subscribe(onNext: { (instruction) in
+                result.append(instruction)
+            }, onCompleted: {
+                expect.fulfill()
+            }).disposed(by: disposeBag)
+        
+        self.generateLines(numberOfLines: expectedCount, pointsPerLine: 10)
+        
+        self.boardViewModel.submitInstruction.onCompleted()
+        
+        waitForExpectations(timeout: 1.0) { error in
+            guard error == nil else {
+                XCTFail(error!.localizedDescription)
+                return
+            }
+
+            XCTAssertEqual(expectedCount, result.count)
+        }
+    }
+    
+    
+    
+    
+    func instructionManagerTests() {
+        
+        //subscribe to IM.new and IM.broadcast
+        // put stuff in and check results
         
         
         
