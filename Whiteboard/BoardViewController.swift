@@ -8,17 +8,43 @@
 
 import UIKit
 import RxSwift
+import MultipeerConnectivity
 
-class BoardViewController: UIViewController {
+class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
+    func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
+        mpcHandler.browser.dismiss(animated: true, completion: nil)
+    }
+    
+    func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
+        mpcHandler.browser.dismiss(animated: true, completion: nil)
+    }
+    
 
     @IBOutlet weak var drawView: DrawView!
     @IBOutlet weak var lineImageView: UIImageView!
     
     let viewModel = BoardViewModel()
     let disposeBag = DisposeBag()
+    var mpcHandler = MPCHandler.sharedInstance
     
+    
+    @IBAction func Add(_ sender: Any) {
+        if mpcHandler.session != nil{
+            mpcHandler.setupBrowser()
+            mpcHandler.browser.delegate = self
+            self.present(mpcHandler.browser, animated: true, completion: nil)
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        mpcHandler.setupPeerWithDisplayName(displayName: UIDevice.current.name)
+        mpcHandler.setupSession()
+        mpcHandler.advertiseSelf(advertise: true)
+        mpcHandler.setupSubscribe()
+        
+        
+        
         drawView.clearsContextBeforeDrawing = true
         drawView.viewModel = self.viewModel
         

@@ -113,21 +113,24 @@ struct Stamp: Comparable, Hashable {
 
 //MARK: Instruction to data
 
-class lineMessage:NSObject, NSCoding{
-    var segmentsData:Array<Array<CGPoint>>!
+class LineMessage:NSObject, NSCoding{
+    var segmentsData:Array<Array<CGFloat>>!
     var colorData:Int!
     var capData:Int!
     var widthData:CGFloat!
     var userData:String!
     var timestampData:String!
-    
-    func fromInstruction(instruction: Instruction){
+    override init() {
+        super.init()
+    }
+    init(instruction: Instruction){
         guard let lineElement = instruction.element.lineElement else {
             //bad things
             return
         }
+        segmentsData = Array<Array<CGFloat>>()
         for segment:LineSegment in lineElement.line.segments{
-            segmentsData.append([segment.firstPoint, segment.secondPoint])
+            segmentsData.append([segment.firstPoint.x, segment.firstPoint.y, segment.secondPoint.x, segment.secondPoint.y])
         }
         switch lineElement.color{
         case UIColor.black:
@@ -158,8 +161,8 @@ class lineMessage:NSObject, NSCoding{
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let date = formatter.date(from: timestampData)
         var line = Line()
-        for segment:Array<CGPoint> in segmentsData{
-            line = Line(and: LineSegment(firstPoint: segment.first!, secondPoint: segment.last!))
+        for segment:Array<CGFloat> in segmentsData{
+            line = Line(with: line, and: LineSegment(firstPoint:CGPoint(x: segment[0], y: segment[1]), secondPoint: CGPoint(x: segment[2], y: segment[3])))
         }
         var elementColor = UIColor()
         switch colorData{
@@ -170,7 +173,7 @@ class lineMessage:NSObject, NSCoding{
             elementColor = UIColor.blue
             break
         default:
-            elementColor = UIColor.white
+            elementColor = UIColor.black
         }
         var elementCap = CGLineCap(rawValue: 0)
         switch capData{
@@ -196,7 +199,7 @@ class lineMessage:NSObject, NSCoding{
         aCoder.encode(self.timestampData, forKey: "timestamp")
     }
     required init?(coder aDecoder: NSCoder) {
-        segmentsData = aDecoder.decodeObject(forKey: "segments") as! Array<Array<CGPoint>>
+        segmentsData = aDecoder.decodeObject(forKey: "segments") as! Array<Array<CGFloat>>
         colorData = aDecoder.decodeObject(forKey: "color") as! Int
         capData = aDecoder.decodeObject(forKey: "cap") as! Int
         widthData = aDecoder.decodeObject(forKey: "width") as! CGFloat

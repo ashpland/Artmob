@@ -50,6 +50,7 @@ class BoardViewModel {
         let newLineElement = LineElement(line: lineToAdd, width: settings.width, cap: settings.cap, color: settings.color)
         let newInstruction = self.buildInstruction(type: .new, from: .line(newLineElement))
         self.submitInstruction.onNext(newInstruction)
+        MPCHandler.sharedInstance.sendLine(lineMessage: LineMessage(instruction: newInstruction))
     }
     
     func newEmoji(_ : String) {
