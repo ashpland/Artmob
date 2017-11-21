@@ -91,6 +91,9 @@ enum InstructionPayload {
 }
 
 struct Stamp: Comparable, Hashable {
+    let user: String
+    let timestamp: Date
+
     var hashValue: Int {
             let timeHash = self.timestamp.hashValue
             let userHash = self.user.hashValue
@@ -111,8 +114,6 @@ struct Stamp: Comparable, Hashable {
         return ((lhs.user == rhs.user) && (lhs.timestamp == rhs.timestamp))
     }
 
-    let user: String
-    let timestamp: Date
 }
 
 //MARK: Instruction to data
