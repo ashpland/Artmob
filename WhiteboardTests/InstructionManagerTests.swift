@@ -48,7 +48,7 @@ class InstructionManagerTests: XCTestCase {
     }
     
     
-    func testInstructionManagerInstructions() {
+    func testInstructionManagerSendingInstructions() {
         
         let expect = expectation(description: #function)
         let expectedCount = 10
@@ -71,33 +71,24 @@ class InstructionManagerTests: XCTestCase {
         }
     }
     
-    func expectObservable(_: Observable<Instruction>){
-        
-    }
     
-    func testInstructionManagerDuplicateInstructions() {
+    func testInstructionManagerWithDuplicateInstructions() {
         
         let expect = expectation(description: #function)
-        let expectedCount = 10
-        
-        let testInstructionSubject = PublishSubject<Instruction>()
-        
-        InstructionManager.subscribeToInstructionsFrom(testInstructionSubject)
+        let expectedCount = Int(arc4random_uniform(5)+1)
         
         var instructionArray = [Instruction]()
-        for _ in 0...arc4random_uniform(5)+1 {
-            instructionArray.append(generateLineInstruction())
+        for _ in 0..<expectedCount {
+            let newInstruction = generateLineInstruction()
+            instructionArray.append(newInstruction)
+            instructionArray.append(newInstruction)
         }
-        
-        
-        
-        
-        
-        
+
+        InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray))
         
         expect.fulfill()
         
-        waitForExpectations(timeout: 2.0) { error in
+        waitForExpectations(timeout: 1.0) { error in
             guard error == nil else {
                 XCTFail(error!.localizedDescription)
                 return
