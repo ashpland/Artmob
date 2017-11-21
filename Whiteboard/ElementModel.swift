@@ -48,7 +48,7 @@ class ElementModel {
         self.lineSubject.onCompleted()
         self.lineSubject = BehaviorSubject(value: lineElements)
     }
-
+    
     private func processLabel(_ labelInstruction: Instruction) {
 
     }

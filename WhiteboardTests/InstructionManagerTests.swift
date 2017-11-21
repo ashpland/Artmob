@@ -48,32 +48,29 @@ class InstructionManagerTests: XCTestCase {
     }
     
     
-    func testInstructionManagerSendingInstructions() {
-        
+    func testInstructionManagerRecieveInstructionsFromViewModel() {
         let expect = expectation(description: #function)
-        let expectedCount = 10
+        let expectedCount = Int(arc4random_uniform(10)+1)
         
         generateLineInputs(numberOfLines: expectedCount,
-                           pointsPerLine: 10,
+                           pointsPerLine: Int(arc4random_uniform(100)+1),
                            boardViewModel: BoardViewModel())
-        
         expect.fulfill()
-        
         
         waitForExpectations(timeout: 1.0) { error in
             guard error == nil else {
                 XCTFail(error!.localizedDescription)
                 return
             }
-            
-            XCTAssertEqual(expectedCount, self.newInstructions.count)
-            XCTAssertEqual(expectedCount, self.broadcastInstructions.count)
+            XCTAssertEqual(expectedCount, self.newInstructions.count,
+                           "New instructions should equal number of lines input.")
+            XCTAssertEqual(expectedCount, self.broadcastInstructions.count,
+                           "Broadcast instructions should equal number of lines input.")
         }
     }
     
     
     func testInstructionManagerWithDuplicateInstructions() {
-        
         let expect = expectation(description: #function)
         let expectedCount = Int(arc4random_uniform(5)+1)
         
@@ -85,7 +82,6 @@ class InstructionManagerTests: XCTestCase {
         }
 
         InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray))
-        
         expect.fulfill()
         
         waitForExpectations(timeout: 1.0) { error in
@@ -94,8 +90,42 @@ class InstructionManagerTests: XCTestCase {
                 return
             }
             
-            XCTAssertEqual(expectedCount, self.newInstructions.count)
-            XCTAssertEqual(expectedCount, self.broadcastInstructions.count)
+            XCTAssertEqual(expectedCount, self.newInstructions.count,
+                           "New instructions should not recieve duplicate instructions.")
+            XCTAssertEqual(expectedCount, self.broadcastInstructions.count,
+                           "Broadcast instructions should not recieve duplicate instructions.")
+            XCTAssertEqual(instructionArray[0].stamp, self.newInstructions[0].stamp, "Instructions should be sent in order")
+        }
+    }
+  
+    
+    func testInstructionManagerInsertInstructions() {
+        let expect = expectation(description: #function)
+        let expectedCount = 5
+        
+        var instructionArray = [Instruction]()
+        for _ in 0..<expectedCount {
+            let newInstruction = generateLineInstruction()
+            instructionArray.append(newInstruction)
+        }
+        
+        let insertInstruction = instructionArray[2]
+        instructionArray.remove(at: 2)
+        instructionArray.append(insertInstruction)
+        
+        InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray))
+        expect.fulfill()
+        
+        waitForExpectations(timeout: 1.0) { error in
+            guard error == nil else {
+                XCTFail(error!.localizedDescription)
+                return
+            }
+            
+            XCTAssertEqual(expectedCount - 1, self.newInstructions.count,
+                           "New instructions should not recieve inserted instructions.")
+            XCTAssertEqual(expectedCount, self.broadcastInstructions.count,
+                           "Broadcast instructions should recieve all instructions.")
         }
     }
     

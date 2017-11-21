@@ -54,6 +54,6 @@ class WhiteboardTests: XCTestCase {
             }
 
             XCTAssertEqual(expectedCount, result.count)
-        }
+        }  
     }
 }
