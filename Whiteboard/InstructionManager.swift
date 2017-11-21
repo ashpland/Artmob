@@ -22,7 +22,7 @@ class InstructionManager {
 
     class func subscribeToInstructionsFrom(_ newObservable: Observable<InstructionAndHash>) {
         newObservable.subscribe(onNext: { instructionAndHash in
-            InstructionManager.sharedInstance.newInstructionAndHash(instructionAndHash)
+            InstructionManager.sharedInstance.new(instructionAndHash)
         }).disposed(by: InstructionManager.sharedInstance.disposeBag)
     }
     
@@ -30,12 +30,13 @@ class InstructionManager {
         self.instructionStore = [Instruction]()
     }
     
-    private func newInstructionAndHash(_ new: InstructionAndHash) {
-        self.newInstruction(new.0)
+    private func new(_ instructionAndHash: InstructionAndHash) {
+        self.newInstruction(instructionAndHash.0)
         
-        if let theirHash = new.1 {
+        if let theirHash = instructionAndHash.1 {
             if self.instructionStore.hashValue != theirHash {
                 // TODO: get their stamp array
+                // user = newInstructionAndHash.0.stamp.user
             }
         }
         
@@ -72,6 +73,10 @@ class InstructionManager {
     private func refreshLines() {
         let lineInstructions = self.instructionStore.filter { if case .line = $0.element { return true }; return false}
         ElementModel.sharedInstance.refreshLines(from: lineInstructions)
+    }
+    
+    internal func sync(theirInstructions: Array<Stamp>) -> [Stamp] {
+        return self.instructionStore.stamps.elementsNotIn(theirInstructions)
     }
 }
 
@@ -133,7 +138,11 @@ struct Stamp: Comparable, Hashable {
 extension Array where Element == Instruction
 {
     var hashValue: InstructionStoreHash {
-        return self.map({ $0.stamp }).hashValue
+        return self.stamps.hashValue
+    }
+    
+    var stamps: Array<Stamp> {
+        return self.map({ $0.stamp })
     }
     
     
