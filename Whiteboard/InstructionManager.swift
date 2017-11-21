@@ -25,6 +25,10 @@ class InstructionManager {
             InstructionManager.sharedInstance.newInstruction(instruction)
         }).disposed(by: InstructionManager.sharedInstance.disposeBag)
     }
+    
+    internal func resetInstructionStore() {
+        self.instructionStore = [Instruction]()
+    }
 
     private func newInstruction(_ newInstruction: Instruction) {
         if self.instructionStore.isEmpty ||
