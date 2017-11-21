@@ -17,11 +17,8 @@
 		495F109B1FBE2F4800BF33FE /* InstructionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495F109A1FBE2F4800BF33FE /* InstructionManager.swift */; };
 		495F109D1FBE3C1200BF33FE /* ElementModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495F109C1FBE3C1200BF33FE /* ElementModel.swift */; };
 		496B676F1FBD06FB0002A2F2 /* DrawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496B676E1FBD06FB0002A2F2 /* DrawView.swift */; };
-
-		496B67711FBD07840002A2F2 /* Lines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496B67701FBD07840002A2F2 /* Lines.swift */; };
 		9393855E1FBFAE75002F7486 /* MultipeerConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9393855D1FBFAE75002F7486 /* MultipeerConnectivity.framework */; };
 		939385601FBFAEB7002F7486 /* MPCHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9393855F1FBFAEB6002F7486 /* MPCHandler.swift */; };
-
 		A6B26FECBB0566E82F8AF0B1 /* Pods_WhiteboardTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 973BF740E19353D8DB6E5900 /* Pods_WhiteboardTests.framework */; };
 		E9F5CCEE84452B724BEB7A1A /* Pods_Whiteboard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DD0542E2ADE540B16AE2AFF /* Pods_Whiteboard.framework */; };
 /* End PBXBuildFile section */
@@ -535,7 +532,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = T5E8L2XP69;
+				DEVELOPMENT_TEAM = PEHCFRL7FZ;
 				INFOPLIST_FILE = Whiteboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = land.ashp.Whiteboard;
@@ -551,7 +548,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = T5E8L2XP69;
+				DEVELOPMENT_TEAM = PEHCFRL7FZ;
 				INFOPLIST_FILE = Whiteboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = land.ashp.Whiteboard;
