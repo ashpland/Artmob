@@ -17,52 +17,20 @@ class WhiteboardTests: XCTestCase {
     var subscription: Disposable!
     
     var boardViewModel: BoardViewModel!
-    var instructionManager: InstructionManager!
-    var elementModel: ElementModel!
-    
-    var lineStream: PublishSubject<LineSegment>!
  
     
     
-    fileprivate func generateLines(numberOfLines: Int, pointsPerLine: Int) {
-        self.lineStream = PublishSubject<LineSegment>()
-        
-        //generate lines
-        for _ in 1...numberOfLines {
-            
-            self.boardViewModel.recieveLine(self.lineStream)
-            
-            //generate random line segments
-            for _ in 1...pointsPerLine {
-                let firstX = Int(arc4random_uniform(UInt32(UIScreen.main.bounds.width)))
-                let firstY = Int(arc4random_uniform(UInt32(UIScreen.main.bounds.height)))
-                let firstPoint = CGPoint(x: firstX, y: firstY)
-                let secondX = Int(arc4random_uniform(UInt32(UIScreen.main.bounds.width)))
-                let secondY = Int(arc4random_uniform(UInt32(UIScreen.main.bounds.height)))
-                let secondPoint = CGPoint(x: secondX, y: secondY)
-                
-                let lineSegment = LineSegment(firstPoint: firstPoint, secondPoint: secondPoint)
-                self.lineStream.onNext(lineSegment)
-            }
-            
-            self.lineStream.onCompleted()
-        }
-    }
+    
     
     override func setUp() {
         super.setUp()
         
-        boardViewModel = BoardViewModel()
-        instructionManager = InstructionManager()
-        elementModel = ElementModel()
-        scheduler = TestScheduler(initialClock: 0)
+        self.boardViewModel = BoardViewModel()
         
     }
     
     override func tearDown() {
-        scheduler.scheduleAt(1000) {
-            self.subscription.dispose()
-        }
+        
         
         super.tearDown()
     }
@@ -81,10 +49,13 @@ class WhiteboardTests: XCTestCase {
             .subscribe(onNext: { (instruction) in
                 result.append(instruction)
             }, onCompleted: {
+                // sampleInstructions get used by later tests
                 expect.fulfill()
             }).disposed(by: disposeBag)
         
-        self.generateLines(numberOfLines: expectedCount, pointsPerLine: 10)
+        generateLineInputs(numberOfLines: expectedCount,
+                                pointsPerLine: 10,
+                                boardViewModel: self.boardViewModel)
         
         self.boardViewModel.submitInstruction.onCompleted()
         
@@ -101,23 +72,113 @@ class WhiteboardTests: XCTestCase {
     
     
     
-    func instructionManagerTests() {
+    func testInstructionManagerInstructions() {
         
-        //subscribe to IM.new and IM.broadcast
-        // put stuff in and check results
+        let disposeBag = DisposeBag()
+        let expect = expectation(description: #function)
+        let expectedCount = 10
+        
+        let completeCount = PublishSubject<Bool>()
+        
+        var newInstructions = [Instruction]()
+        var broadcastInstructions = [Instruction]()
+        
+        generateLineInputs(numberOfLines: expectedCount,
+                           pointsPerLine: 10,
+                           boardViewModel: self.boardViewModel )
+        
+        InstructionManager.sharedInstance.newInstructions.onCompleted()
+        InstructionManager.sharedInstance.broadcastInstructions.onCompleted()
+
+        
+        InstructionManager.sharedInstance.newInstructions
+            .subscribe(onNext: { (instruction) in
+                newInstructions.append(instruction)
+            }, onCompleted: {
+                completeCount.onNext(true)
+            }).disposed(by: disposeBag)
+        
+        InstructionManager.sharedInstance.broadcastInstructions
+            .subscribe(onNext: { (instruction) in
+                broadcastInstructions.append(instruction)
+            }, onCompleted: {
+                completeCount.onNext(true)
+            }).disposed(by: disposeBag)
         
         
+        completeCount.buffer(timeSpan: 1.0, count: 2, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { _ in expect.fulfill() } )
+            .disposed(by: disposeBag)
         
-        
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        waitForExpectations(timeout: 1.0) { error in
+            guard error == nil else {
+                XCTFail(error!.localizedDescription)
+                return
+            }
+            
+            XCTAssertEqual(expectedCount, newInstructions.count)
+            XCTAssertEqual(expectedCount, broadcastInstructions.count)
+        }
     }
     
-    //    func testPerformanceExample() {
-    //        // This is an example of a performance test case.
-    //        self.measure {
-    //            // Put the code you want to measure the time of here.
-    //        }
-    //    }
+    func testInstructionManagerDuplicateInstructions() {
+        
+        let disposeBag = DisposeBag()
+        let expect = expectation(description: #function)
+        let expectedCount = 10
+        
+        let completeCount = PublishSubject<Bool>()
+        
+        var newInstructions = [Instruction]()
+        var broadcastInstructions = [Instruction]()
+        
+        let testInstructionSubject = PublishSubject<Instruction>()
+        
+        InstructionManager.subscribeToInstructionsFrom(testInstructionSubject)
+        
+//        for _ in 1...2 {
+//            for instruction in self.sampleInstructions {
+//                testInstructionSubject.onNext(instruction)
+//            }
+//        }
+        
+        
+        
+        
+        
+        InstructionManager.sharedInstance.newInstructions.onCompleted()
+        InstructionManager.sharedInstance.broadcastInstructions.onCompleted()
+        
+        
+        
+        InstructionManager.sharedInstance.newInstructions
+            .subscribe(onNext: { (instruction) in
+                newInstructions.append(instruction)
+            }, onCompleted: {
+                completeCount.onNext(true)
+            }).disposed(by: disposeBag)
+        
+        InstructionManager.sharedInstance.broadcastInstructions
+            .subscribe(onNext: { (instruction) in
+                broadcastInstructions.append(instruction)
+            }, onCompleted: {
+                completeCount.onNext(true)
+            }).disposed(by: disposeBag)
+        
+        completeCount.buffer(timeSpan: 1.0, count: 2, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { _ in expect.fulfill() } )
+            .disposed(by: disposeBag)
+        
+        waitForExpectations(timeout: 2.0) { error in
+            guard error == nil else {
+                XCTFail(error!.localizedDescription)
+                return
+            }
+            
+            XCTAssertEqual(expectedCount, newInstructions.count)
+            XCTAssertEqual(expectedCount, broadcastInstructions.count)
+        }
+    }
+    
     
 }
