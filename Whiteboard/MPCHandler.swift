@@ -25,7 +25,13 @@ class MPCHandler: NSObject, MCSessionDelegate{
     //MARK: Setup
     func setupSubscribe(){
         InstructionManager.subscribeToInstructionsFrom(self.recievedInstruction)
+        
+        _ = InstructionManager.sharedInstance.newInstructions
+            .subscribe(onNext: { (instruction) in
+                self.sendLine(lineMessage: LineMessage(instruction: instruction))
+        })
     }
+    
     func setupPeerWithDisplayName (displayName:String){
         peerID = MCPeerID(displayName: displayName)
     }

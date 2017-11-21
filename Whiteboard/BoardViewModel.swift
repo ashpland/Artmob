@@ -53,8 +53,6 @@ class BoardViewModel {
         let newLineElement = LineElement(line: line, width: settings.width, cap: settings.cap, color: settings.color)
         let newInstruction = self.buildInstruction(type: .new, from: .line(newLineElement))
         return newInstruction
-        // TODO: Move this to InstructionManager
-        //MPCHandler.sharedInstance.sendLine(lineMessage: LineMessage(instruction: newInstruction))
     }
     
     fileprivate func newEmoji(_ : String) {

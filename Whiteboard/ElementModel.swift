@@ -40,7 +40,7 @@ class ElementModel {
                     print("BoardViewModel Lines Subscription ended")
 
                 }
-        }.disposed(by: disposeBag)
+        }
     }
 
     public func refreshLines(from lineInstructions: [Instruction]) {
