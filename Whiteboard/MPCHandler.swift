@@ -28,7 +28,9 @@ class MPCHandler: NSObject, MCSessionDelegate{
         
         _ = InstructionManager.sharedInstance.newInstructions
             .subscribe(onNext: { (instruction) in
-                self.sendLine(lineMessage: LineMessage(instruction: instruction))
+                if self.state == MCSessionState.connected {
+                    self.sendLine(lineMessage: LineMessage(instruction: instruction))
+                }
         })
     }
     
