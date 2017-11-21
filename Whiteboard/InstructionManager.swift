@@ -113,8 +113,26 @@ struct Stamp: Comparable, Hashable {
     static func == (lhs: Stamp, rhs: Stamp) -> Bool {
         return ((lhs.user == rhs.user) && (lhs.timestamp == rhs.timestamp))
     }
-
 }
+
+extension Array where Element:Hashable
+{
+    var hashValue: Int {
+        return self.reduce(16777619) {$0 ^ $1.hashValue}
+    }
+    
+    func elementsNotIn(_ otherArray: Array<Element>) -> Array<Element> {
+        return otherArray.filter{!Set(self).contains($0)}
+    }
+    
+    static func == (lhs: Array<Element>, rhs: Array<Element>) -> Bool {
+        return lhs.hashValue == rhs.hashValue
+    }
+}
+
+
+
+
 
 //MARK: Instruction to data
 
