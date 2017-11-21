@@ -50,7 +50,9 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
         
         self.viewModel.lineImage.asObservable()
             .subscribe(onNext: { lineImage in
-                self.lineImageView.image = lineImage
+                DispatchQueue.main.async {
+                    self.lineImageView.image = lineImage
+                }
             })
             .disposed(by: disposeBag)
     }
