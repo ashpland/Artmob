@@ -48,13 +48,19 @@ class InstructionManagerTests: XCTestCase {
     }
     
     
-    func testInstructionManagerRecieveInstructionsFromViewModel() {
+    func testInstructionManagerRecieveInstructions() {
         let expect = expectation(description: #function)
         let expectedCount = Int(arc4random_uniform(10)+1)
         
-        generateLineInputs(numberOfLines: expectedCount,
-                           pointsPerLine: Int(arc4random_uniform(100)+1),
-                           boardViewModel: BoardViewModel())
+        var instructionArray = [Instruction]()
+        for _ in 0..<expectedCount {
+            let newInstruction = generateLineInstruction()
+            instructionArray.append(newInstruction)
+            instructionArray.append(newInstruction)
+        }
+        
+        InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray))
+        
         expect.fulfill()
         
         waitForExpectations(timeout: 1.0) { error in

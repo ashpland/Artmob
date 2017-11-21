@@ -43,28 +43,3 @@ fileprivate func buildInstruction(type: InstructionType,
     let stamp = Stamp(user: "User", timestamp: Date())
     return Instruction(type: type, element: payload, stamp: stamp)
 }
-
-
-
-
-
-
-
-
-
-internal func generateLineInputs(numberOfLines: Int, pointsPerLine: Int, boardViewModel: BoardViewModel) {
-    let lineStream = PublishSubject<LineSegment>()
-    
-    //generate lines
-    for _ in 1...numberOfLines {
-        
-        boardViewModel.recieveLine(lineStream)
-        
-        //generate random line segments
-        for _ in 1...pointsPerLine {
-            lineStream.onNext(generateLineSegment())
-        }
-        
-        lineStream.onCompleted()
-    }
-}

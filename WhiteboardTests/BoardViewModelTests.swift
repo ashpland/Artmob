@@ -26,11 +26,12 @@ class BoardViewModelTests: XCTestCase {
     override func tearDown() {
         super.tearDown()
     }
-    
+ 
     
     func testBoardViewModelCreatesInstructions() {
         let expect = expectation(description: #function)
-        let expectedCount = 10
+        let expectedCount = Int(arc4random_uniform(50)+1)
+        
         var result = [Instruction]()
         
         self.boardViewModel.submitInstruction
@@ -38,9 +39,19 @@ class BoardViewModelTests: XCTestCase {
                 result.append(instruction)
             }).disposed(by: self.disposeBag)
         
-        generateLineInputs(numberOfLines: expectedCount,
-                                pointsPerLine: 10,
-                                boardViewModel: self.boardViewModel)
+        
+        //generate lines
+        for _ in 1...expectedCount {
+            let lineStream = PublishSubject<LineSegment>()
+            self.boardViewModel.recieveLine(lineStream)
+            
+            //generate random line segments
+            for _ in 1...Int(arc4random_uniform(50)+1) {
+                lineStream.onNext(generateLineSegment())
+            }
+            lineStream.onCompleted()
+        }
+
         expect.fulfill()
 
         waitForExpectations(timeout: 1.0) { error in
@@ -49,7 +60,7 @@ class BoardViewModelTests: XCTestCase {
                 return
             }
 
-            XCTAssertEqual(expectedCount, result.count)
+            XCTAssertEqual(expectedCount, result.count, "BoardViewModel should create instructions for each line inputed")
         }  
     }
     
