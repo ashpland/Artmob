@@ -71,6 +71,10 @@ class InstructionManagerTests: XCTestCase {
         }
     }
     
+    func expectObservable(_: Observable<Instruction>){
+        
+    }
+    
     func testInstructionManagerDuplicateInstructions() {
         
         let expect = expectation(description: #function)
@@ -80,6 +84,10 @@ class InstructionManagerTests: XCTestCase {
         
         InstructionManager.subscribeToInstructionsFrom(testInstructionSubject)
         
+        var instructionArray = [Instruction]()
+        for _ in 0...arc4random_uniform(5)+1 {
+            instructionArray.append(generateLineInstruction())
+        }
         
         
         

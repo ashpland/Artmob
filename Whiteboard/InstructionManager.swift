@@ -20,8 +20,8 @@ class InstructionManager {
 
     // MARK: - Methods
 
-    class func subscribeToInstructionsFrom(_ newPublishSubject: PublishSubject<Instruction>) {
-        newPublishSubject.subscribe(onNext: { instruction in
+    class func subscribeToInstructionsFrom(_ newObservable: Observable<Instruction>) {
+        newObservable.subscribe(onNext: { instruction in
             InstructionManager.sharedInstance.newInstruction(instruction)
         }).disposed(by: InstructionManager.sharedInstance.disposeBag)
     }

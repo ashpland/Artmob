@@ -39,7 +39,7 @@ class BoardViewModel {
     
     // MARK: - Creating Elements
     
-    internal func recieveLine(_ subject: PublishSubject<LineSegment>) {
+    internal func recieveLine(_ subject: Observable<LineSegment>) {
         let _ = subject.reduce(Line(), accumulator: {
             currentLine, nextSegment in
             return currentLine + nextSegment
