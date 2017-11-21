@@ -14,15 +14,15 @@ class ElementModel {
 
     static let sharedInstance = ElementModel()
 
-    var lineSubject = BehaviorSubject<[LineElement]>(value: [LineElement]())
-    private var labels = [Stamp: LabelElement]()
-    private let disposeBag = DisposeBag()
+    var lineSubject = PublishSubject<[LineElement]>()
+    fileprivate var labels = [Stamp: LabelElement]()
+    fileprivate let disposeBag = DisposeBag()
 
     init() {
         self.setupSubscriptions()
     }
 
-    private func setupSubscriptions() {
+    internal func setupSubscriptions() {
         _ = InstructionManager.sharedInstance.newInstructions
             .subscribe { event in
                 switch event {
@@ -46,10 +46,11 @@ class ElementModel {
     public func refreshLines(from lineInstructions: [Instruction]) {
         let lineElements = lineInstructions.map { return $0.element.lineElement! }
         self.lineSubject.onCompleted()
-        self.lineSubject = BehaviorSubject(value: lineElements)
+        self.lineSubject = PublishSubject<[LineElement]>()
+        self.lineSubject.onNext(lineElements)
     }
     
-    private func processLabel(_ labelInstruction: Instruction) {
+    internal func processLabel(_ labelInstruction: Instruction) {
 
     }
 }
