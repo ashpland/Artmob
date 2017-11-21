@@ -15,19 +15,30 @@ class InstructionManager {
 
     private var instructionStore = [Instruction]()
     let newInstructions = PublishSubject<Instruction>()
-    let broadcastInstructions = PublishSubject<Instruction>()
+    let broadcastInstructions = PublishSubject<InstructionAndHash>()
     private let disposeBag = DisposeBag()
 
     // MARK: - Methods
 
-    class func subscribeToInstructionsFrom(_ newObservable: Observable<Instruction>) {
-        newObservable.subscribe(onNext: { instruction in
-            InstructionManager.sharedInstance.newInstruction(instruction)
+    class func subscribeToInstructionsFrom(_ newObservable: Observable<InstructionAndHash>) {
+        newObservable.subscribe(onNext: { instructionAndHash in
+            InstructionManager.sharedInstance.newInstructionAndHash(instructionAndHash)
         }).disposed(by: InstructionManager.sharedInstance.disposeBag)
     }
     
     internal func resetInstructionStore() {
         self.instructionStore = [Instruction]()
+    }
+    
+    private func newInstructionAndHash(_ new: InstructionAndHash) {
+        self.newInstruction(new.0)
+        
+        if let theirHash = new.1 {
+            if self.instructionStore.map({ $0.stamp }).hashValue != theirHash {
+                // get their stamp array
+            }
+        }
+        
     }
 
     private func newInstruction(_ newInstruction: Instruction) {
@@ -65,6 +76,9 @@ class InstructionManager {
 }
 
 // MARK: - Instruction components
+
+typealias InstructionStoreHash = Int
+typealias InstructionAndHash = (Instruction, InstructionStoreHash?)
 
 struct Instruction {
     let type: InstructionType
@@ -129,6 +143,11 @@ extension Array where Element:Hashable
         return lhs.hashValue == rhs.hashValue
     }
 }
+
+//extension Array where Element:Instruction
+//{
+//    var
+//}
 
 
 
