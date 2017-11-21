@@ -45,8 +45,6 @@ class ElementModel {
 
     public func refreshLines(from lineInstructions: [Instruction]) {
         let lineElements = lineInstructions.map { return $0.element.lineElement! }
-        self.lineSubject.onCompleted()
-        self.lineSubject = PublishSubject<[LineElement]>()
         self.lineSubject.onNext(lineElements)
     }
     

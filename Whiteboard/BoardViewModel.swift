@@ -81,19 +81,17 @@ class BoardViewModel {
                 case .error(let error):
                     fatalError(error.localizedDescription)
                 case .completed:
-                    print("BoardViewModel Lines Subscription ended")
-                    self.lineImage.value = self.makeClearImage()
-                    DispatchQueue.main.async {
-                        self.setupDisplaySubscriptions()
-                    }
-                    
+                    print("Line Subscription Completed")
                 }
         }.disposed(by: disposeBag)
     }
     
     
  
-   fileprivate func drawLines(_ linesToDraw: [LineElement]) {
+    fileprivate func drawLines(_ linesToDraw: [LineElement]) {
+        if linesToDraw.count > 1 {
+            self.lineImage.value = self.makeClearImage()
+        }
         self.lineImage.value = drawLineOnImage(existingImage: self.lineImage.value, lines: linesToDraw)
     }
     

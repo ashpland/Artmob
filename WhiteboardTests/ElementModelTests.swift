@@ -1,5 +1,5 @@
 //
-//  ElementManagerTests.swift
+//  ElementModelTests.swift
 //  WhiteboardTests
 //
 //  Created by Andrew on 2017-11-20.
@@ -11,9 +11,7 @@ import RxSwift
 import RxTest
 @testable import Whiteboard
 
-class ElementManagerTests: XCTestCase {
-    
-    //ElementModel.sharedInstance.lineSubject
+class ElementModelTests: XCTestCase {
     
     var disposeBag = DisposeBag()
     
@@ -21,14 +19,11 @@ class ElementManagerTests: XCTestCase {
         super.setUp()
         self.disposeBag = DisposeBag()
         InstructionManager.sharedInstance.resetInstructionStore()
-  
     }
     
     override func tearDown() {
         super.tearDown()
     }
-    
-    
     
     
     func testElementModelPassingLines() {
@@ -71,20 +66,10 @@ class ElementManagerTests: XCTestCase {
         var linesToDraw = [[LineElement]]()
         
         ElementModel.sharedInstance.lineSubject
-            .subscribe { event in
-                switch event {
-                case .next(let lineElements):
-                    linesToDraw.append(lineElements)
-                case .error:
-                    print("error")
-                case .completed:
-                    ElementModel.sharedInstance.lineSubject
-                        .subscribe(onNext: { lineElements in
-                            linesToDraw.append(lineElements)})
-                        .disposed(by: self.disposeBag)
-                }
-        }.disposed(by: disposeBag)
-        
+            .subscribe(onNext: { (lineElements) in
+                linesToDraw.append(lineElements)
+        }).disposed(by: disposeBag)
+       
         var instructionArray = [Instruction]()
         for _ in 0..<expectedCount {
             let newInstruction = generateLineInstruction()
@@ -96,7 +81,6 @@ class ElementManagerTests: XCTestCase {
         instructionArray.append(insertInstruction)
         
         InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray))
-        
         
         expect.fulfill()
         
