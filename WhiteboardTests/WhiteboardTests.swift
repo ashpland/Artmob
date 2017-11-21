@@ -17,21 +17,13 @@ class WhiteboardTests: XCTestCase {
     var subscription: Disposable!
     
     var boardViewModel: BoardViewModel!
- 
-    
-    
-    
-    
+
     override func setUp() {
         super.setUp()
-        
         self.boardViewModel = BoardViewModel()
-        
     }
     
     override func tearDown() {
-        
-        
         super.tearDown()
     }
     
@@ -49,7 +41,6 @@ class WhiteboardTests: XCTestCase {
             .subscribe(onNext: { (instruction) in
                 result.append(instruction)
             }, onCompleted: {
-                // sampleInstructions get used by later tests
                 expect.fulfill()
             }).disposed(by: disposeBag)
         
@@ -83,13 +74,7 @@ class WhiteboardTests: XCTestCase {
         var newInstructions = [Instruction]()
         var broadcastInstructions = [Instruction]()
         
-        generateLineInputs(numberOfLines: expectedCount,
-                           pointsPerLine: 10,
-                           boardViewModel: self.boardViewModel )
         
-        InstructionManager.sharedInstance.newInstructions.onCompleted()
-        InstructionManager.sharedInstance.broadcastInstructions.onCompleted()
-
         
         InstructionManager.sharedInstance.newInstructions
             .subscribe(onNext: { (instruction) in
@@ -104,6 +89,15 @@ class WhiteboardTests: XCTestCase {
             }, onCompleted: {
                 completeCount.onNext(true)
             }).disposed(by: disposeBag)
+        
+        
+        generateLineInputs(numberOfLines: expectedCount,
+                           pointsPerLine: 10,
+                           boardViewModel: self.boardViewModel )
+        
+        InstructionManager.sharedInstance.newInstructions.onCompleted()
+        InstructionManager.sharedInstance.broadcastInstructions.onCompleted()
+
         
         
         completeCount.buffer(timeSpan: 1.0, count: 2, scheduler: MainScheduler.instance)
@@ -120,36 +114,20 @@ class WhiteboardTests: XCTestCase {
             XCTAssertEqual(expectedCount, broadcastInstructions.count)
         }
     }
-    
+
     func testInstructionManagerDuplicateInstructions() {
-        
+
         let disposeBag = DisposeBag()
         let expect = expectation(description: #function)
         let expectedCount = 10
-        
+
         let completeCount = PublishSubject<Bool>()
-        
+
         var newInstructions = [Instruction]()
         var broadcastInstructions = [Instruction]()
-        
+
         let testInstructionSubject = PublishSubject<Instruction>()
-        
-        InstructionManager.subscribeToInstructionsFrom(testInstructionSubject)
-        
-//        for _ in 1...2 {
-//            for instruction in self.sampleInstructions {
-//                testInstructionSubject.onNext(instruction)
-//            }
-//        }
-        
-        
-        
-        
-        
-        InstructionManager.sharedInstance.newInstructions.onCompleted()
-        InstructionManager.sharedInstance.broadcastInstructions.onCompleted()
-        
-        
+
         
         InstructionManager.sharedInstance.newInstructions
             .subscribe(onNext: { (instruction) in
@@ -164,17 +142,31 @@ class WhiteboardTests: XCTestCase {
             }, onCompleted: {
                 completeCount.onNext(true)
             }).disposed(by: disposeBag)
+
         
+        
+        
+        
+        
+        InstructionManager.subscribeToInstructionsFrom(testInstructionSubject)
+
+        
+//
+//        InstructionManager.sharedInstance.newInstructions.onCompleted()
+//        InstructionManager.sharedInstance.broadcastInstructions.onCompleted()
+//
+
+
         completeCount.buffer(timeSpan: 1.0, count: 2, scheduler: MainScheduler.instance)
             .subscribe(onNext: { _ in expect.fulfill() } )
             .disposed(by: disposeBag)
-        
+
         waitForExpectations(timeout: 2.0) { error in
             guard error == nil else {
                 XCTFail(error!.localizedDescription)
                 return
             }
-            
+
             XCTAssertEqual(expectedCount, newInstructions.count)
             XCTAssertEqual(expectedCount, broadcastInstructions.count)
         }
