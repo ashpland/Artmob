@@ -34,7 +34,7 @@ class InstructionManager {
         self.newInstruction(new.0)
         
         if let theirHash = new.1 {
-            if self.instructionStore.map({ $0.stamp }).hashValue != theirHash {
+            if self.instructionStore.hashValue != theirHash {
                 // get their stamp array
             }
         }
@@ -129,6 +129,15 @@ struct Stamp: Comparable, Hashable {
     }
 }
 
+
+extension Array where Element == Instruction
+{
+    var hashValue: InstructionStoreHash {
+        return self.map({ $0.stamp }).hashValue
+    }
+}
+
+
 extension Array where Element:Hashable
 {
     var hashValue: Int {
@@ -144,10 +153,7 @@ extension Array where Element:Hashable
     }
 }
 
-//extension Array where Element:Instruction
-//{
-//    var
-//}
+
 
 
 
