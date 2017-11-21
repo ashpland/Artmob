@@ -62,7 +62,7 @@ class BoardViewModel {
     }
     
     fileprivate func buildInstruction(type: InstructionType, from payload: InstructionPayload) -> Instruction {
-        let stamp = Stamp(user: "User", timestamp: Date())
+        let stamp = Stamp(user: UIDevice.current.name, timestamp: Date())
         return Instruction(type: type, element: payload, stamp: stamp)
     }
     
