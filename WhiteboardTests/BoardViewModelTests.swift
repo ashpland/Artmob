@@ -1,5 +1,5 @@
 //
-//  WhiteboardTests.swift
+//  BoardViewModelTests.swift
 //  WhiteboardTests
 //
 //  Created by Andrew on 2017-11-15.
@@ -11,12 +11,9 @@ import RxSwift
 import RxTest
 @testable import Whiteboard
 
-class WhiteboardTests: XCTestCase {
+class BoardViewModelTests: XCTestCase {
     
-    var scheduler: TestScheduler!
-    var subscription: Disposable!
     var disposeBag = DisposeBag()
-    
     var boardViewModel: BoardViewModel!
 
     override func setUp() {
@@ -44,7 +41,6 @@ class WhiteboardTests: XCTestCase {
         generateLineInputs(numberOfLines: expectedCount,
                                 pointsPerLine: 10,
                                 boardViewModel: self.boardViewModel)
-        
         expect.fulfill()
 
         waitForExpectations(timeout: 1.0) { error in
@@ -56,4 +52,30 @@ class WhiteboardTests: XCTestCase {
             XCTAssertEqual(expectedCount, result.count)
         }  
     }
+    
+    
+    func testBoardViewModelDidUpdateLineImage() {
+        let expect = expectation(description: #function)
+        
+        let firstImage = self.boardViewModel.lineImage.value
+        
+        InstructionManager.subscribeToInstructionsFrom(Observable
+            .from([generateLineInstruction()]))
+
+        let secondImage = self.boardViewModel.lineImage.value
+        
+        expect.fulfill()
+        
+        waitForExpectations(timeout: 1.0) { error in
+            guard error == nil else {
+                XCTFail(error!.localizedDescription)
+                return
+            }
+            
+            XCTAssertNotEqual(firstImage, secondImage, "BoardViewModel should update LineImage")
+        }
+    }
+    
+    
+    
 }

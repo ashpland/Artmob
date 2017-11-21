@@ -68,7 +68,7 @@ class ElementModelTests: XCTestCase {
         ElementModel.sharedInstance.lineSubject
             .subscribe(onNext: { (lineElements) in
                 linesToDraw.append(lineElements)
-        }).disposed(by: disposeBag)
+        }).disposed(by: self.disposeBag)
        
         var instructionArray = [Instruction]()
         for _ in 0..<expectedCount {

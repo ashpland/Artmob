@@ -13,7 +13,7 @@
 		4949DC241FBCFA430062691C /* Board.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4949DC221FBCFA430062691C /* Board.storyboard */; };
 		4949DC261FBCFA430062691C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4949DC251FBCFA430062691C /* Assets.xcassets */; };
 		4949DC291FBCFA430062691C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4949DC271FBCFA430062691C /* LaunchScreen.storyboard */; };
-		4949DC341FBCFA440062691C /* WhiteboardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4949DC331FBCFA440062691C /* WhiteboardTests.swift */; };
+		4949DC341FBCFA440062691C /* BoardViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4949DC331FBCFA440062691C /* BoardViewModelTests.swift */; };
 		495F109B1FBE2F4800BF33FE /* InstructionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495F109A1FBE2F4800BF33FE /* InstructionManager.swift */; };
 		495F109D1FBE3C1200BF33FE /* ElementModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495F109C1FBE3C1200BF33FE /* ElementModel.swift */; };
 		496B676F1FBD06FB0002A2F2 /* DrawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496B676E1FBD06FB0002A2F2 /* DrawView.swift */; };
@@ -50,7 +50,7 @@
 		4949DC281FBCFA430062691C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4949DC2A1FBCFA430062691C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4949DC2F1FBCFA430062691C /* WhiteboardTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhiteboardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		4949DC331FBCFA440062691C /* WhiteboardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteboardTests.swift; sourceTree = "<group>"; };
+		4949DC331FBCFA440062691C /* BoardViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardViewModelTests.swift; sourceTree = "<group>"; };
 		4949DC351FBCFA440062691C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		495F109A1FBE2F4800BF33FE /* InstructionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionManager.swift; sourceTree = "<group>"; };
 		495F109C1FBE3C1200BF33FE /* ElementModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementModel.swift; sourceTree = "<group>"; };
@@ -126,7 +126,7 @@
 		4949DC321FBCFA440062691C /* WhiteboardTests */ = {
 			isa = PBXGroup;
 			children = (
-				4949DC331FBCFA440062691C /* WhiteboardTests.swift */,
+				4949DC331FBCFA440062691C /* BoardViewModelTests.swift */,
 				49BE285D1FC3C3F800FD7B8A /* InstructionManagerTests.swift */,
 				49BE285F1FC3D0FB00FD7B8A /* ElementModelTests.swift */,
 				49BE285B1FC3A80A00FD7B8A /* DataGenerator.swift */,
@@ -387,7 +387,7 @@
 			files = (
 				49BE28601FC3D0FB00FD7B8A /* ElementModelTests.swift in Sources */,
 				49BE285E1FC3C3F800FD7B8A /* InstructionManagerTests.swift in Sources */,
-				4949DC341FBCFA440062691C /* WhiteboardTests.swift in Sources */,
+				4949DC341FBCFA440062691C /* BoardViewModelTests.swift in Sources */,
 				49BE285C1FC3A80A00FD7B8A /* DataGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
