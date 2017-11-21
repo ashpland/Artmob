@@ -7,7 +7,7 @@ target 'Whiteboard' do
   
   	pod 'RxSwift', '~> 4.0'
 	pod 'RxCocoa', '~> 4.0'
-    pod 'RxTest', '~> 4.0'
+    
 	# pod 'RxRealm', '~> 0.7'
 	# commented out because we probably don't need it, but might want it for file storage eventually
 
@@ -16,6 +16,7 @@ target 'Whiteboard' do
   target 'WhiteboardTests' do
     inherit! :search_paths
     # Pods for testing
+    pod 'RxTest', '~> 4.0'
   end
 
 end
