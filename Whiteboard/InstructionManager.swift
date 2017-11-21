@@ -35,7 +35,7 @@ class InstructionManager {
         
         if let theirHash = new.1 {
             if self.instructionStore.hashValue != theirHash {
-                // get their stamp array
+                // TODO: get their stamp array
             }
         }
         
@@ -46,7 +46,7 @@ class InstructionManager {
             newInstruction.stamp > self.instructionStore.last!.stamp {
             self.instructionStore.append(newInstruction)
             self.newInstructions.onNext(newInstruction)
-            self.broadcastInstructions.onNext(newInstruction)
+            self.broadcastInstructions.onNext((newInstruction, self.instructionStore.hashValue))
             return
         } else {
             for (index, currentInstruction) in self.instructionStore.lazy.reversed().enumerated() {
@@ -55,7 +55,7 @@ class InstructionManager {
                 }
                 if newInstruction.stamp > currentInstruction.stamp {
                     self.instructionStore.insert(newInstruction, at: self.instructionStore.count - index)
-                    self.broadcastInstructions.onNext(newInstruction)
+                    self.broadcastInstructions.onNext((newInstruction, self.instructionStore.hashValue))
 
                     switch newInstruction.element {
                     case .line:
@@ -135,6 +135,13 @@ extension Array where Element == Instruction
     var hashValue: InstructionStoreHash {
         return self.map({ $0.stamp }).hashValue
     }
+    
+    
+    //helper method for testing
+    var withNilHash: Array<InstructionAndHash> {
+        return self.map{($0, nil)}
+    }
+    
 }
 
 
