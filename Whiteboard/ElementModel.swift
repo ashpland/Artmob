@@ -30,7 +30,7 @@ class ElementModel {
                     switch instruction.element {
                     case .line(let lineToDraw):
                         self.lineSubject.onNext([lineToDraw])
-                    case .emoji:
+                    case .label:
                         self.processLabel(instruction)
                     }
 
@@ -84,5 +84,8 @@ struct LineSegment {
 // MARK: - Labels
 
 struct LabelElement {
-    let stamp: Stamp
+    let pos: CGPoint!
+    let text: String!
+    let size: CGRect!
+    let rotation:Float!
 }
