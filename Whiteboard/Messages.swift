@@ -9,23 +9,20 @@
 import UIKit
 
 class StampMessage:NSObject, NSCoding{
-    var stampsData:Array<Dictionary<String,String>>!
+    var stampsData:Array<Dictionary<String,Any>>!
     var currentHash:Int!
     init(stamps:[Stamp]){
-        stampsData = Array<Dictionary<String,String>>()
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        stampsData = Array<Dictionary<String,Any>>()
+ 
         for stamp:Stamp in stamps{
-            stampsData.append(["user":stamp.user, "timestamp":formatter.string(from: stamp.timestamp)])
+            stampsData.append(["user":stamp.user, "timestamp":stamp.timestamp])
         }
         currentHash = 0
     }
     func toStamps() -> [Stamp]{
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         var stamps = Array<Stamp>()
         for stamp in stampsData{
-            stamps.append(Stamp(user: stamp["user"] as! String, timestamp: formatter.date(from: stamp["timestamp"] as! String) as! Date))
+            stamps.append(Stamp(user: stamp["user"] as! String, timestamp: stamp["timestamp"] as! Date))
         }
         return stamps
     }
@@ -35,7 +32,7 @@ class StampMessage:NSObject, NSCoding{
     }
     
     required init?(coder aDecoder: NSCoder) {
-        self.stampsData = aDecoder.decodeObject(forKey: "stamps") as! Array<Dictionary<String,String>>
+        self.stampsData = aDecoder.decodeObject(forKey: "stamps") as! Array<Dictionary<String,Any>>
         self.currentHash = aDecoder.decodeObject(forKey: "hash") as! Int
     }
 }
@@ -48,7 +45,7 @@ class LineMessage:NSObject, NSCoding{
     var capData:Int!
     var widthData:CGFloat!
     var userData:String!
-    var timestampData:String!
+    var timestampData:Date!
     var currentHash:Int!
     override init() {
         super.init()
@@ -82,15 +79,11 @@ class LineMessage:NSObject, NSCoding{
         }
         widthData = lineElement.width
         userData = instruction.stamp.user
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        timestampData = formatter.string(from: instruction.stamp.timestamp)
+        timestampData = instruction.stamp.timestamp
         currentHash = 0
     }
     func toInstruction() -> Instruction{
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        let date = formatter.date(from: timestampData)
+        let date = timestampData
         var line = Line()
         for segment:Array<CGFloat> in segmentsData{
             line = Line(with: line, and: LineSegment(firstPoint:CGPoint(x: segment[0], y: segment[1]), secondPoint: CGPoint(x: segment[2], y: segment[3])))
@@ -136,7 +129,7 @@ class LineMessage:NSObject, NSCoding{
         capData = aDecoder.decodeObject(forKey: "cap") as! Int
         widthData = aDecoder.decodeObject(forKey: "width") as! CGFloat
         userData = aDecoder.decodeObject(forKey: "user") as! String
-        timestampData = aDecoder.decodeObject(forKey: "timestamp") as! String
+        timestampData = aDecoder.decodeObject(forKey: "timestamp") as! Date
         currentHash = aDecoder.decodeObject(forKey: "hash") as! Int
     }
 }
@@ -149,9 +142,9 @@ class LabelMessage:NSObject, NSCoding{
     var size: CGRect!
     var rotation:Float!
     var userData:String!
-    var timestampData:String!
-    var userRef:String!
-    var timestampRef:String!
+    var timestampData:Date!
+    var userRef:String?
+    var timestampRef:Date?
     var currentHash:Int!
     
     override init() {
@@ -167,24 +160,20 @@ class LabelMessage:NSObject, NSCoding{
         size = labelElement.size
         rotation = labelElement.rotation
         userData = instruction.stamp.user
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        timestampData = formatter.string(from: instruction.stamp.timestamp)
-        timestampRef = formatter.string(from: (instruction.type.stamp?.timestamp)!)
+        timestampData = instruction.stamp.timestamp
+        timestampRef = instruction.type.stamp?.timestamp
         userRef = instruction.type.stamp?.user
         currentHash = 0
     }
     func toInstruction() -> Instruction{
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        let date = formatter.date(from: timestampData) as! Date
+        let date = timestampData!
         var type:InstructionType!
-        if timestampRef == ""{
+        if timestampRef == nil{
             type = .new
         } else if text == ""{
-            type = .delete(Stamp(user: userRef, timestamp: formatter.date(from: timestampRef)!))
+            type = .delete(Stamp(user: userRef!, timestamp: timestampRef!))
         } else {
-            type = .edit(Stamp(user: userRef, timestamp: formatter.date(from: timestampRef)!))
+            type = .edit(Stamp(user: userRef!, timestamp: timestampRef!))
         }
         
         let labelElement = LabelElement(pos: pos, text: text, size: size, rotation: rotation)
@@ -208,9 +197,9 @@ class LabelMessage:NSObject, NSCoding{
         size = aDecoder.decodeObject(forKey: "size") as! CGRect
         rotation = aDecoder.decodeObject(forKey: "rotation") as! Float
         userData = aDecoder.decodeObject(forKey: "user") as! String
-        timestampData = aDecoder.decodeObject(forKey: "timestamp") as! String
-        userRef = aDecoder.decodeObject(forKey: "userRef") as! String
-        timestampRef = aDecoder.decodeObject(forKey: "timestampRef") as! String
+        timestampData = aDecoder.decodeObject(forKey: "timestamp") as! Date
+        userRef = aDecoder.decodeObject(forKey: "userRef") as? String
+        timestampRef = aDecoder.decodeObject(forKey: "timestampRef") as? Date
         currentHash = aDecoder.decodeObject(forKey: "hash") as! Int
     }
 }
