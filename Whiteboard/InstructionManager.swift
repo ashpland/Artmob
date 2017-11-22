@@ -16,10 +16,18 @@ class InstructionManager {
     private var instructionStore = [Instruction]()
     let newInstructions = PublishSubject<Instruction>()
     let broadcastInstructions = PublishSubject<InstructionAndHashBundle>()
+    private let hashStream = PublishSubject<HashAndSender>()
     private let disposeBag = DisposeBag()
 
     // MARK: - Methods
 
+    init() {
+        _ = hashStream.throttle(1.0, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { self.check($0.hash, from: $0.sender) })
+    }
+    
+    
+    
     class func subscribeToInstructionsFrom(_ newObservable: Observable<InstructionAndHashBundle>) {
         newObservable.subscribe(onNext: { bundle in
             InstructionManager.sharedInstance.new(instructionAndHash: bundle)
@@ -34,15 +42,9 @@ class InstructionManager {
         self.newInstruction(bundle.instruction)
         
         if let theirHash = bundle.hash {
-            if self.instructionStore.hashValue != theirHash {
-                //Maybe make this buffer for a second?
-                //Put the hashes into a timer thing, and only take the last value out after interval?
-                
-                // TODO: get their stamp array
-                // user = newInstructionAndHash.0.stamp.user
-            }
+            self.hashStream.onNext(HashAndSender(hash: theirHash, 
+                                                 sender: bundle.instruction.stamp.user))
         }
-        
     }
 
     private func newInstruction(_ newInstruction: Instruction) {
@@ -81,6 +83,20 @@ class InstructionManager {
         ElementModel.sharedInstance.refreshLines(from: lineInstructions)
     }
     
+    internal func check(_ hash: InstructionStoreHash, from user:String) {
+        
+        
+        
+//        if self.instructionStore.hashValue != theirHash {
+//            //Maybe make this buffer for a second?
+//            //Put the hashes into a timer thing, and only take the last value out after interval?
+//
+//            // TODO: get their stamp array
+//            // user = newInstructionAndHash.0.stamp.user
+//        }
+        
+    }
+    
     internal func sync(theirInstructions: Array<Stamp>) -> [Stamp] {
         return self.instructionStore.stamps.elementsNotIn(theirInstructions)
     }
@@ -93,6 +109,11 @@ typealias InstructionStoreHash = Int
 struct InstructionAndHashBundle {
     let instruction: Instruction
     let hash: InstructionStoreHash?
+}
+
+struct HashAndSender {
+    let hash: InstructionStoreHash
+    let sender: String
 }
 
 struct Instruction {
