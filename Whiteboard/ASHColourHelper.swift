@@ -30,7 +30,7 @@ fileprivate struct ColorSchemeMarker: ColorSchemeProtocol {
     let yellow: UIColor = #colorLiteral(red: 0.9607843161, green: 0.7058823705, blue: 0.200000003, alpha: 1)
     let green: UIColor  = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
     let blue: UIColor   = #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1)
-    let purple: UIColor = #colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1)
+    let purple: UIColor = #colorLiteral(red: 0.5818830132, green: 0.2156915367, blue: 1, alpha: 1)
 }
 
 fileprivate struct ColorSchemePastel: ColorSchemeProtocol {
