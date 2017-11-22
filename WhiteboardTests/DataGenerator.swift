@@ -25,7 +25,7 @@ internal func generateLineSegment() -> LineSegment {
 
 internal func generateLine() -> Line {
     var newLine = Line()
-    for _ in 0...arc4random_uniform(50) {
+    for _ in 0...arc4random_uniform(50)+1 {
         newLine = newLine + generateLineSegment()
     }
     return newLine

@@ -15,19 +15,34 @@ class InstructionManager {
 
     private var instructionStore = [Instruction]()
     let newInstructions = PublishSubject<Instruction>()
-    let broadcastInstructions = PublishSubject<Instruction>()
+    let broadcastInstructions = PublishSubject<InstructionAndHashBundle>()
     private let disposeBag = DisposeBag()
 
     // MARK: - Methods
 
-    class func subscribeToInstructionsFrom(_ newObservable: Observable<Instruction>) {
-        newObservable.subscribe(onNext: { instruction in
-            InstructionManager.sharedInstance.newInstruction(instruction)
+    class func subscribeToInstructionsFrom(_ newObservable: Observable<InstructionAndHashBundle>) {
+        newObservable.subscribe(onNext: { bundle in
+            InstructionManager.sharedInstance.new(instructionAndHash: bundle)
         }).disposed(by: InstructionManager.sharedInstance.disposeBag)
     }
     
     internal func resetInstructionStore() {
         self.instructionStore = [Instruction]()
+    }
+    
+    private func new(instructionAndHash bundle: InstructionAndHashBundle) {
+        self.newInstruction(bundle.instruction)
+        
+        if let theirHash = bundle.hash {
+            if self.instructionStore.hashValue != theirHash {
+                //Maybe make this buffer for a second?
+                //Put the hashes into a timer thing, and only take the last value out after interval?
+                
+                // TODO: get their stamp array
+                // user = newInstructionAndHash.0.stamp.user
+            }
+        }
+        
     }
 
     private func newInstruction(_ newInstruction: Instruction) {
@@ -35,7 +50,9 @@ class InstructionManager {
             newInstruction.stamp > self.instructionStore.last!.stamp {
             self.instructionStore.append(newInstruction)
             self.newInstructions.onNext(newInstruction)
-            self.broadcastInstructions.onNext(newInstruction)
+            let newBundle = InstructionAndHashBundle(instruction: newInstruction,
+                                                     hash: self.instructionStore.hashValue)
+            self.broadcastInstructions.onNext(newBundle)
             return
         } else {
             for (index, currentInstruction) in self.instructionStore.lazy.reversed().enumerated() {
@@ -44,13 +61,14 @@ class InstructionManager {
                 }
                 if newInstruction.stamp > currentInstruction.stamp {
                     self.instructionStore.insert(newInstruction, at: self.instructionStore.count - index)
-                    self.broadcastInstructions.onNext(newInstruction)
+                    let newInstructionBundle = InstructionAndHashBundle(instruction: newInstruction, hash: self.instructionStore.hashValue)
+                    self.broadcastInstructions.onNext(newInstructionBundle)
 
                     switch newInstruction.element {
                     case .line:
                         self.refreshLines()
                         return
-                    case .emoji:
+                    case .label:
                         return
                     }
                 }
@@ -62,9 +80,20 @@ class InstructionManager {
         let lineInstructions = self.instructionStore.filter { if case .line = $0.element { return true }; return false}
         ElementModel.sharedInstance.refreshLines(from: lineInstructions)
     }
+    
+    internal func sync(theirInstructions: Array<Stamp>) -> [Stamp] {
+        return self.instructionStore.stamps.elementsNotIn(theirInstructions)
+    }
 }
 
 // MARK: - Instruction components
+
+typealias InstructionStoreHash = Int
+
+struct InstructionAndHashBundle {
+    let instruction: Instruction
+    let hash: InstructionStoreHash?
+}
 
 struct Instruction {
     let type: InstructionType
@@ -76,11 +105,20 @@ enum InstructionType {
     case new
     case edit(Stamp)
     case delete(Stamp)
+    var stamp: Stamp? {
+        guard case .edit(let value) = self else {
+            return nil
+        }
+        guard case .delete(value) = self else {
+            return nil
+        }
+        return value
+    }
 }
 
 enum InstructionPayload {
     case line (LineElement)
-    case emoji (LabelElement)
+    case label (LabelElement)
 
     var lineElement: LineElement? {
         guard case .line(let value) = self else {
@@ -88,9 +126,18 @@ enum InstructionPayload {
         }
         return value
     }
+    var labelElement: LabelElement? {
+        guard case .label(let value) = self else {
+            return nil
+        }
+        return value
+    }
 }
 
 struct Stamp: Comparable, Hashable {
+    let user: String
+    let timestamp: Date
+
     var hashValue: Int {
             let timeHash = self.timestamp.hashValue
             let userHash = self.user.hashValue
@@ -110,104 +157,39 @@ struct Stamp: Comparable, Hashable {
     static func == (lhs: Stamp, rhs: Stamp) -> Bool {
         return ((lhs.user == rhs.user) && (lhs.timestamp == rhs.timestamp))
     }
-
-    let user: String
-    let timestamp: Date
 }
 
-//MARK: Instruction to data
 
-class LineMessage:NSObject, NSCoding{
-    var segmentsData:Array<Array<CGFloat>>!
-    var colorData:Int!
-    var capData:Int!
-    var widthData:CGFloat!
-    var userData:String!
-    var timestampData:String!
-    override init() {
-        super.init()
+extension Array where Element == Instruction
+{
+    var hashValue: InstructionStoreHash {
+        return self.stamps.hashValue
     }
-    init(instruction: Instruction){
-        guard let lineElement = instruction.element.lineElement else {
-            //bad things
-            return
-        }
-        segmentsData = Array<Array<CGFloat>>()
-        for segment:LineSegment in lineElement.line.segments{
-            segmentsData.append([segment.firstPoint.x, segment.firstPoint.y, segment.secondPoint.x, segment.secondPoint.y])
-        }
-        switch lineElement.color{
-        case UIColor.black:
-            colorData = 1
-            break
-        case UIColor.blue:
-            colorData = 2
-            break
-        default:
-            colorData = 0
-        }
-        switch lineElement.cap{
-        case .butt:
-            capData = 0
-        case .round:
-            capData = 1
-        case .square:
-            capData = 2
-        }
-        widthData = lineElement.width
-        userData = instruction.stamp.user
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        timestampData = formatter.string(from: instruction.stamp.timestamp)
+    
+    var stamps: Array<Stamp> {
+        return self.map({ $0.stamp })
     }
-    func toInstruction() -> Instruction{
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        let date = formatter.date(from: timestampData)
-        var line = Line()
-        for segment:Array<CGFloat> in segmentsData{
-            line = Line(with: line, and: LineSegment(firstPoint:CGPoint(x: segment[0], y: segment[1]), secondPoint: CGPoint(x: segment[2], y: segment[3])))
-        }
-        var elementColor = UIColor()
-        switch colorData{
-        case 1:
-            elementColor = UIColor.black
-            break
-        case 2:
-            elementColor = UIColor.blue
-            break
-        default:
-            elementColor = UIColor.black
-        }
-        var elementCap = CGLineCap(rawValue: 0)
-        switch capData{
-        case 0:
-            elementCap = .butt
-        case 1:
-            elementCap = .round
-        case 2:
-            elementCap = .square
-        default:
-            elementCap = .round
-        }
-        let lineElement = LineElement(line: line, width: widthData, cap: elementCap!, color: elementColor)
-        let payload:InstructionPayload = .line(lineElement)
-        return Instruction(type: .new, element: payload, stamp: Stamp(user: userData, timestamp: date!))
+    
+    
+    //helper method for testing
+    var withNilHash: Array<InstructionAndHashBundle> {
+        return self.map{InstructionAndHashBundle(instruction: $0, hash: nil)}
     }
-    func encode(with aCoder: NSCoder) {
-        aCoder.encode(self.segmentsData, forKey: "segments")
-        aCoder.encode(self.colorData, forKey: "color")
-        aCoder.encode(self.capData, forKey: "cap")
-        aCoder.encode(self.widthData, forKey: "width")
-        aCoder.encode(self.userData, forKey: "user")
-        aCoder.encode(self.timestampData, forKey: "timestamp")
+    
+}
+
+
+extension Array where Element:Hashable
+{
+    var hashValue: Int {
+        return self.reduce(16777619) {$0 ^ $1.hashValue}
     }
-    required init?(coder aDecoder: NSCoder) {
-        segmentsData = aDecoder.decodeObject(forKey: "segments") as! Array<Array<CGFloat>>
-        colorData = aDecoder.decodeObject(forKey: "color") as! Int
-        capData = aDecoder.decodeObject(forKey: "cap") as! Int
-        widthData = aDecoder.decodeObject(forKey: "width") as! CGFloat
-        userData = aDecoder.decodeObject(forKey: "user") as! String
-        timestampData = aDecoder.decodeObject(forKey: "timestamp") as! String
+    
+    func elementsNotIn(_ otherArray: Array<Element>) -> Array<Element> {
+        return otherArray.filter{!Set(self).contains($0)}
+    }
+    
+    static func == (lhs: Array<Element>, rhs: Array<Element>) -> Bool {
+        return lhs.hashValue == rhs.hashValue
     }
 }

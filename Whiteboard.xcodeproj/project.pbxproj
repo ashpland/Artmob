@@ -20,6 +20,7 @@
 		49BE285C1FC3A80A00FD7B8A /* DataGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BE285B1FC3A80A00FD7B8A /* DataGenerator.swift */; };
 		49BE285E1FC3C3F800FD7B8A /* InstructionManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BE285D1FC3C3F800FD7B8A /* InstructionManagerTests.swift */; };
 		49BE28601FC3D0FB00FD7B8A /* ElementModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BE285F1FC3D0FB00FD7B8A /* ElementModelTests.swift */; };
+		9324827A1FC4F921004ED705 /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 932482791FC4F921004ED705 /* Messages.swift */; };
 		9393855E1FBFAE75002F7486 /* MultipeerConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9393855D1FBFAE75002F7486 /* MultipeerConnectivity.framework */; };
 		939385601FBFAEB7002F7486 /* MPCHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9393855F1FBFAEB6002F7486 /* MPCHandler.swift */; };
 		A82B5FF3EA5DCF2DD8E24305 /* Pods_Whiteboard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19C7E7C83D070CAC297DD0BE /* Pods_Whiteboard.framework */; };
@@ -58,6 +59,7 @@
 		49BE285B1FC3A80A00FD7B8A /* DataGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataGenerator.swift; sourceTree = "<group>"; };
 		49BE285D1FC3C3F800FD7B8A /* InstructionManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionManagerTests.swift; sourceTree = "<group>"; };
 		49BE285F1FC3D0FB00FD7B8A /* ElementModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementModelTests.swift; sourceTree = "<group>"; };
+		932482791FC4F921004ED705 /* Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Messages.swift; sourceTree = "<group>"; };
 		9393855D1FBFAE75002F7486 /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
 		9393855F1FBFAEB6002F7486 /* MPCHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MPCHandler.swift; sourceTree = "<group>"; };
 		CCB8AA3EB739CEAF12F5F39D /* Pods_WhiteboardTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WhiteboardTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -114,6 +116,7 @@
 				4949DC201FBCFA430062691C /* BoardViewController.swift */,
 				494487B81FBCFF3B00AE2C2F /* BoardViewModel.swift */,
 				495F109A1FBE2F4800BF33FE /* InstructionManager.swift */,
+				932482791FC4F921004ED705 /* Messages.swift */,
 				495F109C1FBE3C1200BF33FE /* ElementModel.swift */,
 				9393855F1FBFAEB6002F7486 /* MPCHandler.swift */,
 				4949DC251FBCFA430062691C /* Assets.xcassets */,
@@ -375,6 +378,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				495F109D1FBE3C1200BF33FE /* ElementModel.swift in Sources */,
+				9324827A1FC4F921004ED705 /* Messages.swift in Sources */,
 				939385601FBFAEB7002F7486 /* MPCHandler.swift in Sources */,
 				495F109B1FBE2F4800BF33FE /* InstructionManager.swift in Sources */,
 				4949DC211FBCFA430062691C /* BoardViewController.swift in Sources */,
