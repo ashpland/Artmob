@@ -62,7 +62,13 @@ class MPCHandler: NSObject, MCSessionDelegate{
 //    }
     func sendLine(lineMessage: LineMessage){
         let messageData = NSKeyedArchiver.archivedData(withRootObject: lineMessage)
-        try! session.send(messageData, toPeers: session.connectedPeers, with: MCSessionSendDataMode.reliable)
+        let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 0])
+        try! session.send(data, toPeers: session.connectedPeers, with: MCSessionSendDataMode.reliable)
+    }
+    func sendLabel(labelMessage: LabelMessage){
+        let messageData = NSKeyedArchiver.archivedData(withRootObject: labelMessage)
+        let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 1])
+        try! session.send(data, toPeers: session.connectedPeers, with: MCSessionSendDataMode.reliable)
     }
 
     //MARK: MCSessionDelegate
@@ -70,9 +76,18 @@ class MPCHandler: NSObject, MCSessionDelegate{
         self.state = state
     }
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        let lineMessage = NSKeyedUnarchiver.unarchiveObject(with: data) as! LineMessage
-        let newInstruction = lineMessage.toInstruction()
-        self.recievedInstruction.onNext(newInstruction)
+        //data.
+        let dic = NSKeyedUnarchiver.unarchiveObject(with: data) as! Dictionary<String, Any>
+        if dic["type"] as! Int == 0 {
+            let lineMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! LineMessage
+            let newInstruction = lineMessage.toInstruction()
+            self.recievedInstruction.onNext(newInstruction)
+        } else {
+            let labelMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! LabelMessage
+            let newInstruction = labelMessage.toInstruction()
+            self.recievedInstruction.onNext(newInstruction)
+        }
+        
     }
     func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
     }
