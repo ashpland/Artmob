@@ -37,8 +37,8 @@ class InstructionManagerTests: XCTestCase {
             }).disposed(by: self.disposeBag)
         
         InstructionManager.sharedInstance.broadcastInstructions
-            .subscribe(onNext: { (instructionAndHash) in
-                self.broadcastInstructions.append(instructionAndHash.0)
+            .subscribe(onNext: { (bundle) in
+                self.broadcastInstructions.append(bundle.instruction)
             }).disposed(by: self.disposeBag)
  
     }

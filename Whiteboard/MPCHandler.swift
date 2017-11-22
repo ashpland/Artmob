@@ -20,18 +20,18 @@ class MPCHandler: NSObject, MCSessionDelegate{
 
     var state:MCSessionState!
     
-    let recievedInstruction = PublishSubject<InstructionAndHash>()
+    let recievedInstruction = PublishSubject<InstructionAndHashBundle>()
     
     //MARK: Setup
     func setupSubscribe(){
         InstructionManager.subscribeToInstructionsFrom(self.recievedInstruction)
         
         _ = InstructionManager.sharedInstance.broadcastInstructions
-            .subscribe(onNext: { (instructionAndHash) in
+            .subscribe(onNext: { (bundle) in
                 if self.state == MCSessionState.connected {
                     
                     // TODO: Make this send the hash too
-                    self.sendLine(lineMessage: LineMessage(instruction: instructionAndHash.0))
+                    self.sendLine(lineMessage: LineMessage(instruction: bundle.instruction))
                 }
         })
     }
@@ -76,7 +76,7 @@ class MPCHandler: NSObject, MCSessionDelegate{
         let newInstruction = lineMessage.toInstruction()
         
         // TODO: get the hash from the message
-        let instructionAndHash: InstructionAndHash = (newInstruction, nil)
+        let instructionAndHash = InstructionAndHashBundle(instruction: newInstruction, hash: nil)
         self.recievedInstruction.onNext(instructionAndHash)
     }
     func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {

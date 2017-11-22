@@ -15,14 +15,14 @@ class InstructionManager {
 
     private var instructionStore = [Instruction]()
     let newInstructions = PublishSubject<Instruction>()
-    let broadcastInstructions = PublishSubject<InstructionAndHash>()
+    let broadcastInstructions = PublishSubject<InstructionAndHashBundle>()
     private let disposeBag = DisposeBag()
 
     // MARK: - Methods
 
-    class func subscribeToInstructionsFrom(_ newObservable: Observable<InstructionAndHash>) {
-        newObservable.subscribe(onNext: { instructionAndHash in
-            InstructionManager.sharedInstance.new(instructionAndHash)
+    class func subscribeToInstructionsFrom(_ newObservable: Observable<InstructionAndHashBundle>) {
+        newObservable.subscribe(onNext: { bundle in
+            InstructionManager.sharedInstance.new(instructionAndHash: bundle)
         }).disposed(by: InstructionManager.sharedInstance.disposeBag)
     }
     
@@ -30,11 +30,14 @@ class InstructionManager {
         self.instructionStore = [Instruction]()
     }
     
-    private func new(_ instructionAndHash: InstructionAndHash) {
-        self.newInstruction(instructionAndHash.0)
+    private func new(instructionAndHash bundle: InstructionAndHashBundle) {
+        self.newInstruction(bundle.instruction)
         
-        if let theirHash = instructionAndHash.1 {
+        if let theirHash = bundle.hash {
             if self.instructionStore.hashValue != theirHash {
+                //Maybe make this buffer for a second?
+                //Put the hashes into a timer thing, and only take the last value out after interval?
+                
                 // TODO: get their stamp array
                 // user = newInstructionAndHash.0.stamp.user
             }
@@ -47,7 +50,9 @@ class InstructionManager {
             newInstruction.stamp > self.instructionStore.last!.stamp {
             self.instructionStore.append(newInstruction)
             self.newInstructions.onNext(newInstruction)
-            self.broadcastInstructions.onNext((newInstruction, self.instructionStore.hashValue))
+            let newBundle = InstructionAndHashBundle(instruction: newInstruction,
+                                                     hash: self.instructionStore.hashValue)
+            self.broadcastInstructions.onNext(newBundle)
             return
         } else {
             for (index, currentInstruction) in self.instructionStore.lazy.reversed().enumerated() {
@@ -56,7 +61,8 @@ class InstructionManager {
                 }
                 if newInstruction.stamp > currentInstruction.stamp {
                     self.instructionStore.insert(newInstruction, at: self.instructionStore.count - index)
-                    self.broadcastInstructions.onNext((newInstruction, self.instructionStore.hashValue))
+                    let newInstructionBundle = InstructionAndHashBundle(instruction: newInstruction, hash: self.instructionStore.hashValue)
+                    self.broadcastInstructions.onNext(newInstructionBundle)
 
                     switch newInstruction.element {
                     case .line:
@@ -83,7 +89,11 @@ class InstructionManager {
 // MARK: - Instruction components
 
 typealias InstructionStoreHash = Int
-typealias InstructionAndHash = (Instruction, InstructionStoreHash?)
+
+struct InstructionAndHashBundle {
+    let instruction: Instruction
+    let hash: InstructionStoreHash?
+}
 
 struct Instruction {
     let type: InstructionType
@@ -147,8 +157,8 @@ extension Array where Element == Instruction
     
     
     //helper method for testing
-    var withNilHash: Array<InstructionAndHash> {
-        return self.map{($0, nil)}
+    var withNilHash: Array<InstructionAndHashBundle> {
+        return self.map{InstructionAndHashBundle(instruction: $0, hash: nil)}
     }
     
 }
