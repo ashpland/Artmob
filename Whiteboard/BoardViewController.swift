@@ -18,8 +18,33 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
     func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
         mpcHandler.browser.dismiss(animated: true, completion: nil)
     }
-    
-
+    @IBAction func linecolor(_ sender: Any) {
+        MenubuttonHeightConstraint.constant = 248
+        colorMenu.isHidden = false
+    }
+    @IBAction func line(_ sender: Any) {
+        MenubuttonHeightConstraint.constant = 168
+        lineMenu.isHidden = false
+    }
+    @IBAction func color(_ sender: UIButton) {
+        var lineFormat = LineFormatSettings.sharedInstance
+        switch sender.tag{
+        case 0:
+            lineFormat.color = UIColor.black
+        case 1:
+            lineFormat.color = UIColor.white
+        case 2:
+            lineFormat.color = UIColor.red
+        case 3:
+            lineFormat.color = UIColor.orange
+        default:
+            lineFormat.color = UIColor.brown
+        }
+    }
+    @IBOutlet weak var colorMenu: UIView!
+    @IBOutlet weak var lineMenu: UIView!
+    @IBOutlet weak var mainMenu: UIView!
+    @IBOutlet weak var MenubuttonHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var drawView: DrawView!
     @IBOutlet weak var lineImageView: UIImageView!
     
@@ -27,7 +52,18 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
     let disposeBag = DisposeBag()
     var mpcHandler = MPCHandler.sharedInstance
     
-    
+    @IBAction func Menu(_ sender: UIButton) {
+        if mainMenu.isHidden {
+            mainMenu.isHidden = false
+            MenubuttonHeightConstraint.constant = 88
+        } else{
+            mainMenu.isHidden = true
+            lineMenu.isHidden = true
+            colorMenu.isHidden = true
+            MenubuttonHeightConstraint.constant = 8
+        }
+        
+    }
     @IBAction func Add(_ sender: Any) {
         if mpcHandler.session != nil{
             mpcHandler.setupBrowser()
@@ -37,7 +73,9 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        mainMenu.isHidden = true
+        lineMenu.isHidden = true
+        colorMenu.isHidden = true
         mpcHandler.setupPeerWithDisplayName(displayName: UIDevice.current.name)
         mpcHandler.setupSession()
         mpcHandler.advertiseSelf(advertise: true)
