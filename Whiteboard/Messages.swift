@@ -8,6 +8,38 @@
 
 import UIKit
 
+class StampMessage:NSObject, NSCoding{
+    var stampsData:Array<Dictionary<String,String>>!
+    var currentHash:Int!
+    init(stamps:[Stamp]){
+        stampsData = Array<Dictionary<String,String>>()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        for stamp:Stamp in stamps{
+            stampsData.append(["user":stamp.user, "timestamp":formatter.string(from: stamp.timestamp)])
+        }
+        currentHash = 0
+    }
+    func toStamps() -> [Stamp]{
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        var stamps = Array<Stamp>()
+        for stamp in stampsData{
+            stamps.append(Stamp(user: stamp["user"] as! String, timestamp: formatter.date(from: stamp["timestamp"] as! String) as! Date))
+        }
+        return stamps
+    }
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(self.stampsData, forKey: "stamps")
+        aCoder.encode(self.currentHash, forKey: "hash")
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        self.stampsData = aDecoder.decodeObject(forKey: "stamps") as! Array<Dictionary<String,String>>
+        self.currentHash = aDecoder.decodeObject(forKey: "hash") as! Int
+    }
+}
+
 //MARK: Line
 
 class LineMessage:NSObject, NSCoding{
