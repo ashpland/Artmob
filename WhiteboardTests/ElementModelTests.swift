@@ -43,7 +43,7 @@ class ElementModelTests: XCTestCase {
             instructionArray.append(newInstruction)
         }
         
-        InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray))
+        InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray.withNilHash))
       expect.fulfill()
         
         waitForExpectations(timeout: 1.0) { error in
@@ -80,7 +80,7 @@ class ElementModelTests: XCTestCase {
         instructionArray.remove(at: 2)
         instructionArray.append(insertInstruction)
         
-        InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray))
+        InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray.withNilHash))
         
         expect.fulfill()
         

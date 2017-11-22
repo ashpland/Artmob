@@ -14,7 +14,7 @@ class BoardViewModel {
     fileprivate let settings = LineFormatSettings.sharedInstance
     fileprivate let disposeBag = DisposeBag()
         
-    let submitInstruction = PublishSubject<Instruction>()
+    let submitInstruction = PublishSubject<InstructionAndHashBundle>()
     
     internal lazy var lineImage : Variable<UIImage> = Variable<UIImage>(makeClearImage())
     
@@ -44,8 +44,8 @@ class BoardViewModel {
             currentLine, nextSegment in
             return currentLine + nextSegment
         }).subscribe(onNext: { line in
-            let newInstruction = self.makeInstruction(for: line)
-            self.submitInstruction.onNext(newInstruction)
+            let newInstructionBundle = InstructionAndHashBundle(instruction: self.makeInstruction(for: line), hash: nil)
+            self.submitInstruction.onNext(newInstructionBundle)
         })
     }
     

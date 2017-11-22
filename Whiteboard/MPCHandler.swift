@@ -20,16 +20,18 @@ class MPCHandler: NSObject, MCSessionDelegate{
 
     var state:MCSessionState!
     
-    let recievedInstruction = PublishSubject<Instruction>()
+    let recievedInstruction = PublishSubject<InstructionAndHashBundle>()
     
     //MARK: Setup
     func setupSubscribe(){
         InstructionManager.subscribeToInstructionsFrom(self.recievedInstruction)
         
-        _ = InstructionManager.sharedInstance.newInstructions
-            .subscribe(onNext: { (instruction) in
+        _ = InstructionManager.sharedInstance.broadcastInstructions
+            .subscribe(onNext: { (bundle) in
                 if self.state == MCSessionState.connected {
-                    self.sendLine(lineMessage: LineMessage(instruction: instruction))
+                    
+                    // TODO: Make this send the hash too
+                    self.sendLine(lineMessage: LineMessage(instruction: bundle.instruction))
                 }
         })
     }
@@ -76,16 +78,24 @@ class MPCHandler: NSObject, MCSessionDelegate{
         self.state = state
     }
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        //data.
+
+      //data.
         let dic = NSKeyedUnarchiver.unarchiveObject(with: data) as! Dictionary<String, Any>
         if dic["type"] as! Int == 0 {
             let lineMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! LineMessage
             let newInstruction = lineMessage.toInstruction()
-            self.recievedInstruction.onNext(newInstruction)
+          
+            // TODO: get the hash from the message
+          let instructionAndHash = InstructionAndHashBundle(instruction: newInstruction, hash: nil)
+          self.recievedInstruction.onNext(instructionAndHash)
+          
         } else {
             let labelMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! LabelMessage
             let newInstruction = labelMessage.toInstruction()
-            self.recievedInstruction.onNext(newInstruction)
+          
+            // TODO: get the hash from the message
+        let instructionAndHash = InstructionAndHashBundle(instruction: newInstruction, hash: nil)
+        self.recievedInstruction.onNext(instructionAndHash)
         }
         
     }

@@ -35,8 +35,8 @@ class BoardViewModelTests: XCTestCase {
         var result = [Instruction]()
         
         self.boardViewModel.submitInstruction
-            .subscribe(onNext: { (instruction) in
-                result.append(instruction)
+            .subscribe(onNext: { (bundle) in
+                result.append(bundle.instruction)
             }).disposed(by: self.disposeBag)
         
         
@@ -71,7 +71,8 @@ class BoardViewModelTests: XCTestCase {
         let firstImage = self.boardViewModel.lineImage.value
         
         InstructionManager.subscribeToInstructionsFrom(Observable
-            .from([generateLineInstruction()]))
+            .from(optional: InstructionAndHashBundle(instruction: generateLineInstruction(),
+                                                     hash: nil) ))
 
         let secondImage = self.boardViewModel.lineImage.value
         

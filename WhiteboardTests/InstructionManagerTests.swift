@@ -37,8 +37,8 @@ class InstructionManagerTests: XCTestCase {
             }).disposed(by: self.disposeBag)
         
         InstructionManager.sharedInstance.broadcastInstructions
-            .subscribe(onNext: { (instruction) in
-                self.broadcastInstructions.append(instruction)
+            .subscribe(onNext: { (bundle) in
+                self.broadcastInstructions.append(bundle.instruction)
             }).disposed(by: self.disposeBag)
  
     }
@@ -59,7 +59,7 @@ class InstructionManagerTests: XCTestCase {
             instructionArray.append(newInstruction)
         }
         
-        InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray))
+        InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray.withNilHash))
         
         expect.fulfill()
         
@@ -87,7 +87,7 @@ class InstructionManagerTests: XCTestCase {
             instructionArray.append(newInstruction)
         }
 
-        InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray))
+        InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray.withNilHash))
         expect.fulfill()
         
         waitForExpectations(timeout: 1.0) { error in
@@ -119,7 +119,7 @@ class InstructionManagerTests: XCTestCase {
         instructionArray.remove(at: 2)
         instructionArray.append(insertInstruction)
         
-        InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray))
+        InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray.withNilHash))
         expect.fulfill()
         
         waitForExpectations(timeout: 1.0) { error in
