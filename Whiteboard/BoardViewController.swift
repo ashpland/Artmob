@@ -85,22 +85,32 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
          
          */
         if MainMenuHeight.constant == -148{
-            UIView.animate(withDuration: 1.25, delay: 0, usingSpringWithDamping: 0.25, initialSpringVelocity: 5, options: [], animations: {
+            UIView.animate(withDuration: 0.5, animations: {
                 self.MainMenuHeight.constant = 0
-                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 270)
+                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
                 self.view.layoutIfNeeded()
-            }) { (finished: Bool) in
-                // Completion and cleanup
-            }
+            })
+//            UIView.animate(withDuration: 1.0, delay: 0, usingSpringWithDamping: 0.25, initialSpringVelocity: 5, options: [], animations: {
+//                self.MainMenuHeight.constant = 0
+//                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 270)
+//                self.view.layoutIfNeeded()
+//            }) { (finished: Bool) in
+//                // Completion and cleanup
+//            }
             
         } else{
-            UIView.animate(withDuration: 1.25, delay: 0, usingSpringWithDamping: 0.25, initialSpringVelocity: 5, options: [], animations: {
+            UIView.animate(withDuration: 0.5, animations: {
                 self.MainMenuHeight.constant = -148
                 self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 0)
                 self.view.layoutIfNeeded()
-            }) { (finished: Bool) in
-                // Completion and cleanup
-            }
+            })
+//            UIView.animate(withDuration: 1.0, delay: 0, usingSpringWithDamping: 0.25, initialSpringVelocity: 5, options: [], animations: {
+//                self.MainMenuHeight.constant = -148
+//                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 0)
+//                self.view.layoutIfNeeded()
+//            }) { (finished: Bool) in
+//                // Completion and cleanup
+//            }
             
         }
         
