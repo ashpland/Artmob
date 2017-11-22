@@ -103,6 +103,11 @@ class MPCHandler: NSObject, MCSessionDelegate{
             
         } else if dic["type"] as! Int == 2 {
             let stampMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! StampMessage
+            
+            InstructionManager.sharedInstance.stampsStream
+                .onNext(StampsAndSender(stamps: stampMessage.toStamps(),
+                                        sender: peerID.displayName))
+            
         } else {
             let labelMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! LabelMessage
             newInstruction = labelMessage.toInstruction()
