@@ -72,6 +72,25 @@ class MPCHandler: NSObject, MCSessionDelegate{
         let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 1])
         try! session.send(data, toPeers: session.connectedPeers, with: MCSessionSendDataMode.reliable)
     }
+    func peerFromUser(user: String) -> [MCPeerID] {
+        return self.session.connectedPeers.filter{$0.displayName == user}
+    }
+    
+    
+    func sendStamps(_ stampsArray: [Stamp], to user:String, with hash: InstructionStoreHash) {
+        let stampMessage = StampMessage(stamps: stampsArray)
+        stampMessage.currentHash = hash
+        self.sendStamps(stampMessage: stampMessage, user: user)
+    }
+    
+    
+    func sendStamps(stampMessage: StampMessage, user:String){
+        
+        let messageData = NSKeyedArchiver.archivedData(withRootObject: stampMessage)
+        let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 2])
+        try! session.send(data, toPeers: peerFromUser(user: user), with: MCSessionSendDataMode.reliable)
+        
+    }
     
     //MARK: MCSessionDelegate
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
@@ -89,15 +108,24 @@ class MPCHandler: NSObject, MCSessionDelegate{
             newInstruction = lineMessage.toInstruction()
             instructionAndHash = InstructionAndHashBundle(instruction: newInstruction,
                                                           hash: lineMessage.currentHash)
+            self.recievedInstruction.onNext(instructionAndHash)
+            
+        } else if dic["type"] as! Int == 2 {
+            let stampMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! StampMessage
+            
+            InstructionManager.sharedInstance.stampsStream
+                .onNext(StampsAndSender(stamps: stampMessage.toStamps(),
+                                        sender: peerID.displayName))
             
         } else {
             let labelMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! LabelMessage
             newInstruction = labelMessage.toInstruction()
             instructionAndHash = InstructionAndHashBundle(instruction: newInstruction,
                                                           hash: labelMessage.currentHash)
+            self.recievedInstruction.onNext(instructionAndHash)
         }
         
-        self.recievedInstruction.onNext(instructionAndHash)
+        
 
         
     }
