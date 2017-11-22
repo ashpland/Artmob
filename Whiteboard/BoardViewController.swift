@@ -18,33 +18,47 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
     func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
         mpcHandler.browser.dismiss(animated: true, completion: nil)
     }
-    @IBAction func linecolor(_ sender: Any) {
-        MenubuttonHeightConstraint.constant = 248
-        colorMenu.isHidden = false
-    }
-    @IBAction func line(_ sender: Any) {
-        MenubuttonHeightConstraint.constant = 168
-        lineMenu.isHidden = false
-    }
-    @IBAction func color(_ sender: UIButton) {
-        var lineFormat = LineFormatSettings.sharedInstance
+
+    @IBOutlet weak var MainMenuButton: UIButton!
+    @IBOutlet weak var MainMenuHeight: NSLayoutConstraint!
+    @IBAction func thickness(_ sender: UIButton) {
+        var formatLine = LineFormatSettings.sharedInstance
         switch sender.tag{
         case 0:
-            lineFormat.color = UIColor.black
+            formatLine.width = 0.3
+            break
         case 1:
-            lineFormat.color = UIColor.white
-        case 2:
-            lineFormat.color = UIColor.red
-        case 3:
-            lineFormat.color = UIColor.orange
+            formatLine.width = 0.5
+            break
         default:
-            lineFormat.color = UIColor.brown
+            formatLine.width = 1
+            break
         }
     }
-    @IBOutlet weak var colorMenu: UIView!
-    @IBOutlet weak var lineMenu: UIView!
-    @IBOutlet weak var mainMenu: UIView!
-    @IBOutlet weak var MenubuttonHeightConstraint: NSLayoutConstraint!
+    @IBAction func color(_ sender: UIButton) {
+        var formatLine = LineFormatSettings.sharedInstance
+        switch sender.tag{
+        case 0:
+            formatLine.color = UIColor.black
+        case 1:
+            formatLine.color = UIColor.red
+        case 2:
+            formatLine.color = UIColor.orange
+        case 3:
+            formatLine.color = UIColor.yellow
+        case 4:
+            formatLine.color = UIColor.green
+        case 5:
+            formatLine.color = UIColor.blue
+        case 6:
+            formatLine.color = UIColor.purple
+        case 7:
+            formatLine.color = UIColor.white
+        default:
+            formatLine.color = UIColor.black
+        }
+    }
+
     @IBOutlet weak var drawView: DrawView!
     @IBOutlet weak var lineImageView: UIImageView!
     
@@ -52,15 +66,42 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
     let disposeBag = DisposeBag()
     var mpcHandler = MPCHandler.sharedInstance
     
+    @IBAction func addLabel(_ sender: Any) {
+        //AddLabel
+    }
     @IBAction func Menu(_ sender: UIButton) {
-        if mainMenu.isHidden {
-            mainMenu.isHidden = false
-            MenubuttonHeightConstraint.constant = 88
+        /*
+         
+         UIView.animate(withDuration: 1.25, delay: 0, usingSpringWithDamping: 0.25, initialSpringVelocity: 5, options: [], animations: {
+         // Values for end state of animation
+         self.plusButton.transform = CGAffineTransform(rotationAngle: 0)
+         self.snackLabelYConstraint.constant = 0
+         self.snackLabel.text = "SNACKS"
+         self.navHeightConstraint.constant = 64
+         self.view.layoutIfNeeded()
+         }) { (finished: Bool) in
+         // Completion and cleanup
+         }
+         
+         */
+        if MainMenuHeight.constant == -148{
+            UIView.animate(withDuration: 1.25, delay: 0, usingSpringWithDamping: 0.25, initialSpringVelocity: 5, options: [], animations: {
+                self.MainMenuHeight.constant = 0
+                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 270)
+                self.view.layoutIfNeeded()
+            }) { (finished: Bool) in
+                // Completion and cleanup
+            }
+            
         } else{
-            mainMenu.isHidden = true
-            lineMenu.isHidden = true
-            colorMenu.isHidden = true
-            MenubuttonHeightConstraint.constant = 8
+            UIView.animate(withDuration: 1.25, delay: 0, usingSpringWithDamping: 0.25, initialSpringVelocity: 5, options: [], animations: {
+                self.MainMenuHeight.constant = -148
+                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 0)
+                self.view.layoutIfNeeded()
+            }) { (finished: Bool) in
+                // Completion and cleanup
+            }
+            
         }
         
     }
@@ -73,9 +114,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        mainMenu.isHidden = true
-        lineMenu.isHidden = true
-        colorMenu.isHidden = true
+        MainMenuHeight.constant = -148
         mpcHandler.setupPeerWithDisplayName(displayName: UIDevice.current.name)
         mpcHandler.setupSession()
         mpcHandler.advertiseSelf(advertise: true)
