@@ -58,6 +58,8 @@ class InstructionManager {
         }
     }
 
+    
+    
     private func newInstruction(_ newInstruction: Instruction) {
         if self.instructionStore.isEmpty ||
             newInstruction.stamp > self.instructionStore.last!.stamp {
@@ -68,22 +70,26 @@ class InstructionManager {
             self.broadcastInstructions.onNext(newBundle)
             return
         } else {
-            for (index, currentInstruction) in self.instructionStore.lazy.reversed().enumerated() {
-                guard newInstruction.stamp != currentInstruction.stamp else {
+            insertInstruction(newInstruction)
+        }
+    }
+    
+    fileprivate func insertInstruction(_ newInstruction: Instruction) {
+        for (index, currentInstruction) in self.instructionStore.lazy.reversed().enumerated() {
+            guard newInstruction.stamp != currentInstruction.stamp else {
+                return
+            }
+            if newInstruction.stamp > currentInstruction.stamp {
+                self.instructionStore.insert(newInstruction, at: self.instructionStore.count - index)
+                let newInstructionBundle = InstructionAndHashBundle(instruction: newInstruction, hash: self.instructionStore.hashValue)
+                self.broadcastInstructions.onNext(newInstructionBundle)
+                
+                switch newInstruction.element {
+                case .line:
+                    self.refreshLines()
                     return
-                }
-                if newInstruction.stamp > currentInstruction.stamp {
-                    self.instructionStore.insert(newInstruction, at: self.instructionStore.count - index)
-                    let newInstructionBundle = InstructionAndHashBundle(instruction: newInstruction, hash: self.instructionStore.hashValue)
-                    self.broadcastInstructions.onNext(newInstructionBundle)
-
-                    switch newInstruction.element {
-                    case .line:
-                        self.refreshLines()
-                        return
-                    case .label:
-                        return
-                    }
+                case .label:
+                    return
                 }
             }
         }
