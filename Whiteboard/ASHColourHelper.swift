@@ -9,17 +9,65 @@
 import Foundation
 import UIKit
 
-fileprivate protocol ColorSchemeProtocol {
-    var title: String { get }
-    var black: UIColor { get }
-    var white: UIColor { get }
-    var red: UIColor { get }
+
+public class Colour {
+    
+    private static let global = Colour()
+    
+    private var colorScheme: ColorSchemeProtocol = DefaultColorSchemes.marker.get()
+    
+    class func setDefault(_ newColorScheme: DefaultColorSchemes){
+        self.global.colorScheme = newColorScheme.get()
+    }
+    
+    class func setCustom(_ newColorScheme: ColorSchemeProtocol){
+        self.global.colorScheme = newColorScheme
+    }
+    
+    class var currentScheme: String { return self.global.colorScheme.title}
+    
+    class var black:UIColor  { return self.global.colorScheme.black }
+    class var white:UIColor  { return self.global.colorScheme.white }
+    class var red:UIColor    { return self.global.colorScheme.red }
+    class var orange:UIColor { return self.global.colorScheme.orange }
+    class var yellow:UIColor { return self.global.colorScheme.yellow }
+    class var green:UIColor  { return self.global.colorScheme.green }
+    class var blue:UIColor   { return self.global.colorScheme.blue }
+    class var purple:UIColor { return self.global.colorScheme.purple }
+}
+
+
+public protocol ColorSchemeProtocol {
+    var title: String   { get }
+    var black: UIColor  { get }
+    var white: UIColor  { get }
+    var red:    UIColor { get }
     var orange: UIColor { get }
     var yellow: UIColor { get }
-    var green: UIColor { get }
-    var blue: UIColor { get }
+    var green: UIColor  { get }
+    var blue: UIColor   { get }
     var purple: UIColor { get }
 }
+
+
+public enum DefaultColorSchemes {
+    case marker
+    case pastel
+    case nature
+    
+    func get() -> ColorSchemeProtocol {
+        switch self {
+        case .marker:
+            return ColorSchemeMarker()
+        case .pastel:
+            return ColorSchemePastel()
+        case .nature:
+            return ColorSchemeNature()
+        }
+        
+    }
+}
+
 
 fileprivate struct ColorSchemeMarker: ColorSchemeProtocol {
     let title = "Marker"
@@ -55,45 +103,4 @@ fileprivate struct ColorSchemeNature: ColorSchemeProtocol {
     let green: UIColor  = #colorLiteral(red: 0.2745098174, green: 0.4862745106, blue: 0.1411764771, alpha: 1)
     let blue: UIColor   = #colorLiteral(red: 0.1411764771, green: 0.3960784376, blue: 0.5647059083, alpha: 1)
     let purple: UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 1)
-}
-
-
-public enum ColorSchemes {
-    case marker
-    case pastel
-    case nature
-
-    fileprivate func get() -> ColorSchemeProtocol {
-        switch self {
-        case .marker:
-            return ColorSchemeMarker()
-        case .pastel:
-            return ColorSchemePastel()
-        case .nature:
-            return ColorSchemeNature()
-        }
-        
-    }
-}
-
-public class Colour {
-    
-    private static let global = Colour()
-    
-    private var colorScheme: ColorSchemeProtocol = ColorSchemes.marker.get()
-    
-    class func set(_ newColorScheme: ColorSchemes){
-        self.global.colorScheme = newColorScheme.get()
-    }
-    
-    class var currentScheme: String { return self.global.colorScheme.title}
-    
-    class var black:UIColor  { return self.global.colorScheme.black }
-    class var white:UIColor  { return self.global.colorScheme.white }
-    class var red:UIColor    { return self.global.colorScheme.red }
-    class var orange:UIColor { return self.global.colorScheme.orange }
-    class var yellow:UIColor { return self.global.colorScheme.yellow }
-    class var green:UIColor  { return self.global.colorScheme.green }
-    class var blue:UIColor   { return self.global.colorScheme.blue }
-    class var purple:UIColor { return self.global.colorScheme.purple }
 }
