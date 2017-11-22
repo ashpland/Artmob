@@ -145,6 +145,9 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
                                   completion: nil)
             })
             .disposed(by: disposeBag)
+        
+        
+
     }
 }
 
@@ -153,7 +156,7 @@ class LineFormatSettings {
     
     var width : CGFloat = 5.0
     var cap = CGLineCap.round
-    var color = UIColor.blue
+    var color = LineColor.blue
 }
 
 
