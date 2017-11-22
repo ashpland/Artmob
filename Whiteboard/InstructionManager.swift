@@ -17,13 +17,24 @@ class InstructionManager {
     let newInstructions = PublishSubject<Instruction>()
     let broadcastInstructions = PublishSubject<InstructionAndHashBundle>()
     private let hashStream = PublishSubject<HashAndSender>()
+    let stampsStream = PublishSubject<StampsAndSender>()
     private let disposeBag = DisposeBag()
 
     // MARK: - Methods
 
     init() {
-        _ = hashStream.throttle(1.0, scheduler: MainScheduler.instance)
-            .subscribe(onNext: { self.check($0.hash, from: $0.sender) })
+        let hashCheckInterval = 1.0
+        let stampsCheckInterval = 1.0
+        
+        _ = hashStream.throttle(hashCheckInterval, scheduler: MainScheduler.instance)
+            .subscribe(onNext: {
+                self.check($0.hash, from: $0.sender)
+            })
+        _ = stampsStream.throttle(stampsCheckInterval, scheduler: MainScheduler.instance)
+            .subscribe(onNext: {
+                self.sync(theirInstructions: $0.stamps, from: $0.sender)
+            })
+
     }
     
     
@@ -84,21 +95,24 @@ class InstructionManager {
     }
     
     internal func check(_ hash: InstructionStoreHash, from user:String) {
-        
-        
-        
-//        if self.instructionStore.hashValue != theirHash {
-//            //Maybe make this buffer for a second?
-//            //Put the hashes into a timer thing, and only take the last value out after interval?
-//
-//            // TODO: get their stamp array
-//            // user = newInstructionAndHash.0.stamp.user
-//        }
-        
+        if self.instructionStore.hashValue != hash {
+            // send self.instructionStore.stamps to user
+        }
     }
     
-    internal func sync(theirInstructions: Array<Stamp>) -> [Stamp] {
-        return self.instructionStore.stamps.elementsNotIn(theirInstructions)
+    internal func sync(theirInstructions: Array<Stamp>, from user: String) {
+        let myInstructions = self.instructionStore.stamps
+        
+        for stamp in myInstructions.elementsNotIn(theirInstructions) {
+            if let instruction = self.instructionStore.instruction(for: stamp) {
+                let bundle = InstructionAndHashBundle(instruction: instruction,
+                                                      hash: self.instructionStore.hashValue)
+                self.broadcastInstructions.onNext(bundle)
+            }
+        }
+        if theirInstructions.elementsNotIn(myInstructions).count > 0 {
+            // send self.instructionStore.stamps to user
+        }
     }
 }
 
@@ -155,6 +169,11 @@ enum InstructionPayload {
     }
 }
 
+struct StampsAndSender {
+    let stamps: Array<Stamp>
+    let sender: String
+}
+
 struct Stamp: Comparable, Hashable {
     let user: String
     let timestamp: Date
@@ -189,6 +208,10 @@ extension Array where Element == Instruction
     
     var stamps: Array<Stamp> {
         return self.map({ $0.stamp })
+    }
+    
+    func instruction(for stamp: Stamp) -> Instruction? {
+        return self.filter{$0.stamp == stamp}.first
     }
     
     
