@@ -30,7 +30,14 @@ class MessagesTests: XCTestCase {
         let decodedStamps = stampsMessage.toStamps()
         
         XCTAssert(stamps == decodedStamps, "Stamps array should be the same after conversion to message")
- 
+    }
+    
+    func testLineConversion() {
+        let instructions = [generateLineInstruction(), generateLineInstruction(), generateLineInstruction()]
+        let lineMessages = instructions.map{ LineMessage(instruction: $0) }
+        let decodedLineMessages = lineMessages.map { $0.toInstruction() }
+        
+        XCTAssert(instructions.stamps == decodedLineMessages.stamps, "Instructions should be the same after conversion to message")
     }
     
     
