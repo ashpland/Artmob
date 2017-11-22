@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		490E6C2D1FC60F2E00A5649A /* Colours.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490E6C2C1FC60F2E00A5649A /* Colours.swift */; };
+		490E6C2D1FC60F2E00A5649A /* ASHColourHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490E6C2C1FC60F2E00A5649A /* ASHColourHelper.swift */; };
 		494487B91FBCFF3B00AE2C2F /* BoardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494487B81FBCFF3B00AE2C2F /* BoardViewModel.swift */; };
 		4949DC1F1FBCFA430062691C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4949DC1E1FBCFA430062691C /* AppDelegate.swift */; };
 		4949DC211FBCFA430062691C /* BoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4949DC201FBCFA430062691C /* BoardViewController.swift */; };
@@ -43,7 +43,7 @@
 		19C7E7C83D070CAC297DD0BE /* Pods_Whiteboard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Whiteboard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DA2CDD772086609A7B07201 /* Pods-WhiteboardTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WhiteboardTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WhiteboardTests/Pods-WhiteboardTests.debug.xcconfig"; sourceTree = "<group>"; };
 		213248CB49223F7549B7B3B4 /* Pods-Whiteboard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Whiteboard.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Whiteboard/Pods-Whiteboard.debug.xcconfig"; sourceTree = "<group>"; };
-		490E6C2C1FC60F2E00A5649A /* Colours.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colours.swift; sourceTree = "<group>"; };
+		490E6C2C1FC60F2E00A5649A /* ASHColourHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASHColourHelper.swift; sourceTree = "<group>"; };
 		494487B81FBCFF3B00AE2C2F /* BoardViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardViewModel.swift; sourceTree = "<group>"; };
 		4949DC1B1FBCFA430062691C /* Whiteboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Whiteboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4949DC1E1FBCFA430062691C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -118,7 +118,7 @@
 				4949DC201FBCFA430062691C /* BoardViewController.swift */,
 				494487B81FBCFF3B00AE2C2F /* BoardViewModel.swift */,
 				495F109A1FBE2F4800BF33FE /* InstructionManager.swift */,
-				490E6C2C1FC60F2E00A5649A /* Colours.swift */,
+				490E6C2C1FC60F2E00A5649A /* ASHColourHelper.swift */,
 				932482791FC4F921004ED705 /* Messages.swift */,
 				495F109C1FBE3C1200BF33FE /* ElementModel.swift */,
 				9393855F1FBFAEB6002F7486 /* MPCHandler.swift */,
@@ -387,7 +387,7 @@
 				4949DC211FBCFA430062691C /* BoardViewController.swift in Sources */,
 				496B676F1FBD06FB0002A2F2 /* DrawView.swift in Sources */,
 				494487B91FBCFF3B00AE2C2F /* BoardViewModel.swift in Sources */,
-				490E6C2D1FC60F2E00A5649A /* Colours.swift in Sources */,
+				490E6C2D1FC60F2E00A5649A /* ASHColourHelper.swift in Sources */,
 				4949DC1F1FBCFA430062691C /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

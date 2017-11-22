@@ -1,8 +1,8 @@
 //
-//  Colours.swift
+//  ASHColourHelper
 //  Whiteboard
 //
-//  Created by Andrew on 2017-11-22.
+//  Created by Andrew Shopland on 2017-11-22.
 //  Copyright © 2017 hearthedge. All rights reserved.
 //
 
