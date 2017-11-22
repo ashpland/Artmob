@@ -49,10 +49,13 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
         drawView.viewModel = self.viewModel
         
         self.viewModel.lineImage.asObservable()
+            .observeOn(MainScheduler.instance)
             .subscribe(onNext: { lineImage in
-                DispatchQueue.main.async {
-                    self.lineImageView.image = lineImage
-                }
+                UIView.transition(with: self.view,
+                                  duration: 0.25,
+                                  options: UIViewAnimationOptions.transitionCrossDissolve,
+                                  animations: { self.lineImageView.image = lineImage },
+                                  completion: nil)
             })
             .disposed(by: disposeBag)
     }
