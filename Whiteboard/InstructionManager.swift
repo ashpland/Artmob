@@ -96,7 +96,9 @@ class InstructionManager {
     
     internal func check(_ hash: InstructionStoreHash, from user:String) {
         if self.instructionStore.hashValue != hash {
-            // send self.instructionStore.stamps to user
+            MPCHandler.sharedInstance.sendStamps(self.instructionStore.stamps,
+                                                 to: user,
+                                                 with: self.instructionStore.hashValue)
         }
     }
     
@@ -111,7 +113,9 @@ class InstructionManager {
             }
         }
         if theirInstructions.elementsNotIn(myInstructions).count > 0 {
-            // send self.instructionStore.stamps to user
+            MPCHandler.sharedInstance.sendStamps(self.instructionStore.stamps,
+                                                 to: user,
+                                                 with: self.instructionStore.hashValue)
         }
     }
 }

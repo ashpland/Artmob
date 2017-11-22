@@ -75,6 +75,15 @@ class MPCHandler: NSObject, MCSessionDelegate{
     func peerFromUser(user: String) -> [MCPeerID] {
         return self.session.connectedPeers.filter{$0.displayName == user}
     }
+    
+    
+    func sendStamps(_ stampsArray: [Stamp], to user:String, with hash: InstructionStoreHash) {
+        let stampMessage = StampMessage(stamps: stampsArray)
+        stampMessage.currentHash = hash
+        self.sendStamps(stampMessage: stampMessage, user: user)
+    }
+    
+    
     func sendStamps(stampMessage: StampMessage, user:String){
         
         let messageData = NSKeyedArchiver.archivedData(withRootObject: stampMessage)
