@@ -14,7 +14,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     func closeMenu() {
         emojiTextField.endEditing(false)
         UIView.animate(withDuration: 0.4, animations: {
-            self.MainMenuHeight.constant = -148
+            self.MainMenuHeight.constant = -160
             self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 0)
             self.view.layoutIfNeeded()
         })
@@ -84,6 +84,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         default:
             formatLine.color = LineColor.black
         }
+        MainMenuButton.setTitleColor(LineElement(line: Line(), width: 0, cap: .butt, color: formatLine.color).drawColor, for: UIControlState.normal)
     }
 
     @IBOutlet weak var drawView: DrawView!
@@ -95,7 +96,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     
     @IBAction func Menu(_ sender: UIButton) {
         
-        if MainMenuHeight.constant == -148{
+        if MainMenuHeight.constant == -160{
             UIView.animate(withDuration: 0.5, animations: {
                 self.MainMenuHeight.constant = 0
                 self.MainMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
@@ -103,14 +104,14 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
             })
         } else if MainMenuHeight.constant == 0{
             UIView.animate(withDuration: 0.5, animations: {
-                self.MainMenuHeight.constant = -148
+                self.MainMenuHeight.constant = -160
                 self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 0)
                 self.view.layoutIfNeeded()
             })
         } else {
             emojiTextField.endEditing(false)
             UIView.animate(withDuration: 0.35, animations: {
-                self.MainMenuHeight.constant = -148
+                self.MainMenuHeight.constant = -160
                 self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 0)
                 self.view.layoutIfNeeded()
             })
@@ -136,8 +137,16 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
             
         }
     }
+    @IBOutlet var ColorButtons: [UIButton]!
+    
+    func setUpColorButtons(){
+        for button in ColorButtons{
+            button.backgroundColor = LineElement(line: Line(), width: 0, cap: .butt, color: LineColor(rawValue: button.tag)!).drawColor //sooo janky
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
+        setUpColorButtons()
         
         NotificationCenter.default.addObserver(
             self,
@@ -146,7 +155,8 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
             object: nil
         )
         
-        MainMenuHeight.constant = -148
+        MainMenuHeight.constant = -160
+        
         mpcHandler.setupPeerWithDisplayName(displayName: UIDevice.current.name)
         mpcHandler.setupSession()
         mpcHandler.advertiseSelf(advertise: true)

@@ -26,14 +26,16 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BHP-fi-5lz" userLabel="MenuButton">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BHP-fi-5lz" userLabel="MenuButton">
                                 <rect key="frame" x="317" y="449" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="kVk-PF-Ib6"/>
                                     <constraint firstAttribute="height" constant="50" id="zzi-WI-t63"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="40"/>
-                                <state key="normal" title="△"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="56"/>
+                                <state key="normal" title="▲" backgroundImage="tri-1">
+                                    <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
                                 <connections>
                                     <action selector="Menu:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7AT-OL-yfT"/>
                                 </connections>
@@ -214,6 +216,14 @@
                         <outlet property="drawView" destination="gmm-FH-6rc" id="r21-B9-xrM"/>
                         <outlet property="emojiTextField" destination="f2O-NS-T40" id="lfE-ps-V75"/>
                         <outlet property="lineImageView" destination="k2k-vt-RbJ" id="vdU-t0-qZH"/>
+                        <outletCollection property="ColorButtons" destination="f8v-8b-oeT" collectionClass="NSMutableArray" id="9lH-bd-9IT"/>
+                        <outletCollection property="ColorButtons" destination="JTw-GB-FcN" collectionClass="NSMutableArray" id="8dv-vn-pTR"/>
+                        <outletCollection property="ColorButtons" destination="Sg6-JH-QQa" collectionClass="NSMutableArray" id="X3Z-eH-2qt"/>
+                        <outletCollection property="ColorButtons" destination="u3R-XL-wed" collectionClass="NSMutableArray" id="0Js-Yb-faw"/>
+                        <outletCollection property="ColorButtons" destination="gu2-ez-PN3" collectionClass="NSMutableArray" id="33T-t1-jcX"/>
+                        <outletCollection property="ColorButtons" destination="WNW-Hr-oAT" collectionClass="NSMutableArray" id="cTZ-ul-DMi"/>
+                        <outletCollection property="ColorButtons" destination="xdF-KP-3vn" collectionClass="NSMutableArray" id="kHN-PW-y9D"/>
+                        <outletCollection property="ColorButtons" destination="Hhn-qx-1ME" collectionClass="NSMutableArray" id="707-Hc-Jgd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -221,4 +231,7 @@
             <point key="canvasLocation" x="32.799999999999997" y="38.23088455772114"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="tri-1" width="512" height="512"/>
+    </resources>
 </document>
