@@ -71,7 +71,10 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
             }).disposed(by: disposeBag)
     }
     func setUpMenu(){
+        MainMenuButton.setTitleColor(LineElement(line: Line(), width: 0, cap: .butt, color: LineFormatSettings.sharedInstance.color).drawColor, for: UIControlState.normal) //jankness
+        MainMenuButton.titleLabel?.font = MainMenuButton.titleLabel?.font.withSize(40.0)
         MainMenuHeight.constant = -160
+        
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(keyboardWillShow),
@@ -101,7 +104,6 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     }
     
     @IBAction func color(_ sender: UIButton) {
-        print(sender.tag)
         textSelected = false
         let formatLine = LineFormatSettings.sharedInstance
         switch sender.tag{
