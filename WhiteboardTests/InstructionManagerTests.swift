@@ -17,6 +17,7 @@ class InstructionManagerTests: XCTestCase {
     
     var newInstructions: [Instruction]!
     var broadcastInstructions: [Instruction]!
+    var requestedInstructions: [Stamp]!
     
     
     
@@ -28,7 +29,7 @@ class InstructionManagerTests: XCTestCase {
         
         self.newInstructions = [Instruction]()
         self.broadcastInstructions = [Instruction]()
-        
+        self.requestedInstructions = [Stamp]()
         
         
         InstructionManager.sharedInstance.newInstructions
@@ -40,7 +41,12 @@ class InstructionManagerTests: XCTestCase {
             .subscribe(onNext: { (bundle) in
                 self.broadcastInstructions.append(bundle.instruction)
             }).disposed(by: self.disposeBag)
- 
+        
+        InstructionManager.sharedInstance.broadcastInstructions
+            .subscribe(onNext: { (bundle) in
+                self.broadcastInstructions.append(bundle.instruction)
+            }).disposed(by: self.disposeBag)
+        
     }
     
     override func tearDown() {
@@ -86,7 +92,7 @@ class InstructionManagerTests: XCTestCase {
             instructionArray.append(newInstruction)
             instructionArray.append(newInstruction)
         }
-
+        
         InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray.withNilHash))
         expect.fulfill()
         
@@ -103,7 +109,7 @@ class InstructionManagerTests: XCTestCase {
             XCTAssertEqual(instructionArray[0].stamp, self.newInstructions[0].stamp, "Instructions should be sent in order")
         }
     }
-  
+    
     
     func testInstructionManagerInsertInstructions() {
         let expect = expectation(description: #function)
@@ -133,6 +139,64 @@ class InstructionManagerTests: XCTestCase {
             XCTAssertEqual(expectedCount, self.broadcastInstructions.count,
                            "Broadcast instructions should recieve all instructions.")
         }
+    }
+    
+    func testInstructionRequestQueueing() {
+        let expect = expectation(description: #function)
+        
+        var myInstructions = [Instruction]()
+        for _ in 0..<5 {
+            let newInstruction = generateLineInstruction()
+            myInstructions.append(newInstruction)
+        }
+        
+        var theirInstructions = myInstructions
+        theirInstructions.remove(at: 0)
+        
+        InstructionManager.subscribeToInstructionsFrom(Observable.from(myInstructions.withNilHash))
+        
+        InstructionManager.sharedInstance.sync(theirInstructions: theirInstructions.stamps,
+                                               from: MPCHandler.sharedInstance.session.myPeerID)
+        InstructionManager.sharedInstance.sync(theirInstructions: theirInstructions.stamps,
+                                               from: MPCHandler.sharedInstance.session.myPeerID)
+        
+        var requestedInstructions = [Stamp]()
+        
+        
+        
+        
+        
+        expect.fulfill()
+        
+        
+        
+        
+        
+        
+        waitForExpectations(timeout: 3.0) { error in
+            guard error == nil else {
+                XCTFail(error!.localizedDescription)
+                return
+            }
+            
+            
+            
+            
+            XCTAssertEqual(requestedInstructions,
+                           [myInstructions[0].stamp, myInstructions[0].stamp],
+                           "New instructions should not recieve inserted instructions.")
+        }
+        
+        /*
+         myArray = 5 instructions
+         theirArray = my - 1
+         
+         subscribe to self.broadcastInstructions and check results
+         
+         IM.sync theirArray twice. should have a duplicate in the array
+         
+         
+         */
     }
     
     

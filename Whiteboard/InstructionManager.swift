@@ -20,6 +20,7 @@ class InstructionManager {
     let broadcastInstructions = PublishSubject<InstructionAndHashBundle>()
     private let hashStream = PublishSubject<HashAndSender>()
     let stampsStream = PublishSubject<StampsAndSender>()
+    let instructionRequests = PublishSubject<Stamp>()
     private let disposeBag = DisposeBag()
     
     // MARK: - Methods
@@ -27,14 +28,20 @@ class InstructionManager {
     init() {
         let hashCheckInterval = 1.0
         
-        _ = hashStream.throttle(hashCheckInterval, scheduler: MainScheduler.instance)
+        hashStream.throttle(hashCheckInterval, scheduler: MainScheduler.instance)
             .subscribe(onNext: { self.check(hash:$0.hash,
                                             from: $0.sender) })
+            .disposed(by: self.disposeBag)
         
-        _ = stampsStream.subscribe(onNext:
+        stampsStream.subscribe(onNext:
             { self.sync(theirInstructions: $0.stamps,
                         from: $0.sender) })
+        .disposed(by: self.disposeBag)
         
+        instructionRequests.buffer(timeSpan: 1.0, count: 50, scheduler: MainScheduler.instance)
+            .subscribe(onNext: {self.processInstructionRequests($0)})
+        .disposed(by: self.disposeBag)
+
     }
     
     
@@ -115,17 +122,29 @@ class InstructionManager {
     internal func sync(theirInstructions: Array<Stamp>, from user: MCPeerID) {
         let myInstructions = self.instructionStore.stamps
         
-        for stamp in myInstructions.elementsNotIn(theirInstructions) {
-            if let instruction = self.instructionStore.instruction(for: stamp) {
-                let bundle = InstructionAndHashBundle(instruction: instruction,
-                                                      hash: self.instructionStore.hashValue)
-                self.broadcastInstructions.onNext(bundle)
-            }
-        }
+        Observable.from(myInstructions.elementsNotIn(theirInstructions))
+            .subscribe { self.instructionRequests.on($0) }
+            .disposed(by: self.disposeBag)
+        
+        
         if theirInstructions.elementsNotIn(myInstructions).count > 0 {
             MPCHandler.sharedInstance.sendStamps(self.instructionStore.stamps,
                                                  to: user,
                                                  with: self.instructionStore.hashValue)
         }
     }
+    
+    internal func processInstructionRequests(_ requests: Array<Stamp>) {
+//        let instructionStamps = Array(Set(requests))
+        
+        for stamp in requests {
+            if let instruction = self.instructionStore.instruction(for: stamp) {
+                let bundle = InstructionAndHashBundle(instruction: instruction,
+                                                      hash: self.instructionStore.hashValue)
+                self.broadcastInstructions.onNext(bundle)
+            }
+        }
+    }
+    
+    
 }
