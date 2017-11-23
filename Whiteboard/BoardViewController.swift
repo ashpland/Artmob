@@ -10,7 +10,15 @@ import UIKit
 import RxSwift
 import MultipeerConnectivity
 
-class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
+class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, CloseMenu  {
+    func closeMenu() {
+        UIView.animate(withDuration: 0.4, animations: {
+            self.MainMenuHeight.constant = -148
+            self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 0)
+            self.view.layoutIfNeeded()
+        })
+    }
+    
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
         mpcHandler.browser.dismiss(animated: true, completion: nil)
     }
@@ -96,6 +104,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         MainMenuHeight.constant = -148
         mpcHandler.setupPeerWithDisplayName(displayName: UIDevice.current.name)
         mpcHandler.setupSession()
@@ -104,7 +113,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
         
         
         
-        
+        drawView.closeMenuDelagate = self
         drawView.clearsContextBeforeDrawing = true
         drawView.viewModel = self.viewModel
         
