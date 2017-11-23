@@ -588,7 +588,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1DA2CDD772086609A7B07201 /* Pods-WhiteboardTests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = T5E8L2XP69;
@@ -606,7 +605,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EAB871D93390FA32D1D1068B /* Pods-WhiteboardTests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = T5E8L2XP69;
