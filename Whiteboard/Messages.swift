@@ -59,16 +59,7 @@ class LineMessage:NSObject, NSCoding{
         for segment:LineSegment in lineElement.line.segments{
             segmentsData.append([segment.firstPoint.x, segment.firstPoint.y, segment.secondPoint.x, segment.secondPoint.y])
         }
-        switch lineElement.color{
-        case UIColor.black:
-            colorData = 1
-            break
-        case UIColor.blue:
-            colorData = 2
-            break
-        default:
-            colorData = 0
-        }
+        colorData = lineElement.color.rawValue
         switch lineElement.cap{
         case .butt:
             capData = 0
@@ -88,17 +79,7 @@ class LineMessage:NSObject, NSCoding{
         for segment:Array<CGFloat> in segmentsData{
             line = Line(with: line, and: LineSegment(firstPoint:CGPoint(x: segment[0], y: segment[1]), secondPoint: CGPoint(x: segment[2], y: segment[3])))
         }
-        var elementColor = UIColor()
-        switch colorData{
-        case 1:
-            elementColor = UIColor.black
-            break
-        case 2:
-            elementColor = UIColor.blue
-            break
-        default:
-            elementColor = UIColor.black
-        }
+        let elementColor = LineColor(rawValue: colorData)
         var elementCap = CGLineCap(rawValue: 0)
         switch capData{
         case 0:
@@ -110,7 +91,7 @@ class LineMessage:NSObject, NSCoding{
         default:
             elementCap = .round
         }
-        let lineElement = LineElement(line: line, width: widthData, cap: elementCap!, color: elementColor)
+        let lineElement = LineElement(line: line, width: widthData, cap: elementCap!, color: elementColor!)
         let payload:InstructionPayload = .line(lineElement)
         return Instruction(type: .new, element: payload, stamp: Stamp(user: userData, timestamp: date!))
     }

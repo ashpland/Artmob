@@ -25,37 +25,38 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
         var formatLine = LineFormatSettings.sharedInstance
         switch sender.tag{
         case 0:
-            formatLine.width = 0.3
+            formatLine.width = 3.0
             break
         case 1:
-            formatLine.width = 0.5
+            formatLine.width = 5.0
             break
         default:
-            formatLine.width = 1
+            formatLine.width = 8.0
             break
         }
     }
     @IBAction func color(_ sender: UIButton) {
+        print(sender.tag)
         var formatLine = LineFormatSettings.sharedInstance
         switch sender.tag{
         case 0:
-            formatLine.color = UIColor.black
+            formatLine.color = LineColor.black
         case 1:
-            formatLine.color = UIColor.red
+            formatLine.color = LineColor.white
         case 2:
-            formatLine.color = UIColor.orange
+            formatLine.color = LineColor.red
         case 3:
-            formatLine.color = UIColor.yellow
+            formatLine.color = LineColor.orange
         case 4:
-            formatLine.color = UIColor.green
+            formatLine.color = LineColor.yellow
         case 5:
-            formatLine.color = UIColor.blue
+            formatLine.color = LineColor.green
         case 6:
-            formatLine.color = UIColor.purple
+            formatLine.color = LineColor.blue
         case 7:
-            formatLine.color = UIColor.white
+            formatLine.color = LineColor.purple
         default:
-            formatLine.color = UIColor.black
+            formatLine.color = LineColor.black
         }
     }
 
@@ -70,48 +71,19 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
         //AddLabel
     }
     @IBAction func Menu(_ sender: UIButton) {
-        /*
-         
-         UIView.animate(withDuration: 1.25, delay: 0, usingSpringWithDamping: 0.25, initialSpringVelocity: 5, options: [], animations: {
-         // Values for end state of animation
-         self.plusButton.transform = CGAffineTransform(rotationAngle: 0)
-         self.snackLabelYConstraint.constant = 0
-         self.snackLabel.text = "SNACKS"
-         self.navHeightConstraint.constant = 64
-         self.view.layoutIfNeeded()
-         }) { (finished: Bool) in
-         // Completion and cleanup
-         }
-         
-         */
+        
         if MainMenuHeight.constant == -148{
             UIView.animate(withDuration: 0.5, animations: {
                 self.MainMenuHeight.constant = 0
                 self.MainMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
                 self.view.layoutIfNeeded()
             })
-//            UIView.animate(withDuration: 1.0, delay: 0, usingSpringWithDamping: 0.25, initialSpringVelocity: 5, options: [], animations: {
-//                self.MainMenuHeight.constant = 0
-//                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 270)
-//                self.view.layoutIfNeeded()
-//            }) { (finished: Bool) in
-//                // Completion and cleanup
-//            }
-            
         } else{
             UIView.animate(withDuration: 0.5, animations: {
                 self.MainMenuHeight.constant = -148
                 self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 0)
                 self.view.layoutIfNeeded()
             })
-//            UIView.animate(withDuration: 1.0, delay: 0, usingSpringWithDamping: 0.25, initialSpringVelocity: 5, options: [], animations: {
-//                self.MainMenuHeight.constant = -148
-//                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 0)
-//                self.view.layoutIfNeeded()
-//            }) { (finished: Bool) in
-//                // Completion and cleanup
-//            }
-            
         }
         
     }
@@ -145,9 +117,6 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
                                   completion: nil)
             })
             .disposed(by: disposeBag)
-        
-        
-
     }
 }
 

@@ -63,7 +63,6 @@ struct LineElement {
     
     var drawColor: UIColor {
         switch self.color {
-        
         case .black:
             return Colour.black
         case .white:
