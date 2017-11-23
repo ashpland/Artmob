@@ -22,7 +22,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
     @IBOutlet weak var MainMenuButton: UIButton!
     @IBOutlet weak var MainMenuHeight: NSLayoutConstraint!
     @IBAction func thickness(_ sender: UIButton) {
-        var formatLine = LineFormatSettings.sharedInstance
+        let formatLine = LineFormatSettings.sharedInstance
         switch sender.tag{
         case 0:
             formatLine.width = 3.0
@@ -37,7 +37,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
     }
     @IBAction func color(_ sender: UIButton) {
         print(sender.tag)
-        var formatLine = LineFormatSettings.sharedInstance
+        let formatLine = LineFormatSettings.sharedInstance
         switch sender.tag{
         case 0:
             formatLine.color = LineColor.black
@@ -75,7 +75,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
         if MainMenuHeight.constant == -148{
             UIView.animate(withDuration: 0.5, animations: {
                 self.MainMenuHeight.constant = 0
-                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
+                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: Double.pi)
                 self.view.layoutIfNeeded()
             })
         } else{
@@ -101,6 +101,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
         mpcHandler.setupSession()
         mpcHandler.advertiseSelf(advertise: true)
         mpcHandler.setupSubscribe()
+        
         
         
         

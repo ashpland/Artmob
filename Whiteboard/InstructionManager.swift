@@ -95,7 +95,7 @@ class InstructionManager {
         }
     }
 
-    private func refreshLines() {
+    internal func refreshLines() {
         let lineInstructions = self.instructionStore.filter { if case .line = $0.element { return true }; return false}
         ElementModel.sharedInstance.refreshLines(from: lineInstructions)
     }
