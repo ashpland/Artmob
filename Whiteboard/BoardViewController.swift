@@ -10,14 +10,31 @@ import UIKit
 import RxSwift
 import MultipeerConnectivity
 
-class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, CloseMenu  {
+class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, CloseMenu, UITextFieldDelegate {
     func closeMenu() {
+        emojiTextField.endEditing(false)
         UIView.animate(withDuration: 0.4, animations: {
             self.MainMenuHeight.constant = -148
             self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 0)
             self.view.layoutIfNeeded()
         })
+        
     }
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textSelected = true
+    }
+    var textSelected:Bool!
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        UIView.animate(withDuration: 0.25, animations: {
+            self.MainMenuHeight.constant = 0
+            self.MainMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+            self.view.layoutIfNeeded()
+        })
+        
+        textField.resignFirstResponder()
+        return true
+    }
+    @IBOutlet weak var emojiTextField: UITextField!
     
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
         mpcHandler.browser.dismiss(animated: true, completion: nil)
@@ -45,6 +62,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     }
     @IBAction func color(_ sender: UIButton) {
         print(sender.tag)
+        textSelected = false
         let formatLine = LineFormatSettings.sharedInstance
         switch sender.tag{
         case 0:
@@ -75,9 +93,6 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     let disposeBag = DisposeBag()
     var mpcHandler = MPCHandler.sharedInstance
     
-    @IBAction func addLabel(_ sender: Any) {
-        //AddLabel
-    }
     @IBAction func Menu(_ sender: UIButton) {
         
         if MainMenuHeight.constant == -148{
@@ -86,8 +101,15 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
                 self.MainMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
                 self.view.layoutIfNeeded()
             })
-        } else{
+        } else if MainMenuHeight.constant == 0{
             UIView.animate(withDuration: 0.5, animations: {
+                self.MainMenuHeight.constant = -148
+                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 0)
+                self.view.layoutIfNeeded()
+            })
+        } else {
+            emojiTextField.endEditing(false)
+            UIView.animate(withDuration: 0.35, animations: {
                 self.MainMenuHeight.constant = -148
                 self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 0)
                 self.view.layoutIfNeeded()
@@ -102,8 +124,27 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
             self.present(mpcHandler.browser, animated: true, completion: nil)
         }
     }
+    @objc func keyboardWillShow(_ notification: Notification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            let keyboardHeight = keyboardRectangle.height
+            UIView.animate(withDuration: 0.5, animations: {
+                self.MainMenuHeight.constant = keyboardHeight
+                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+                self.view.layoutIfNeeded()
+            })
+            
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: NSNotification.Name.UIKeyboardWillShow,
+            object: nil
+        )
         
         MainMenuHeight.constant = -148
         mpcHandler.setupPeerWithDisplayName(displayName: UIDevice.current.name)
