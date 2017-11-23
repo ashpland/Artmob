@@ -41,15 +41,16 @@ class DrawView: UIView {
     override func draw(_ rect: CGRect) {
         
         let path = UIBezierPath()
-        path.lineWidth = lineFormatSettings.width
-        path.lineCapStyle = lineFormatSettings.cap
-        lineFormatSettings.color.setStroke()
+        let drawMe = LineElement(line: activeDrawingLine, width: lineFormatSettings.width, cap: lineFormatSettings.cap, color: lineFormatSettings.color)
+        path.lineWidth = drawMe.width
+        path.lineCapStyle = drawMe.cap
+        drawMe.drawColor.setStroke()
         
-        if !activeDrawingLine.segments.isEmpty {
+        if !drawMe.line.segments.isEmpty {
             
-            path.move(to: activeDrawingLine.segments.first!.firstPoint)
+            path.move(to: drawMe.line.segments.first!.firstPoint)
             
-            for segment in activeDrawingLine.segments {
+            for segment in drawMe.line.segments {
                 path.addLine(to: segment.firstPoint)
                 path.addLine(to: segment.secondPoint)
             }

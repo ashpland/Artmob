@@ -22,16 +22,16 @@ class MPCHandler: NSObject, MCSessionDelegate{
     
     let recievedInstruction = PublishSubject<InstructionAndHashBundle>()
     
-    //MARK: Setup
+    //MARK:- Setup
     func setupSubscribe(){
         InstructionManager.subscribeToInstructionsFrom(self.recievedInstruction)
         
         _ = InstructionManager.sharedInstance.broadcastInstructions
             .subscribe(onNext: { (bundle) in
                 if self.state == MCSessionState.connected {
-                    
-                    // TODO: Make this send the hash too
-                    self.sendLine(lineMessage: LineMessage(instruction: bundle.instruction))
+                    let newMessage = LineMessage(instruction: bundle.instruction)
+                    newMessage.currentHash = bundle.hash
+                    self.sendLine(lineMessage: newMessage)
                 }
             })
     }
@@ -56,7 +56,7 @@ class MPCHandler: NSObject, MCSessionDelegate{
         }
     }
     
-    //MARK: Send message
+    //MARK: - Send message
     //    func sendInstruction(instruction:Instruction){
     //        let messageDict = ["message":message, "player":UIDevice.current.name] as [String : Any]
     //        let messageData = try! JSONSerialization.data(withJSONObject: messageDict, options: JSONSerialization.WritingOptions.prettyPrinted)
@@ -72,8 +72,31 @@ class MPCHandler: NSObject, MCSessionDelegate{
         let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 1])
         try! session.send(data, toPeers: session.connectedPeers, with: MCSessionSendDataMode.reliable)
     }
+    func peerFromUser(user: String) -> [MCPeerID] {
+        let conPeers = self.session.connectedPeers
+        let userPeerID = conPeers.filter{$0.displayName == user}
+        return userPeerID
+    }
     
-    //MARK: MCSessionDelegate
+    
+    func sendStamps(_ stampsArray: [Stamp], to user:String, with hash: InstructionStoreHash) {
+        if self.state == MCSessionState.connected {
+            let stampMessage = StampMessage(stamps: stampsArray)
+            stampMessage.currentHash = hash
+            self.sendStamps(stampMessage: stampMessage, user: user)
+        }
+    }
+    
+    
+    func sendStamps(stampMessage: StampMessage, user:String){
+        
+        let messageData = NSKeyedArchiver.archivedData(withRootObject: stampMessage)
+        let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 2])
+        try! session.send(data, toPeers: peerFromUser(user: user), with: MCSessionSendDataMode.reliable)
+        
+    }
+    
+    //MARK:- MCSessionDelegate
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         self.state = state
     }
@@ -89,15 +112,24 @@ class MPCHandler: NSObject, MCSessionDelegate{
             newInstruction = lineMessage.toInstruction()
             instructionAndHash = InstructionAndHashBundle(instruction: newInstruction,
                                                           hash: lineMessage.currentHash)
+            self.recievedInstruction.onNext(instructionAndHash)
+            
+        } else if dic["type"] as! Int == 2 {
+            let stampMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! StampMessage
+            
+            InstructionManager.sharedInstance.stampsStream
+                .onNext(StampsAndSender(stamps: stampMessage.toStamps(),
+                                        sender: peerID.displayName))
             
         } else {
             let labelMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! LabelMessage
             newInstruction = labelMessage.toInstruction()
             instructionAndHash = InstructionAndHashBundle(instruction: newInstruction,
                                                           hash: labelMessage.currentHash)
+            self.recievedInstruction.onNext(instructionAndHash)
         }
         
-        self.recievedInstruction.onNext(instructionAndHash)
+        
 
         
     }
