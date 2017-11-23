@@ -73,7 +73,9 @@ class MPCHandler: NSObject, MCSessionDelegate{
         try! session.send(data, toPeers: session.connectedPeers, with: MCSessionSendDataMode.reliable)
     }
     func peerFromUser(user: String) -> [MCPeerID] {
-        return self.session.connectedPeers.filter{$0.displayName == user}
+        let conPeers = self.session.connectedPeers
+        let userPeerID = conPeers.filter{$0.displayName == user}
+        return userPeerID
     }
     
     
