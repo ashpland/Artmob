@@ -18,7 +18,47 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
     func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
         mpcHandler.browser.dismiss(animated: true, completion: nil)
     }
-    
+
+    @IBOutlet weak var MainMenuButton: UIButton!
+    @IBOutlet weak var MainMenuHeight: NSLayoutConstraint!
+    @IBAction func thickness(_ sender: UIButton) {
+        var formatLine = LineFormatSettings.sharedInstance
+        switch sender.tag{
+        case 0:
+            formatLine.width = 3.0
+            break
+        case 1:
+            formatLine.width = 5.0
+            break
+        default:
+            formatLine.width = 8.0
+            break
+        }
+    }
+    @IBAction func color(_ sender: UIButton) {
+        print(sender.tag)
+        var formatLine = LineFormatSettings.sharedInstance
+        switch sender.tag{
+        case 0:
+            formatLine.color = LineColor.black
+        case 1:
+            formatLine.color = LineColor.white
+        case 2:
+            formatLine.color = LineColor.red
+        case 3:
+            formatLine.color = LineColor.orange
+        case 4:
+            formatLine.color = LineColor.yellow
+        case 5:
+            formatLine.color = LineColor.green
+        case 6:
+            formatLine.color = LineColor.blue
+        case 7:
+            formatLine.color = LineColor.purple
+        default:
+            formatLine.color = LineColor.black
+        }
+    }
 
     @IBOutlet weak var drawView: DrawView!
     @IBOutlet weak var lineImageView: UIImageView!
@@ -27,7 +67,26 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
     let disposeBag = DisposeBag()
     var mpcHandler = MPCHandler.sharedInstance
     
-    
+    @IBAction func addLabel(_ sender: Any) {
+        //AddLabel
+    }
+    @IBAction func Menu(_ sender: UIButton) {
+        
+        if MainMenuHeight.constant == -148{
+            UIView.animate(withDuration: 0.5, animations: {
+                self.MainMenuHeight.constant = 0
+                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
+                self.view.layoutIfNeeded()
+            })
+        } else{
+            UIView.animate(withDuration: 0.5, animations: {
+                self.MainMenuHeight.constant = -148
+                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 0)
+                self.view.layoutIfNeeded()
+            })
+        }
+        
+    }
     @IBAction func Add(_ sender: Any) {
         if mpcHandler.session != nil{
             mpcHandler.setupBrowser()
@@ -37,7 +96,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        MainMenuHeight.constant = -148
         mpcHandler.setupPeerWithDisplayName(displayName: UIDevice.current.name)
         mpcHandler.setupSession()
         mpcHandler.advertiseSelf(advertise: true)
@@ -66,7 +125,7 @@ class LineFormatSettings {
     
     var width : CGFloat = 5.0
     var cap = CGLineCap.round
-    var color = UIColor.blue
+    var color = LineColor.blue
 }
 
 
