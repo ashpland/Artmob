@@ -40,6 +40,10 @@ class MessagesTests: XCTestCase {
         XCTAssert(instructions.stamps == decodedLineMessages.stamps, "Instructions should be the same after conversion to message")
     }
     
+    func testLabelConversion() {
+        
+    }
+    
     
     
 }

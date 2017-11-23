@@ -75,7 +75,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate  {
         if MainMenuHeight.constant == -148{
             UIView.animate(withDuration: 0.5, animations: {
                 self.MainMenuHeight.constant = 0
-                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: Double.pi)
+                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
                 self.view.layoutIfNeeded()
             })
         } else{

@@ -22,16 +22,16 @@ class MPCHandler: NSObject, MCSessionDelegate{
     
     let recievedInstruction = PublishSubject<InstructionAndHashBundle>()
     
-    //MARK: Setup
+    //MARK:- Setup
     func setupSubscribe(){
         InstructionManager.subscribeToInstructionsFrom(self.recievedInstruction)
         
         _ = InstructionManager.sharedInstance.broadcastInstructions
             .subscribe(onNext: { (bundle) in
                 if self.state == MCSessionState.connected {
-                    
-                    // TODO: Make this send the hash too
-                    self.sendLine(lineMessage: LineMessage(instruction: bundle.instruction))
+                    let newMessage = LineMessage(instruction: bundle.instruction)
+                    newMessage.currentHash = bundle.hash
+                    self.sendLine(lineMessage: newMessage)
                 }
             })
     }
@@ -56,7 +56,7 @@ class MPCHandler: NSObject, MCSessionDelegate{
         }
     }
     
-    //MARK: Send message
+    //MARK: - Send message
     //    func sendInstruction(instruction:Instruction){
     //        let messageDict = ["message":message, "player":UIDevice.current.name] as [String : Any]
     //        let messageData = try! JSONSerialization.data(withJSONObject: messageDict, options: JSONSerialization.WritingOptions.prettyPrinted)
@@ -78,9 +78,11 @@ class MPCHandler: NSObject, MCSessionDelegate{
     
     
     func sendStamps(_ stampsArray: [Stamp], to user:String, with hash: InstructionStoreHash) {
-        let stampMessage = StampMessage(stamps: stampsArray)
-        stampMessage.currentHash = hash
-        self.sendStamps(stampMessage: stampMessage, user: user)
+        if self.state == MCSessionState.connected {
+            let stampMessage = StampMessage(stamps: stampsArray)
+            stampMessage.currentHash = hash
+            self.sendStamps(stampMessage: stampMessage, user: user)
+        }
     }
     
     
@@ -92,7 +94,7 @@ class MPCHandler: NSObject, MCSessionDelegate{
         
     }
     
-    //MARK: MCSessionDelegate
+    //MARK:- MCSessionDelegate
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         self.state = state
     }
