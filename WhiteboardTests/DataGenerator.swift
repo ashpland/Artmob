@@ -40,6 +40,6 @@ internal func generateLineInstruction() -> Instruction {
 
 fileprivate func buildInstruction(type: InstructionType,
                                   from payload: InstructionPayload) -> Instruction {
-    let stamp = Stamp(user: "User", timestamp: Date())
+    let stamp = Stamp(user: MPCHandler.sharedInstance.session.myPeerID, timestamp: Date())
     return Instruction(type: type, element: payload, stamp: stamp)
 }

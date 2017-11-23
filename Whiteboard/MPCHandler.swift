@@ -79,20 +79,20 @@ class MPCHandler: NSObject, MCSessionDelegate{
     }
     
     
-    func sendStamps(_ stampsArray: [Stamp], to user:String, with hash: InstructionStoreHash) {
+    func sendStamps(_ stampsArray: [Stamp], to peer:MCPeerID, with hash: InstructionStoreHash) {
         if self.state == MCSessionState.connected {
             let stampMessage = StampMessage(stamps: stampsArray)
             stampMessage.currentHash = hash
-            self.sendStamps(stampMessage: stampMessage, user: user)
+            self.sendStamps(stampMessage: stampMessage, peer: peer)
         }
     }
     
     
-    func sendStamps(stampMessage: StampMessage, user:String){
+    func sendStamps(stampMessage: StampMessage, peer:MCPeerID){
         
         let messageData = NSKeyedArchiver.archivedData(withRootObject: stampMessage)
         let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 2])
-        try! session.send(data, toPeers: peerFromUser(user: user), with: MCSessionSendDataMode.reliable)
+        try! session.send(data, toPeers: [peer], with: MCSessionSendDataMode.reliable)
         
     }
     
@@ -119,7 +119,7 @@ class MPCHandler: NSObject, MCSessionDelegate{
             
             InstructionManager.sharedInstance.stampsStream
                 .onNext(StampsAndSender(stamps: stampMessage.toStamps(),
-                                        sender: peerID.displayName))
+                                        sender: peerID))
             
         } else {
             let labelMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! LabelMessage
