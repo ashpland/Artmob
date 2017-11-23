@@ -59,7 +59,18 @@ struct LineElement {
     let line: Line
     let width: CGFloat
     let cap: CGLineCap
-    let color: UIColor
+    let color: LineColor
+}
+
+enum LineColor: Int {
+    case black
+    case white
+    case red
+    case orange
+    case yellow
+    case green
+    case blue
+    case purple
 }
 
 struct Line {
