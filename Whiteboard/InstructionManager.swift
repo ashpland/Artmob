@@ -8,6 +8,8 @@
 
 import Foundation
 import RxSwift
+import MultipeerConnectivity
+
 
 class InstructionManager {
     
@@ -24,13 +26,14 @@ class InstructionManager {
     
     init() {
         let hashCheckInterval = 1.0
-        let stampsCheckInterval = 1.0
         
         _ = hashStream.throttle(hashCheckInterval, scheduler: MainScheduler.instance)
-            .subscribe(onNext: { self.check($0.hash, from: $0.sender) })
+            .subscribe(onNext: { self.check(hash:$0.hash,
+                                            from: $0.sender) })
         
-        _ = stampsStream.throttle(stampsCheckInterval, scheduler: MainScheduler.instance)
-            .subscribe(onNext: { self.sync(theirInstructions: $0.stamps, from: $0.sender) })
+        _ = stampsStream.subscribe(onNext:
+            { self.sync(theirInstructions: $0.stamps,
+                        from: $0.sender) })
         
     }
     
@@ -50,7 +53,7 @@ class InstructionManager {
         self.newInstruction(bundle.instruction)
         
         if let theirHash = bundle.hash {
-            if bundle.instruction.stamp.user != MPCHandler.sharedInstance.peerID.displayName {
+            if bundle.instruction.stamp.user != MPCHandler.sharedInstance.peerID {
                 self.hashStream.onNext(HashAndSender(hash: theirHash, 
                                                      sender: bundle.instruction.stamp.user))
             }
@@ -101,7 +104,7 @@ class InstructionManager {
         ElementModel.sharedInstance.refreshLines(from: lineInstructions)
     }
     
-    internal func check(_ hash: InstructionStoreHash, from user:String) {
+    internal func check(hash: InstructionStoreHash, from user:MCPeerID) {
         if self.instructionStore.hashValue != hash {
             MPCHandler.sharedInstance.sendStamps(self.instructionStore.stamps,
                                                  to: user,
@@ -109,7 +112,7 @@ class InstructionManager {
         }
     }
     
-    internal func sync(theirInstructions: Array<Stamp>, from user: String) {
+    internal func sync(theirInstructions: Array<Stamp>, from user: MCPeerID) {
         let myInstructions = self.instructionStore.stamps
         
         for stamp in myInstructions.elementsNotIn(theirInstructions) {
@@ -138,7 +141,7 @@ struct InstructionAndHashBundle {
 
 struct HashAndSender {
     let hash: InstructionStoreHash
-    let sender: String
+    let sender: MCPeerID
 }
 
 struct Instruction {
@@ -182,11 +185,11 @@ enum InstructionPayload {
 
 struct StampsAndSender {
     let stamps: Array<Stamp>
-    let sender: String
+    let sender: MCPeerID
 }
 
 struct Stamp: Comparable, Hashable {
-    let user: String
+    let user: MCPeerID
     let timestamp: Date
     
     var hashValue: Int {
@@ -199,7 +202,7 @@ struct Stamp: Comparable, Hashable {
         if lhs.timestamp < rhs.timestamp {
             return true
         }
-        if lhs.timestamp == rhs.timestamp && lhs.user < rhs.user {
+        if lhs.timestamp == rhs.timestamp && lhs.user.displayName < rhs.user.displayName {
             return true
         }
         return false
