@@ -102,7 +102,7 @@ class BoardViewModel {
             let path = UIBezierPath()
             path.lineWidth = lineToDraw.width
             path.lineCapStyle = lineToDraw.cap
-            lineToDraw.color.setStroke()
+            lineToDraw.drawColor.setStroke()
             
             if !lineToDraw.line.segments.isEmpty {
                 path.move(to: lineToDraw.line.segments.first!.firstPoint)
