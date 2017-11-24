@@ -17,6 +17,7 @@ class InstructionManagerTests: XCTestCase {
     
     var newInstructions: [Instruction]!
     var broadcastInstructions: [Instruction]!
+    var fakeFriendManager: FakeFriendManager!
     
     override func setUp() {
         super.setUp()
@@ -27,6 +28,7 @@ class InstructionManagerTests: XCTestCase {
         self.newInstructions = [Instruction]()
         self.broadcastInstructions = [Instruction]()
         
+        self.fakeFriendManager = FakeFriendManager()
         
         InstructionManager.sharedInstance.newInstructions
             .subscribe(onNext: { (instruction) in
@@ -161,9 +163,11 @@ class InstructionManagerTests: XCTestCase {
         InstructionManager.subscribeToInstructionsFrom(Observable.from(myInstructions.withNilHash))
         
         InstructionManager.sharedInstance.sync(theirInstructions: theirInstructions.stamps,
-                                               from: MPCHandler.sharedInstance.session.myPeerID, with: MPCHandler.sharedInstance)
+                                               from: MPCHandler.sharedInstance.session.myPeerID,
+                                               with: self.fakeFriendManager)
         InstructionManager.sharedInstance.sync(theirInstructions: theirInstructions.stamps,
-                                               from: MPCHandler.sharedInstance.session.myPeerID, with: MPCHandler.sharedInstance)
+                                               from: MPCHandler.sharedInstance.session.myPeerID,
+                                               with: self.fakeFriendManager)
         
         // change MPCHandler.sharedInstance bit
         
@@ -199,11 +203,10 @@ class InstructionManagerTests: XCTestCase {
         
         InstructionManager.sharedInstance.sync(theirInstructions: theirInstructions.stamps,
                                                from: MPCHandler.sharedInstance.session.myPeerID,
-                                               with: MPCHandler.sharedInstance)
+                                               with: self.fakeFriendManager)
         
         
         
-        // change MPCHandler.sharedInstance bit
         
         Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) {
             _ in
@@ -217,8 +220,8 @@ class InstructionManagerTests: XCTestCase {
                 return
             }
             
-            XCTAssert(self.broadcastInstructions.count == 3,
-                      "Only one instruction should be rebroadcasted")
+            XCTAssertTrue(self.fakeFriendManager.instructionRequested,
+                          "Missing instruction should be requested")
         }
         
         
