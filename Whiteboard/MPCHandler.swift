@@ -10,7 +10,9 @@ import UIKit
 import MultipeerConnectivity
 import RxSwift
 
-class MPCHandler: NSObject, MCSessionDelegate{
+class MPCHandler: NSObject, MCSessionDelegate, PeerManager{
+    
+    
     static let sharedInstance = MPCHandler()
     //MARK: Properties
     var peerID:MCPeerID!
@@ -78,22 +80,21 @@ class MPCHandler: NSObject, MCSessionDelegate{
         return userPeerID
     }
     
-    
-    func sendStamps(_ stampsArray: [Stamp], to user:String, with hash: InstructionStoreHash) {
+    func requestInstructions(from peer: MCPeerID, for stampsArray: [Stamp], with hash: InstructionStoreHash) {
         if self.state == MCSessionState.connected {
             let stampMessage = StampMessage(stamps: stampsArray)
             stampMessage.currentHash = hash
-            self.sendStamps(stampMessage: stampMessage, user: user)
+            self.sendStamps(stampMessage: stampMessage, peer: peer)
         }
     }
     
     
-    func sendStamps(stampMessage: StampMessage, user:String){
+    func sendStamps(stampMessage: StampMessage, peer:MCPeerID){
         
         let messageData = NSKeyedArchiver.archivedData(withRootObject: stampMessage)
         let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 2])
-        try! session.send(data, toPeers: peerFromUser(user: user), with: MCSessionSendDataMode.reliable)
-        
+        try! session.send(data, toPeers: [peer], with: MCSessionSendDataMode.reliable)
+        print("Instructions requested")
     }
     
     //MARK:- MCSessionDelegate
@@ -108,6 +109,7 @@ class MPCHandler: NSObject, MCSessionDelegate{
         let instructionAndHash: InstructionAndHashBundle
         
         if dic["type"] as! Int == 0 {
+            print("Recieved Line")
             let lineMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! LineMessage
             newInstruction = lineMessage.toInstruction()
             instructionAndHash = InstructionAndHashBundle(instruction: newInstruction,
@@ -115,11 +117,13 @@ class MPCHandler: NSObject, MCSessionDelegate{
             self.recievedInstruction.onNext(instructionAndHash)
             
         } else if dic["type"] as! Int == 2 {
+            print("Recieved Stamps")
+
             let stampMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! StampMessage
             
             InstructionManager.sharedInstance.stampsStream
                 .onNext(StampsAndSender(stamps: stampMessage.toStamps(),
-                                        sender: peerID.displayName))
+                                        sender: peerID))
             
         } else {
             let labelMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! LabelMessage

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MultipeerConnectivity
 
 class StampMessage:NSObject, NSCoding{
     var stampsData:Array<Dictionary<String,Any>>!
@@ -22,7 +23,7 @@ class StampMessage:NSObject, NSCoding{
     func toStamps() -> [Stamp]{
         var stamps = Array<Stamp>()
         for stamp in stampsData{
-            stamps.append(Stamp(user: stamp["user"] as! String, timestamp: stamp["timestamp"] as! Date))
+            stamps.append(Stamp(user: stamp["user"] as! MCPeerID, timestamp: stamp["timestamp"] as! Date))
         }
         return stamps
     }
@@ -44,7 +45,7 @@ class LineMessage:NSObject, NSCoding{
     var colorData:Int!
     var capData:Int!
     var widthData:CGFloat!
-    var userData:String!
+    var userData:MCPeerID!
     var timestampData:Date!
     var currentHash:Int!
     override init() {
@@ -109,7 +110,7 @@ class LineMessage:NSObject, NSCoding{
         colorData = aDecoder.decodeObject(forKey: "color") as! Int
         capData = aDecoder.decodeObject(forKey: "cap") as! Int
         widthData = aDecoder.decodeObject(forKey: "width") as! CGFloat
-        userData = aDecoder.decodeObject(forKey: "user") as! String
+        userData = aDecoder.decodeObject(forKey: "user") as! MCPeerID
         timestampData = aDecoder.decodeObject(forKey: "timestamp") as! Date
         currentHash = aDecoder.decodeObject(forKey: "hash") as! Int
     }
@@ -122,9 +123,9 @@ class LabelMessage:NSObject, NSCoding{
     var text: String!
     var size: CGRect!
     var rotation:Float!
-    var userData:String!
+    var userData:MCPeerID!
     var timestampData:Date!
-    var userRef:String?
+    var userRef:MCPeerID?
     var timestampRef:Date?
     var currentHash:Int!
     
@@ -177,9 +178,9 @@ class LabelMessage:NSObject, NSCoding{
         text = aDecoder.decodeObject(forKey: "text") as! String
         size = aDecoder.decodeObject(forKey: "size") as! CGRect
         rotation = aDecoder.decodeObject(forKey: "rotation") as! Float
-        userData = aDecoder.decodeObject(forKey: "user") as! String
+        userData = aDecoder.decodeObject(forKey: "user") as! MCPeerID
         timestampData = aDecoder.decodeObject(forKey: "timestamp") as! Date
-        userRef = aDecoder.decodeObject(forKey: "userRef") as? String
+        userRef = aDecoder.decodeObject(forKey: "userRef") as? MCPeerID
         timestampRef = aDecoder.decodeObject(forKey: "timestampRef") as? Date
         currentHash = aDecoder.decodeObject(forKey: "hash") as! Int
     }

@@ -61,7 +61,7 @@ class BoardViewModel {
     }
     
     fileprivate func buildInstruction(type: InstructionType, from payload: InstructionPayload) -> Instruction {
-        let stamp = Stamp(user: UIDevice.current.name, timestamp: Date())
+        let stamp = Stamp(user: MPCHandler.sharedInstance.session.myPeerID, timestamp: Date())
         return Instruction(type: type, element: payload, stamp: stamp)
     }
     
