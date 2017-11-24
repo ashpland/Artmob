@@ -1,1 +1,5 @@
-- [ ] write tests to try inserting instructions before first instruction
+- write tests to try inserting instructions before first instruction
+- test insert at 0
+- test insert for correct order
+- print index and store.count
+- test insert function in playground
