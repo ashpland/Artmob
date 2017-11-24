@@ -13,6 +13,7 @@ class BoardViewModel {
     
     fileprivate let settings = LineFormatSettings.sharedInstance
     fileprivate let disposeBag = DisposeBag()
+    
         
     let submitInstruction = PublishSubject<InstructionAndHashBundle>()
     
