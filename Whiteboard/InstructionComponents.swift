@@ -120,7 +120,7 @@ extension Array where Element:Hashable
         return self.reduce(16777619) {$0 ^ $1.hashValue}
     }
     
-    func elementsNotIn(_ otherArray: Array<Element>) -> Array<Element> {
+    func elementsMissingFrom(_ otherArray: Array<Element>) -> Array<Element> {
         return otherArray.filter{!Set(self).contains($0)}
     }
     

@@ -122,12 +122,11 @@ class InstructionManager {
     internal func sync(theirInstructions: Array<Stamp>, from user: MCPeerID) {
         let myInstructions = self.instructionStore.stamps
         
-        Observable.from(myInstructions.elementsNotIn(theirInstructions))
-            .subscribe { self.instructionRequests.on($0) }
-            .disposed(by: self.disposeBag)
+        for instruction in myInstructions.elementsMissingFrom(theirInstructions) {
+            self.instructionRequests.onNext(instruction)
+        }
         
-        
-        if theirInstructions.elementsNotIn(myInstructions).count > 0 {
+        if theirInstructions.elementsMissingFrom(myInstructions).count > 0 {
             MPCHandler.sharedInstance.sendStamps(self.instructionStore.stamps,
                                                  to: user,
                                                  with: self.instructionStore.hashValue)

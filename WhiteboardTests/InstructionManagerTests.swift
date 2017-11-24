@@ -42,9 +42,9 @@ class InstructionManagerTests: XCTestCase {
                 self.broadcastInstructions.append(bundle.instruction)
             }).disposed(by: self.disposeBag)
         
-        InstructionManager.sharedInstance.broadcastInstructions
-            .subscribe(onNext: { (bundle) in
-                self.broadcastInstructions.append(bundle.instruction)
+        InstructionManager.sharedInstance.instructionRequests
+            .subscribe(onNext: { (stamp) in
+                self.requestedInstructions.append(stamp)
             }).disposed(by: self.disposeBag)
         
     }
@@ -141,11 +141,24 @@ class InstructionManagerTests: XCTestCase {
         }
     }
     
+    func testArrayComparison() {
+        
+        let myArray = ["element1", "element2", "element3", "element4"]
+        let theirArray1 = ["element1", "element3", "element4"]
+        
+        let output = theirArray1.elementsMissingFrom(myArray)
+        
+        XCTAssertEqual(output, ["element2"], "element2 should be missing")
+        
+    }
+    
+    
+    
     func testInstructionRequestQueueing() {
         let expect = expectation(description: #function)
         
         var myInstructions = [Instruction]()
-        for _ in 0..<5 {
+        for _ in 0..<2 {
             let newInstruction = generateLineInstruction()
             myInstructions.append(newInstruction)
         }
@@ -160,20 +173,19 @@ class InstructionManagerTests: XCTestCase {
         InstructionManager.sharedInstance.sync(theirInstructions: theirInstructions.stamps,
                                                from: MPCHandler.sharedInstance.session.myPeerID)
         
-        var requestedInstructions = [Stamp]()
+        
+        
+        
+        
+        Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { _ in expect.fulfill() }
         
         
         
         
         
-        expect.fulfill()
         
         
-        
-        
-        
-        
-        waitForExpectations(timeout: 3.0) { error in
+        waitForExpectations(timeout: 4.0) { error in
             guard error == nil else {
                 XCTFail(error!.localizedDescription)
                 return
@@ -182,7 +194,7 @@ class InstructionManagerTests: XCTestCase {
             
             
             
-            XCTAssertEqual(requestedInstructions,
+            XCTAssertEqual(self.requestedInstructions,
                            [myInstructions[0].stamp, myInstructions[0].stamp],
                            "New instructions should not recieve inserted instructions.")
         }
