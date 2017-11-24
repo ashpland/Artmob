@@ -9,8 +9,11 @@
 import UIKit
 import RxSwift
 
+protocol CloseMenu {
+    func closeMenu()
+}
 class DrawView: UIView {
-
+    var closeMenuDelagate:CloseMenu?
     private var activeDrawingLine = Line()
     private let lineFormatSettings = LineFormatSettings.sharedInstance
     public var lineStream : PublishSubject<LineSegment>!
@@ -19,6 +22,7 @@ class DrawView: UIView {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.lineStream = PublishSubject<LineSegment>()
         self.viewModel.recieveLine(self.lineStream)
+        closeMenuDelagate?.closeMenu()
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
