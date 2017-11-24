@@ -27,7 +27,7 @@ class InstructionManager {
     // MARK: - Methods
     
     init() {
-        let hashCheckInterval = 1.0
+        let hashCheckInterval = 10.0
         
         hashStream.throttle(hashCheckInterval, scheduler: MainScheduler.instance)
             .subscribe(onNext: { self.check(hash: $0.hash,
@@ -61,11 +61,14 @@ class InstructionManager {
     }
     
     private func new(instructionAndHash bundle: InstructionAndHashBundle) {
+        print("New Instruction")
         self.newInstruction(bundle.instruction)
         
         if let theirHash = bundle.hash {
             if bundle.instruction.stamp.user != MPCHandler.sharedInstance.peerID {
-                self.hashStream.onNext(HashAndSender(hash: theirHash, 
+                print("Recieved Hash")
+
+                self.hashStream.onNext(HashAndSender(hash: theirHash,
                                                      sender: bundle.instruction.stamp.user))
             }
         }
@@ -114,7 +117,9 @@ class InstructionManager {
     }
     
     internal func check(hash: InstructionStoreHash, from peer:MCPeerID, with peerManager: PeerManager) {
+        print("Checked Hash")
         if self.instructionStore.hashValue != hash {
+            print("Hash conflict")
             peerManager.requestInstructions(from: peer,
                                             for: self.instructionStore.stamps,
                                             with: self.instructionStore.hashValue)
@@ -122,6 +127,7 @@ class InstructionManager {
     }
     
     internal func sync(theirInstructions: Array<Stamp>, from peer: MCPeerID, with peerManager: PeerManager) {
+        
         let myInstructions = self.instructionStore.stamps        
         
         for instruction in theirInstructions.elementsMissingFrom(myInstructions) {
