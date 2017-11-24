@@ -17,9 +17,6 @@ class InstructionManagerTests: XCTestCase {
     
     var newInstructions: [Instruction]!
     var broadcastInstructions: [Instruction]!
-    var requestedInstructions: [Stamp]!
-    
-    
     
     override func setUp() {
         super.setUp()
@@ -29,7 +26,6 @@ class InstructionManagerTests: XCTestCase {
         
         self.newInstructions = [Instruction]()
         self.broadcastInstructions = [Instruction]()
-        self.requestedInstructions = [Stamp]()
         
         
         InstructionManager.sharedInstance.newInstructions
@@ -42,10 +38,6 @@ class InstructionManagerTests: XCTestCase {
                 self.broadcastInstructions.append(bundle.instruction)
             }).disposed(by: self.disposeBag)
         
-        InstructionManager.sharedInstance.instructionRequests
-            .subscribe(onNext: { (stamp) in
-                self.requestedInstructions.append(stamp)
-            }).disposed(by: self.disposeBag)
         
     }
     
@@ -173,17 +165,7 @@ class InstructionManagerTests: XCTestCase {
         InstructionManager.sharedInstance.sync(theirInstructions: theirInstructions.stamps,
                                                from: MPCHandler.sharedInstance.session.myPeerID)
         
-        
-        
-        
-        
         Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { _ in expect.fulfill() }
-        
-        
-        
-        
-        
-        
         
         waitForExpectations(timeout: 4.0) { error in
             guard error == nil else {
@@ -191,24 +173,50 @@ class InstructionManagerTests: XCTestCase {
                 return
             }
             
-            
-            
-            
-            XCTAssertEqual(self.requestedInstructions,
-                           [myInstructions[0].stamp, myInstructions[0].stamp],
-                           "New instructions should not recieve inserted instructions.")
+            XCTAssert(self.broadcastInstructions.count == 3,
+                      "Only one instruction should be rebroadcasted")
+            XCTAssertEqual(self.broadcastInstructions[0].stamp, self.broadcastInstructions[2].stamp,
+                      "The instruction missing from the second and third arrays should be rebroadcast")
+        }
+    }
+    
+    
+    func testRequestMissingLocalInstruction() {
+        let expect = expectation(description: #function)
+        
+        var theirInstructions = [Instruction]()
+        for _ in 0..<2 {
+            let newInstruction = generateLineInstruction()
+            theirInstructions.append(newInstruction)
         }
         
-        /*
-         myArray = 5 instructions
-         theirArray = my - 1
-         
-         subscribe to self.broadcastInstructions and check results
-         
-         IM.sync theirArray twice. should have a duplicate in the array
-         
-         
-         */
+        var myInstructions = theirInstructions
+        myInstructions.remove(at: 0)
+        
+        InstructionManager.subscribeToInstructionsFrom(Observable.from(myInstructions.withNilHash))
+        
+        InstructionManager.sharedInstance.sync(theirInstructions: theirInstructions.stamps,
+                                               from: MPCHandler.sharedInstance.session.myPeerID)
+        
+        Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) {
+            _ in
+            expect.fulfill()
+            
+        }
+        
+        waitForExpectations(timeout: 4.0) { error in
+            guard error == nil else {
+                XCTFail(error!.localizedDescription)
+                return
+            }
+            
+            XCTAssert(self.broadcastInstructions.count == 3,
+                      "Only one instruction should be rebroadcasted")
+            XCTAssertEqual(self.broadcastInstructions[0].stamp, self.broadcastInstructions[2].stamp,
+                           "The instruction missing from the second and third arrays should be rebroadcast")
+        }
+        
+        
     }
     
     

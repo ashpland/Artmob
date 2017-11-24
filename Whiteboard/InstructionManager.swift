@@ -38,7 +38,8 @@ class InstructionManager {
                         from: $0.sender) })
         .disposed(by: self.disposeBag)
         
-        instructionRequests.buffer(timeSpan: 1.0, count: 50, scheduler: MainScheduler.instance)
+        
+        instructionRequests.buffer(timeSpan: 2.0, count: 50, scheduler: MainScheduler.instance)
             .subscribe(onNext: {self.processInstructionRequests($0)})
         .disposed(by: self.disposeBag)
 
@@ -111,22 +112,24 @@ class InstructionManager {
         ElementModel.sharedInstance.refreshLines(from: lineInstructions)
     }
     
-    internal func check(hash: InstructionStoreHash, from user:MCPeerID) {
+    internal func check(hash: InstructionStoreHash, from user:MCPeerID) -> Bool {
         if self.instructionStore.hashValue != hash {
             MPCHandler.sharedInstance.sendStamps(self.instructionStore.stamps,
                                                  to: user,
                                                  with: self.instructionStore.hashValue)
+            return false
         }
+        return true
     }
     
     internal func sync(theirInstructions: Array<Stamp>, from user: MCPeerID) {
-        let myInstructions = self.instructionStore.stamps
+        let myInstructions = self.instructionStore.stamps        
         
-        for instruction in myInstructions.elementsMissingFrom(theirInstructions) {
+        for instruction in theirInstructions.elementsMissingFrom(myInstructions) {
             self.instructionRequests.onNext(instruction)
         }
         
-        if theirInstructions.elementsMissingFrom(myInstructions).count > 0 {
+        if myInstructions.elementsMissingFrom(theirInstructions).count > 0 {
             MPCHandler.sharedInstance.sendStamps(self.instructionStore.stamps,
                                                  to: user,
                                                  with: self.instructionStore.hashValue)
@@ -134,9 +137,12 @@ class InstructionManager {
     }
     
     internal func processInstructionRequests(_ requests: Array<Stamp>) {
-//        let instructionStamps = Array(Set(requests))
         
-        for stamp in requests {
+        guard !requests.isEmpty else {return}
+        
+        let instructionStamps = Array(Set(requests))
+
+        for stamp in instructionStamps {
             if let instruction = self.instructionStore.instruction(for: stamp) {
                 let bundle = InstructionAndHashBundle(instruction: instruction,
                                                       hash: self.instructionStore.hashValue)
