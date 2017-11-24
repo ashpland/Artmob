@@ -107,7 +107,7 @@ class InstructionManagerTests: XCTestCase {
     
     func testInstructionManagerInsertInstructions() {
         let expect = expectation(description: #function)
-        let expectedCount = 5
+        let expectedCount = 6
         
         var instructionArray = [Instruction]()
         for _ in 0..<expectedCount {
@@ -115,9 +115,13 @@ class InstructionManagerTests: XCTestCase {
             instructionArray.append(newInstruction)
         }
         
-        let insertInstruction = instructionArray[2]
+        let zeroInsertInstruction = instructionArray[0]
+        instructionArray.remove(at: 0)
+        let middleInsertInstruction = instructionArray[2]
         instructionArray.remove(at: 2)
-        instructionArray.append(insertInstruction)
+        
+        instructionArray.append(middleInsertInstruction)
+        instructionArray.append(zeroInsertInstruction)
         
         InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray.withNilHash))
         expect.fulfill()
@@ -127,8 +131,8 @@ class InstructionManagerTests: XCTestCase {
                 XCTFail(error!.localizedDescription)
                 return
             }
-            
-            XCTAssertEqual(expectedCount - 1, self.newInstructions.count,
+     
+            XCTAssertEqual(expectedCount - 2, self.newInstructions.count,
                            "New instructions should not recieve inserted instructions.")
             XCTAssertEqual(expectedCount, self.broadcastInstructions.count,
                            "Broadcast instructions should recieve all instructions.")
