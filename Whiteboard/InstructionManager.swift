@@ -97,17 +97,20 @@ class InstructionManager {
             }
             if newInstruction.stamp > currentInstruction.stamp {
                 self.instructionStore.insert(newInstruction, at: self.instructionStore.count - index)
-                let newInstructionBundle = InstructionAndHashBundle(instruction: newInstruction, hash: self.instructionStore.hashValue)
-                self.broadcastInstructions.onNext(newInstructionBundle)
-                
-                switch newInstruction.element {
-                case .line:
-                    self.refreshLines()
-                    return
-                case .label:
-                    return
-                }
             }
+            if index == instructionStore.count - 1 {
+                self.instructionStore.insert(newInstruction, at: 0)
+            }
+        }
+        let newInstructionBundle = InstructionAndHashBundle(instruction: newInstruction, hash: self.instructionStore.hashValue)
+        self.broadcastInstructions.onNext(newInstructionBundle)
+        
+        switch newInstruction.element {
+        case .line:
+            self.refreshLines()
+            return
+        case .label:
+            return
         }
     }
     
