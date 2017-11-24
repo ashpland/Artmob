@@ -22,6 +22,7 @@ class InstructionManager {
     let stampsStream = PublishSubject<StampsAndSender>()
     let instructionRequests = PublishSubject<Stamp>()
     private let disposeBag = DisposeBag()
+    private let peerManager: PeerManager = MPCHandler.sharedInstance
     
     // MARK: - Methods
     
@@ -29,20 +30,22 @@ class InstructionManager {
         let hashCheckInterval = 1.0
         
         hashStream.throttle(hashCheckInterval, scheduler: MainScheduler.instance)
-            .subscribe(onNext: { self.check(hash:$0.hash,
-                                            from: $0.sender) })
+            .subscribe(onNext: { self.check(hash: $0.hash,
+                                            from: $0.sender,
+                                            with: self.peerManager) })
             .disposed(by: self.disposeBag)
         
-        stampsStream.subscribe(onNext:
-            { self.sync(theirInstructions: $0.stamps,
-                        from: $0.sender) })
-        .disposed(by: self.disposeBag)
+        stampsStream
+            .subscribe(onNext: { self.sync(theirInstructions: $0.stamps,
+                                           from: $0.sender,
+                                           with: self.peerManager)})
+            .disposed(by: self.disposeBag)
         
         
         instructionRequests.buffer(timeSpan: 2.0, count: 50, scheduler: MainScheduler.instance)
             .subscribe(onNext: {self.processInstructionRequests($0)})
-        .disposed(by: self.disposeBag)
-
+            .disposed(by: self.disposeBag)
+        
     }
     
     
@@ -112,17 +115,15 @@ class InstructionManager {
         ElementModel.sharedInstance.refreshLines(from: lineInstructions)
     }
     
-    internal func check(hash: InstructionStoreHash, from user:MCPeerID) -> Bool {
+    internal func check(hash: InstructionStoreHash, from peer:MCPeerID, with peerManager: PeerManager) {
         if self.instructionStore.hashValue != hash {
-            MPCHandler.sharedInstance.sendStamps(self.instructionStore.stamps,
-                                                 to: user,
-                                                 with: self.instructionStore.hashValue)
-            return false
+            peerManager.requestInstructions(from: peer,
+                                            for: self.instructionStore.stamps,
+                                            with: self.instructionStore.hashValue)
         }
-        return true
     }
     
-    internal func sync(theirInstructions: Array<Stamp>, from user: MCPeerID) {
+    internal func sync(theirInstructions: Array<Stamp>, from peer: MCPeerID, with peerManager: PeerManager) {
         let myInstructions = self.instructionStore.stamps        
         
         for instruction in theirInstructions.elementsMissingFrom(myInstructions) {
@@ -130,9 +131,9 @@ class InstructionManager {
         }
         
         if myInstructions.elementsMissingFrom(theirInstructions).count > 0 {
-            MPCHandler.sharedInstance.sendStamps(self.instructionStore.stamps,
-                                                 to: user,
-                                                 with: self.instructionStore.hashValue)
+            peerManager.requestInstructions(from: peer,
+                                            for: self.instructionStore.stamps,
+                                            with: self.instructionStore.hashValue)
         }
     }
     
@@ -141,7 +142,7 @@ class InstructionManager {
         guard !requests.isEmpty else {return}
         
         let instructionStamps = Array(Set(requests))
-
+        
         for stamp in instructionStamps {
             if let instruction = self.instructionStore.instruction(for: stamp) {
                 let bundle = InstructionAndHashBundle(instruction: instruction,
@@ -150,6 +151,8 @@ class InstructionManager {
             }
         }
     }
-    
-    
+}
+
+protocol PeerManager {
+    func requestInstructions(from peer:MCPeerID, for stampsArray: [Stamp], with hash: InstructionStoreHash)
 }

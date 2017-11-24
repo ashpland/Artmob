@@ -10,7 +10,9 @@ import UIKit
 import MultipeerConnectivity
 import RxSwift
 
-class MPCHandler: NSObject, MCSessionDelegate{
+class MPCHandler: NSObject, MCSessionDelegate, PeerManager{
+    
+    
     static let sharedInstance = MPCHandler()
     //MARK: Properties
     var peerID:MCPeerID!
@@ -78,8 +80,7 @@ class MPCHandler: NSObject, MCSessionDelegate{
         return userPeerID
     }
     
-    
-    func sendStamps(_ stampsArray: [Stamp], to peer:MCPeerID, with hash: InstructionStoreHash) {
+    func requestInstructions(from peer: MCPeerID, for stampsArray: [Stamp], with hash: InstructionStoreHash) {
         if self.state == MCSessionState.connected {
             let stampMessage = StampMessage(stamps: stampsArray)
             stampMessage.currentHash = hash
