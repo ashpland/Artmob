@@ -219,12 +219,12 @@ class InstructionManagerTests: XCTestCase {
             
             XCTAssert(self.broadcastInstructions.count == 3,
                       "Only one instruction should be rebroadcasted")
-//            XCTAssertEqual(self.broadcastInstructions[0].stamp, self.broadcastInstructions[2].stamp,
-//                           "The instruction missing from the second and third arrays should be rebroadcast")
         }
         
         
     }
     
-    
 }
+
+
+

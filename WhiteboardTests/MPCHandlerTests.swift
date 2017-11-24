@@ -7,7 +7,16 @@
 //
 
 import XCTest
+import MultipeerConnectivity
 @testable import Whiteboard
+
+
+class FakeFriendManager: PeerManager {
+    var instructionRequested = false
+    func requestInstructions(from peer: MCPeerID, for stampsArray: [Stamp], with hash: InstructionStoreHash) {
+        instructionRequested = true
+    }
+}
 
 
 class MPCHandlerTests: XCTestCase {
