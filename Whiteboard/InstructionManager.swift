@@ -68,9 +68,7 @@ class InstructionManager {
                 self.hashStream.onNext(HashAndSender(hash: theirHash, 
                                                      sender: bundle.instruction.stamp.user))
             }
-            
         }
-        
     }
     
     

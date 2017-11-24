@@ -163,10 +163,10 @@ class InstructionManagerTests: XCTestCase {
         InstructionManager.subscribeToInstructionsFrom(Observable.from(myInstructions.withNilHash))
         
         InstructionManager.sharedInstance.sync(theirInstructions: theirInstructions.stamps,
-                                               from: MPCHandler.sharedInstance.session.myPeerID,
+                                               from: self.fakeFriendManager.anotherPeer,
                                                with: self.fakeFriendManager)
         InstructionManager.sharedInstance.sync(theirInstructions: theirInstructions.stamps,
-                                               from: MPCHandler.sharedInstance.session.myPeerID,
+                                               from: self.fakeFriendManager.anotherPeer,
                                                with: self.fakeFriendManager)
         
         // change MPCHandler.sharedInstance bit
@@ -202,17 +202,10 @@ class InstructionManagerTests: XCTestCase {
         InstructionManager.subscribeToInstructionsFrom(Observable.from(myInstructions.withNilHash))
         
         InstructionManager.sharedInstance.sync(theirInstructions: theirInstructions.stamps,
-                                               from: MPCHandler.sharedInstance.session.myPeerID,
+                                               from: self.fakeFriendManager.anotherPeer,
                                                with: self.fakeFriendManager)
         
-        
-        
-        
-        Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) {
-            _ in
-            expect.fulfill()
-            
-        }
+        expect.fulfill()
         
         waitForExpectations(timeout: 4.0) { error in
             guard error == nil else {
@@ -221,11 +214,53 @@ class InstructionManagerTests: XCTestCase {
             }
             
             XCTAssertTrue(self.fakeFriendManager.instructionRequested,
-                          "Missing instruction should be requested")
+                          "Missing instruction should be requested if their stamp array has elements that user's does not")
         }
         
         
     }
+    
+    func testRequestMissingOnDifferentHash() {
+        let expect = expectation(description: #function)
+
+        var theirInstructions = [Instruction]()
+        for _ in 0..<2 {
+            let newInstruction = generateLineInstruction()
+            theirInstructions.append(newInstruction)
+        }
+
+        var myInstructions = theirInstructions
+        myInstructions.remove(at: 0)
+
+        InstructionManager.subscribeToInstructionsFrom(Observable.from(myInstructions.withNilHash))
+
+        InstructionManager.sharedInstance.check(hash: theirInstructions.hashValue,
+                                                from: self.fakeFriendManager.anotherPeer,
+                                                with: self.fakeFriendManager)
+
+        expect.fulfill()
+
+        waitForExpectations(timeout: 4.0) { error in
+            guard error == nil else {
+                XCTFail(error!.localizedDescription)
+                return
+            }
+
+            XCTAssertTrue(self.fakeFriendManager.instructionRequested,
+                          "Missing instructions should be requested when an incoming hash is different than the current store")
+        }
+    }
+    
+    
+    func testHashSteamInput() {
+        
+        
+        
+        
+        
+    }
+    
+    
     
 }
 

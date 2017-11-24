@@ -12,6 +12,7 @@ import MultipeerConnectivity
 
 
 class FakeFriendManager: PeerManager {
+    let anotherPeer = MCPeerID(displayName: "Someone Else")
     var instructionRequested = false
     func requestInstructions(from peer: MCPeerID, for stampsArray: [Stamp], with hash: InstructionStoreHash) {
         instructionRequested = true
@@ -23,6 +24,8 @@ class MPCHandlerTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
+        
+        
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
     
