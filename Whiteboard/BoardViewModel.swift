@@ -40,15 +40,33 @@ class BoardViewModel {
     
     // MARK: - Creating Elements
     
-    internal func recieveLine(_ subject: Observable<LineSegment>) {
-        let _ = subject.reduce(Line(), accumulator: {
-            currentLine, nextSegment in
-            return currentLine + nextSegment
-        }).subscribe(onNext: { line in
+    internal func recieveLine(_ subject: Observable<Line>) {
+        print("Recieve Start")
+
+        
+        //.observeOn(SerialDispatchQueueScheduler.init(qos: .userInteractive))
+        
+        
+        let _ = subject.subscribe(onNext: { (line) in
             let newInstructionBundle = InstructionAndHashBundle(instruction: self.makeInstruction(for: line), hash: nil)
             self.submitInstruction.onNext(newInstructionBundle)
+            print("Line Receieved")
+        }, onCompleted: {
+            print("Recieve Complete\n")
         })
     }
+    
+    
+    /*
+ 
+     onNext: { line in
+     let newInstructionBundle = InstructionAndHashBundle(instruction: self.makeInstruction(for: line), hash: nil)
+     self.submitInstruction.onNext(newInstructionBundle)
+     }, onComplete: { print("Recieve Complete") }
+ 
+     */
+    
+    
     
     fileprivate func makeInstruction(for line: Line) -> Instruction {
         let newLineElement = LineElement(line: line, width: settings.width, cap: settings.cap, color: settings.color)

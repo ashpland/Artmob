@@ -18,3 +18,12 @@
 ## Multipeer error
 [ERROR] ICEStopConnectivityCheck:2688 ICEStopConnectivityCheck() found no ICE check with call id (383054229)
 
+
+## Concurrency
+Image display pushes back to main thread
+Line drawing pushed to serial queue
+
+make Instruction manager writes threadsafe
+make line drawing serial?
+
+

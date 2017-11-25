@@ -56,9 +56,11 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         mpcHandler.setupSubscribe()
     }
     func setUpModel(){
-        drawView.closeMenuDelagate = self
-        drawView.clearsContextBeforeDrawing = true
-        drawView.viewModel = self.viewModel
+        self.drawView.closeMenuDelagate = self
+        self.drawView.clearsContextBeforeDrawing = true
+        self.drawView.viewModel = self.viewModel
+        
+        self.viewModel.recieveLine(self.drawView.lineStream)
         
         self.viewModel.lineImage.asObservable()
             .observeOn(MainScheduler.instance)

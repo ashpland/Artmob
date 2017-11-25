@@ -16,30 +16,34 @@ class DrawView: UIView {
     var closeMenuDelagate:CloseMenu?
     private var activeDrawingLine = Line()
     private let lineFormatSettings = LineFormatSettings.sharedInstance
-    public var lineStream : PublishSubject<LineSegment>!
+    public var lineStream = PublishSubject<Line>()
     public var viewModel : BoardViewModel!
     
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.lineStream = PublishSubject<LineSegment>()
-        self.viewModel.recieveLine(self.lineStream)
+        print("Began")
         closeMenuDelagate?.closeMenu()
+        self.activeDrawingLine = Line()
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        print("Moved")
+
         let touch = touches.first
         if let first = touch?.previousLocation(in: self),
             let second = touch?.location(in: self) {
             let lineSegment = LineSegment(firstPoint: first, secondPoint: second)
             self.activeDrawingLine = self.activeDrawingLine + lineSegment
-            self.lineStream.onNext(lineSegment)
         }
         self.setNeedsDisplay()
+        //setNeedsDisplayInRect
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.lineStream.onCompleted()
-        activeDrawingLine = Line()
-        self.setNeedsDisplay()
+        print("Ended")
+        DispatchQueue.global(qos: .userInteractive).async {
+            self.lineStream.onNext(self.activeDrawingLine)
+        }
     }
     
     override func draw(_ rect: CGRect) {
