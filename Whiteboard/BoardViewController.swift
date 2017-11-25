@@ -65,11 +65,12 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         self.viewModel.lineImage.asObservable()
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { lineImage in
-                UIView.transition(with: self.view,
-                                  duration: 0.25,
-                                  options: UIViewAnimationOptions.transitionCrossDissolve,
-                                  animations: { self.lineImageView.image = lineImage },
-                                  completion: nil)
+                self.lineImageView.image = lineImage
+//                UIView.transition(with: self.view,
+//                                  duration: 0,
+//                                  options: UIViewAnimationOptions.transitionCrossDissolve,
+//                                  animations: {  },
+//                                  completion: nil)
             }).disposed(by: disposeBag)
     }
     func setUpMenu(){

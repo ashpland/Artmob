@@ -112,11 +112,10 @@ class BoardViewModel {
             self.lineImage.value = self.makeClearImage()
         }
         
-        DispatchQueue.global(qos: .userInteractive).async {
+        DispatchQueue.global(qos: .default).async {
             self.lineImage.value = self.drawLineOnImage(existingImage: self.lineImage.value, lines: linesToDraw)
             print("Ended Async")
         }
-        
     }
     
     fileprivate func drawLineOnImage(existingImage: UIImage, lines: [LineElement]) -> UIImage{
@@ -127,10 +126,10 @@ class BoardViewModel {
             path.lineWidth = lineToDraw.width
             path.lineCapStyle = lineToDraw.cap
             lineToDraw.drawColor.setStroke()
-            
+
             if !lineToDraw.line.segments.isEmpty {
                 path.move(to: lineToDraw.line.segments.first!.firstPoint)
-                
+
                 for segment in lineToDraw.line.segments {
                     path.addLine(to: segment.firstPoint)
                     path.addLine(to: segment.secondPoint)
