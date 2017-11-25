@@ -46,8 +46,8 @@ fileprivate func buildInstruction(type: InstructionType,
 }
 
 fileprivate func getUser() -> MCPeerID {
-    let choice = arc4random_uniform(1)
-    
+    let choice = arc4random_uniform(2)
+
     switch choice {
     case 0:
         return MPCHandler.sharedInstance.session.myPeerID

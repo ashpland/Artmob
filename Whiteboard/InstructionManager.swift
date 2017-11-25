@@ -15,7 +15,8 @@ class InstructionManager {
     
     static let sharedInstance = InstructionManager()
     
-    fileprivate var instructionStore = [Instruction]()
+//    fileprivate var instructionStore = [Instruction]()
+    fileprivate var instructionStore = [Stamp: Instruction]()
     let newInstructions = PublishSubject<Instruction>()
     let broadcastInstructions = PublishSubject<InstructionAndHashBundle>()
     fileprivate let hashStream = PublishSubject<HashAndSender>()
@@ -61,7 +62,7 @@ class InstructionManager {
     }
     
     internal func resetInstructionStore() {
-        self.instructionStore = [Instruction]()
+        self.instructionStore = [Stamp: Instruction]()
     }
     
     private func new(instructionAndHash bundle: InstructionAndHashBundle) {
@@ -80,53 +81,26 @@ class InstructionManager {
     
     
     
+    
     private func newInstruction(_ newInstruction: Instruction) {
-        if self.instructionStore.isEmpty ||
-            newInstruction.stamp > self.instructionStore.last!.stamp {
-            self.instructionStore.append(newInstruction)
-            print("Instruction appended")
-            self.newInstructions.onNext(newInstruction)
+        if self.instructionStore.contains(where:
+            {$0.key == newInstruction.stamp})
+            { return }
+        
+        self.instructionStore[newInstruction.stamp] = newInstruction
+        self.newInstructions.onNext(newInstruction)
+        
+        if newInstruction.isFromSelf() {
             let newBundle = InstructionAndHashBundle(instruction: newInstruction,
                                                      hash: self.instructionStore.hashValue)
             self.broadcastInstructions.onNext(newBundle)
-            return
-        } else {
-            insertInstruction(newInstruction)
         }
     }
     
-    fileprivate func insertInstruction(_ newInstruction: Instruction) {
-        if newInstruction.stamp < self.instructionStore.first!.stamp {
-            self.instructionStore.insert(newInstruction, at: 0)
-            self.fullRefresh.onNext(true)
-            return
-        }
-         
-        for (index, currentInstruction) in self.instructionStore.lazy.reversed().enumerated() {
-            guard newInstruction.stamp != currentInstruction.stamp else {
-                return
-            }
-            if newInstruction.stamp > currentInstruction.stamp {
-                self.instructionStore.insert(newInstruction, at: self.instructionStore.count - index)
-            }
-            if index == instructionStore.count - 1 {
-                
-            }
-        }
-        let newInstructionBundle = InstructionAndHashBundle(instruction: newInstruction, hash: self.instructionStore.hashValue)
-        self.broadcastInstructions.onNext(newInstructionBundle)
-        
-        switch newInstruction.element {
-        case .line:
-            self.refreshLines()
-            return
-        case .label:
-            return
-        }
-    }
+    
     
     internal func refreshLines() {
-        let lineInstructions = self.instructionStore.filter { if case .line = $0.element { return true }; return false}
+        let lineInstructions = self.instructionStore.inOrder.filter { if case .line = $0.element { return true }; return false}
         ElementModel.sharedInstance.refreshLines(from: lineInstructions)
     }
     
@@ -162,7 +136,7 @@ class InstructionManager {
         let instructionStamps = Array(Set(requests))
         
         for stamp in instructionStamps {
-            if let instruction = self.instructionStore.instruction(for: stamp) {
+            if let instruction = self.instructionStore[stamp] {
                 let bundle = InstructionAndHashBundle(instruction: instruction,
                                                       hash: self.instructionStore.hashValue)
                 self.broadcastInstructions.onNext(bundle)
@@ -174,3 +148,25 @@ class InstructionManager {
 protocol PeerManager {
     func requestInstructions(from peer:MCPeerID, for stampsArray: [Stamp], with hash: InstructionStoreHash)
 }
+
+extension Instruction {
+    func isFromSelf() -> Bool {
+        return self.stamp.user == MPCHandler.sharedInstance.session.myPeerID
+    }
+}
+
+extension Dictionary where Value == Instruction {
+    var hashValue: InstructionStoreHash {
+        return self.stamps.hashValue
+    }
+    
+    var stamps: Array<Stamp> {
+        return self.inOrder.map({ $0.stamp })
+    }
+    
+    var inOrder: Array<Instruction> {
+        return self.map({ $1 }).sorted(by: { $0.stamp < $1.stamp })
+    }
+    
+}
+

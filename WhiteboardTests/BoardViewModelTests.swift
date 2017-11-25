@@ -41,15 +41,12 @@ class BoardViewModelTests: XCTestCase {
         
         
         //generate lines
+        let lineStream = PublishSubject<Line>()
+        self.boardViewModel.recieveLine(lineStream)
+
         for _ in 1...expectedCount {
-            let lineStream = PublishSubject<LineSegment>()
-            self.boardViewModel.recieveLine(lineStream)
+            lineStream.onNext(generateLine())
             
-            //generate random line segments
-            for _ in 1...Int(arc4random_uniform(50)+1) {
-                lineStream.onNext(generateLineSegment())
-            }
-            lineStream.onCompleted()
         }
 
         expect.fulfill()
