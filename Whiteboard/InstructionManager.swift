@@ -47,7 +47,7 @@ class InstructionManager {
             .subscribe(onNext: {self.processInstructionRequests($0)})
             .disposed(by: self.disposeBag)
         
-        fullRefresh.debounce(1.0, scheduler: MainScheduler.instance)
+        fullRefresh.debounce(3.0, scheduler: MainScheduler.instance)
             .subscribe(onNext: { _ in self.refreshLines() })
             .disposed(by: self.disposeBag)
     }
