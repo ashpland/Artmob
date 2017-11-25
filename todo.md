@@ -27,3 +27,4 @@ make Instruction manager writes threadsafe
 make line drawing serial?
 
 
+http://basememara.com/creating-thread-safe-arrays-in-swift/

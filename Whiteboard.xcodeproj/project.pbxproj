@@ -561,6 +561,7 @@
 				DEVELOPMENT_TEAM = T5E8L2XP69;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Whiteboard/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = land.ashp.Whiteboard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -579,6 +580,7 @@
 				DEVELOPMENT_TEAM = T5E8L2XP69;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Whiteboard/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = land.ashp.Whiteboard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
