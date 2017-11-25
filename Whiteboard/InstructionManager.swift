@@ -15,14 +15,15 @@ class InstructionManager {
     
     static let sharedInstance = InstructionManager()
     
-    private var instructionStore = [Instruction]()
+    fileprivate var instructionStore = [Instruction]()
     let newInstructions = PublishSubject<Instruction>()
     let broadcastInstructions = PublishSubject<InstructionAndHashBundle>()
-    private let hashStream = PublishSubject<HashAndSender>()
+    fileprivate let hashStream = PublishSubject<HashAndSender>()
     let stampsStream = PublishSubject<StampsAndSender>()
     let instructionRequests = PublishSubject<Stamp>()
-    private let disposeBag = DisposeBag()
-    private let peerManager: PeerManager = MPCHandler.sharedInstance
+    fileprivate let fullRefresh = PublishSubject<Bool>()
+    fileprivate let disposeBag = DisposeBag()
+    fileprivate let peerManager: PeerManager = MPCHandler.sharedInstance
     
     // MARK: - Methods
     
@@ -46,6 +47,9 @@ class InstructionManager {
             .subscribe(onNext: {self.processInstructionRequests($0)})
             .disposed(by: self.disposeBag)
         
+        fullRefresh.debounce(1.0, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { _ in self.refreshLines() })
+            .disposed(by: self.disposeBag)
     }
     
     
@@ -92,6 +96,12 @@ class InstructionManager {
     }
     
     fileprivate func insertInstruction(_ newInstruction: Instruction) {
+        if newInstruction.stamp < self.instructionStore.first!.stamp {
+            self.instructionStore.insert(newInstruction, at: 0)
+            self.fullRefresh.onNext(true)
+            return
+        }
+         
         for (index, currentInstruction) in self.instructionStore.lazy.reversed().enumerated() {
             guard newInstruction.stamp != currentInstruction.stamp else {
                 return
@@ -100,7 +110,7 @@ class InstructionManager {
                 self.instructionStore.insert(newInstruction, at: self.instructionStore.count - index)
             }
             if index == instructionStore.count - 1 {
-                self.instructionStore.insert(newInstruction, at: 0)
+                
             }
         }
         let newInstructionBundle = InstructionAndHashBundle(instruction: newInstruction, hash: self.instructionStore.hashValue)

@@ -93,7 +93,7 @@ class MPCHandler: NSObject, MCSessionDelegate, PeerManager{
         
         let messageData = NSKeyedArchiver.archivedData(withRootObject: stampMessage)
         let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 2])
-        try! session.send(data, toPeers: [peer], with: MCSessionSendDataMode.unreliable)
+        try! session.send(data, toPeers: [peer], with: MCSessionSendDataMode.reliable)
         print("Instructions requested")
     }
     
