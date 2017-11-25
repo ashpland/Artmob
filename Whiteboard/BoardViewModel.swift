@@ -111,7 +111,12 @@ class BoardViewModel {
         if linesToDraw.count > 1 {
             self.lineImage.value = self.makeClearImage()
         }
-        self.lineImage.value = drawLineOnImage(existingImage: self.lineImage.value, lines: linesToDraw)
+        
+        DispatchQueue.global(qos: .userInteractive).async {
+            self.lineImage.value = self.drawLineOnImage(existingImage: self.lineImage.value, lines: linesToDraw)
+            print("Ended Async")
+        }
+        
     }
     
     fileprivate func drawLineOnImage(existingImage: UIImage, lines: [LineElement]) -> UIImage{

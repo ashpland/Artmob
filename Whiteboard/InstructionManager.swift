@@ -80,6 +80,7 @@ class InstructionManager {
         if self.instructionStore.isEmpty ||
             newInstruction.stamp > self.instructionStore.last!.stamp {
             self.instructionStore.append(newInstruction)
+            print("Instruction appended")
             self.newInstructions.onNext(newInstruction)
             let newBundle = InstructionAndHashBundle(instruction: newInstruction,
                                                      hash: self.instructionStore.hashValue)

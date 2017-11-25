@@ -41,9 +41,12 @@ class DrawView: UIView {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         print("Ended")
-        DispatchQueue.global(qos: .userInteractive).async {
-            self.lineStream.onNext(self.activeDrawingLine)
-        }
+//        let completeLine = self.activeDrawingLine
+        self.lineStream.onNext(self.activeDrawingLine)
+//        DispatchQueue.global(qos: .userInteractive).async {
+//            print("Ended Async")
+//        }
+        print("Ended Ended")
     }
     
     override func draw(_ rect: CGRect) {
