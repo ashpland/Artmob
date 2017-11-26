@@ -23,13 +23,14 @@ class InstructionManager {
     let stampsStream = PublishSubject<StampsAndSender>()
     let instructionRequests = PublishSubject<Stamp>()
     fileprivate let fullRefresh = PublishSubject<Bool>()
+    fileprivate let instructionRepublish = PublishSubject<InstructionAndHashBundle>()
     fileprivate let disposeBag = DisposeBag()
     fileprivate let peerManager: PeerManager = MPCHandler.sharedInstance
     
     // MARK: - Methods
     
     init() {
-        let hashCheckInterval = 10.0
+        let hashCheckInterval = 2.0
         
         hashStream.throttle(hashCheckInterval, scheduler: MainScheduler.instance)
             .subscribe(onNext: { self.check(hash: $0.hash,
@@ -48,8 +49,17 @@ class InstructionManager {
             .subscribe(onNext: {self.processInstructionRequests($0)})
             .disposed(by: self.disposeBag)
         
-        fullRefresh.debounce(3.0, scheduler: MainScheduler.instance)
-            .subscribe(onNext: { _ in self.refreshLines() })
+        fullRefresh.throttle(1.0, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { doRefresh in
+                
+                if doRefresh {
+                    self.refreshLines()
+                }
+            })
+            .disposed(by: self.disposeBag)
+        
+        instructionRepublish.throttle(0.1, scheduler: MainScheduler.instance)
+            .subscribe(onNext: {print("sending missing instruction"); self.broadcastInstructions.onNext($0)})
             .disposed(by: self.disposeBag)
     }
     
@@ -100,6 +110,7 @@ class InstructionManager {
     
     
     internal func refreshLines() {
+        self.fullRefresh.onNext(false)
         let lineInstructions = self.instructionStore.inOrder.filter { if case .line = $0.element { return true }; return false}
         ElementModel.sharedInstance.refreshLines(from: lineInstructions)
     }
@@ -116,13 +127,17 @@ class InstructionManager {
     
     internal func sync(theirInstructions: Array<Stamp>, from peer: MCPeerID, with peerManager: PeerManager) {
         
+        print("Syncing their instructions")
+        
         let myInstructions = self.instructionStore.stamps        
         
         for instruction in theirInstructions.elementsMissingFrom(myInstructions) {
+            print("Found instruction they are missing")
             self.instructionRequests.onNext(instruction)
         }
         
         if myInstructions.elementsMissingFrom(theirInstructions).count > 0 {
+            print("Found instruction I am missing")
             peerManager.requestInstructions(from: peer,
                                             for: self.instructionStore.stamps,
                                             with: self.instructionStore.hashValue)
@@ -130,16 +145,19 @@ class InstructionManager {
     }
     
     internal func processInstructionRequests(_ requests: Array<Stamp>) {
-        
+        print("Processing Instruction Requests")
+
         guard !requests.isEmpty else {return}
         
         let instructionStamps = Array(Set(requests))
         
         for stamp in instructionStamps {
             if let instruction = self.instructionStore[stamp] {
+                print("Queueing missing instruction")
+
                 let bundle = InstructionAndHashBundle(instruction: instruction,
                                                       hash: self.instructionStore.hashValue)
-                self.broadcastInstructions.onNext(bundle)
+                self.instructionRepublish.onNext(bundle)
             }
         }
     }
