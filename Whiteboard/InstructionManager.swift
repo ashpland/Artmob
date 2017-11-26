@@ -51,14 +51,13 @@ class InstructionManager {
         
         fullRefresh.throttle(1.0, scheduler: MainScheduler.instance)
             .subscribe(onNext: { doRefresh in
+                print("Refreshing Lines")
+                self.refreshLines()
                 
-                if doRefresh {
-                    self.refreshLines()
-                }
             })
             .disposed(by: self.disposeBag)
         
-        instructionRepublish.throttle(0.1, scheduler: MainScheduler.instance)
+        instructionRepublish.throttle(0.01, scheduler: MainScheduler.instance)
             .subscribe(onNext: {print("sending missing instruction"); self.broadcastInstructions.onNext($0)})
             .disposed(by: self.disposeBag)
     }
@@ -99,6 +98,7 @@ class InstructionManager {
         
         self.instructionStore[newInstruction.stamp] = newInstruction
         self.newInstructions.onNext(newInstruction)
+        self.fullRefresh.onNext(true)
         
         if newInstruction.isFromSelf() {
             let newBundle = InstructionAndHashBundle(instruction: newInstruction,
@@ -110,7 +110,6 @@ class InstructionManager {
     
     
     internal func refreshLines() {
-        self.fullRefresh.onNext(false)
         let lineInstructions = self.instructionStore.inOrder.filter { if case .line = $0.element { return true }; return false}
         ElementModel.sharedInstance.refreshLines(from: lineInstructions)
     }
@@ -129,7 +128,9 @@ class InstructionManager {
         
         print("Syncing their instructions")
         
-        let myInstructions = self.instructionStore.stamps        
+        let myInstructions = self.instructionStore.stamps
+        
+        guard myInstructions == theirInstructions else { return }
         
         for instruction in theirInstructions.elementsMissingFrom(myInstructions) {
             print("Found instruction they are missing")

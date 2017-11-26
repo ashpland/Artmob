@@ -71,11 +71,13 @@ class BoardViewModelTests: XCTestCase {
             .from(optional: InstructionAndHashBundle(instruction: generateLineInstruction(),
                                                      hash: nil) ))
 
+        sleep(1)
+        
         let secondImage = self.boardViewModel.lineImage.value
         
         expect.fulfill()
         
-        waitForExpectations(timeout: 1.0) { error in
+        waitForExpectations(timeout: 2.0) { error in
             guard error == nil else {
                 XCTFail(error!.localizedDescription)
                 return
