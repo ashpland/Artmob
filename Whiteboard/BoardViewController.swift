@@ -19,7 +19,7 @@ class LineFormatSettings {
     var color = LineColor.blue
 }
 
-class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, CloseMenu, UITextFieldDelegate, UIScrollViewDelegate {
+class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, CloseMenu, /*UITextFieldDelegate,*/ UIScrollViewDelegate {
     
     //MARK: Properties / Outlets
     let viewModel = BoardViewModel()
@@ -97,14 +97,14 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     func setUpMenu(){
         MainMenuButton.setTitleColor(LineElement(line: Line(), width: 0, cap: .butt, color: LineFormatSettings.sharedInstance.color).drawColor, for: UIControlState.normal) //jankness
         MainMenuButton.titleLabel?.font = MainMenuButton.titleLabel?.font.withSize(40.0)
-        MainMenuHeight.constant = -160
+        MainMenuHeight.constant = -120
         
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillShow),
-            name: NSNotification.Name.UIKeyboardWillShow,
-            object: nil
-        )
+//        NotificationCenter.default.addObserver(
+//            self,
+//            selector: #selector(keyboardWillShow),
+//            name: NSNotification.Name.UIKeyboardWillShow,
+//            object: nil
+//        )
     }
     
     //MARK: Actions
@@ -172,7 +172,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     
     @IBAction func Menu(_ sender: UIButton) {
         
-        if MainMenuHeight.constant == -160{
+        if MainMenuHeight.constant == -120{
             UIView.animate(withDuration: 0.5, animations: {
                 self.MainMenuHeight.constant = 0
                 self.MainMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
@@ -181,35 +181,35 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         } else if MainMenuHeight.constant == 0{
             closeMenu()
         } else { //Keyboard Open
-            emojiTextField.endEditing(false)
+            //emojiTextField.endEditing(false)
             closeMenu()
         }
     }
     
     //MARK: Close Menu Delegate
     func closeMenu() {
-        emojiTextField.endEditing(false)
+        //emojiTextField.endEditing(false)
         UIView.animate(withDuration: 0.4, animations: {
-            self.MainMenuHeight.constant = -160
+            self.MainMenuHeight.constant = -120
             self.MainMenuButton.transform = CGAffineTransform(rotationAngle: 0)
             self.view.layoutIfNeeded()
         })
     }
     
-    //MARK: TextField Delegate
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        textSelected = true
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        UIView.animate(withDuration: 0.25, animations: {
-            self.MainMenuHeight.constant = 0
-            self.MainMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
-            self.view.layoutIfNeeded()
-        })
-        textField.resignFirstResponder()
-        return true
-    }
+//    //MARK: TextField Delegate
+//    func textFieldDidBeginEditing(_ textField: UITextField) {
+//        textSelected = true
+//    }
+//
+//    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+//        UIView.animate(withDuration: 0.25, animations: {
+//            self.MainMenuHeight.constant = 0
+//            self.MainMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+//            self.view.layoutIfNeeded()
+//        })
+//        textField.resignFirstResponder()
+//        return true
+//    }
     
     //MARK: Browser View Controller Delegate
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
@@ -220,18 +220,18 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         mpcHandler.browser.dismiss(animated: true, completion: nil)
     }
 
-    //MARK: Keyboard Will Show
-    @objc func keyboardWillShow(_ notification: Notification) {
-        if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
-            let keyboardRectangle = keyboardFrame.cgRectValue
-            let keyboardHeight = keyboardRectangle.height
-            UIView.animate(withDuration: 0.5, animations: {
-                self.MainMenuHeight.constant = keyboardHeight
-                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
-                self.view.layoutIfNeeded()
-            })
-        }
-    }
+//    //MARK: Keyboard Will Show
+//    @objc func keyboardWillShow(_ notification: Notification) {
+//        if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+//            let keyboardRectangle = keyboardFrame.cgRectValue
+//            let keyboardHeight = keyboardRectangle.height
+//            UIView.animate(withDuration: 0.5, animations: {
+//                self.MainMenuHeight.constant = keyboardHeight
+//                self.MainMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+//                self.view.layoutIfNeeded()
+//            })
+//        }
+//    }
     //MARK: ScrollView
     func viewForZooming(in scrollView: UIScrollView) -> UIView?{
         return content
