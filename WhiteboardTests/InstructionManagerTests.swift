@@ -268,5 +268,12 @@ class InstructionManagerTests: XCTestCase {
     
 }
 
+private typealias InstructionArrayTestHelper = Array
+extension InstructionArrayTestHelper where Element == Instruction {
+    var withNilHash: Array<InstructionAndHashBundle> {
+        return self.map{InstructionAndHashBundle(instruction: $0, hash: nil)}
+    }
+}
+
 
 

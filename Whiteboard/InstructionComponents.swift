@@ -9,22 +9,18 @@
 import Foundation
 import MultipeerConnectivity
 
-typealias InstructionStoreHash = Int
-
-struct InstructionAndHashBundle {
-    let instruction: Instruction
-    let hash: InstructionStoreHash?
-}
-
-struct HashAndSender {
-    let hash: InstructionStoreHash
-    let sender: MCPeerID
-}
+// MARK: Instruction
 
 struct Instruction {
     let type: InstructionType
     let element: InstructionPayload
     let stamp: Stamp
+}
+
+extension Instruction {
+    func isFromSelf() -> Bool {
+        return self.stamp.user == MPCHandler.sharedInstance.session.myPeerID
+    }
 }
 
 enum InstructionType {
@@ -45,7 +41,7 @@ enum InstructionType {
 enum InstructionPayload {
     case line (LineElement)
     case label (LabelElement)
-    
+
     var lineElement: LineElement? {
         guard case .line(let value) = self else {
             return nil
@@ -60,21 +56,61 @@ enum InstructionPayload {
     }
 }
 
-struct StampsAndSender {
-    let stamps: Array<Stamp>
-    let sender: MCPeerID
+// MARK: - Instruction Collections
+
+extension Dictionary where Value == Instruction {
+    var hashValue: InstructionStoreHash { return self.stamps.hashValue }
+
+    var stamps: [Stamp] { return self.inOrder.map({ $0.stamp }) }
+
+    var inOrder: [Instruction] {
+        return self.map({ $1 })
+            .sorted(by: { $0.stamp < $1.stamp })
+    }
 }
 
-struct Stamp: Comparable, Hashable {
+extension Array where Element == Instruction {
+    var hashValue: InstructionStoreHash {
+        return self.stamps.hashValue
+    }
+
+    var stamps: [Stamp] {
+        return self.map({ $0.stamp })
+    }
+
+    func instruction(for stamp: Stamp) -> Instruction? {
+        return self.filter {$0.stamp == stamp}.first
+    }
+}
+
+extension Array where Element:Hashable {
+    var hashValue: Int {
+        return self.reduce(16777619) {$0 ^ $1.hashValue}
+    }
+
+    func elementsMissingFrom(_ otherArray: [Element]) -> [Element] {
+        return otherArray.filter {!Set(self).contains($0)}
+    }
+
+    static func == (lhs: [Element], rhs: [Element]) -> Bool {
+        return lhs.hashValue == rhs.hashValue
+    }
+}
+
+// MARK: - Stamp
+
+struct Stamp {
     let user: MCPeerID
     let timestamp: Date
-    
-    var hashValue: Int {
-        let timeHash = self.timestamp.hashValue
-        let userHash = self.user.hashValue
-        return timeHash ^ userHash &* 16777619
+}
+
+extension Stamp: Equatable {
+    static func == (lhs: Stamp, rhs: Stamp) -> Bool {
+        return ((lhs.user == rhs.user) && (lhs.timestamp == rhs.timestamp))
     }
-    
+}
+
+extension Stamp: Comparable {
     static func < (lhs: Stamp, rhs: Stamp) -> Bool {
         if lhs.timestamp < rhs.timestamp {
             return true
@@ -84,47 +120,31 @@ struct Stamp: Comparable, Hashable {
         }
         return false
     }
-    
-    static func == (lhs: Stamp, rhs: Stamp) -> Bool {
-        return ((lhs.user == rhs.user) && (lhs.timestamp == rhs.timestamp))
-    }
 }
 
-
-extension Array where Element == Instruction
-{
-    var hashValue: InstructionStoreHash {
-        return self.stamps.hashValue
-    }
-    
-    var stamps: Array<Stamp> {
-        return self.map({ $0.stamp })
-    }
-    
-    func instruction(for stamp: Stamp) -> Instruction? {
-        return self.filter{$0.stamp == stamp}.first
-    }
-    
-    
-    //helper method for testing
-    var withNilHash: Array<InstructionAndHashBundle> {
-        return self.map{InstructionAndHashBundle(instruction: $0, hash: nil)}
-    }
-    
-}
-
-
-extension Array where Element:Hashable
-{
+extension Stamp: Hashable {
     var hashValue: Int {
-        return self.reduce(16777619) {$0 ^ $1.hashValue}
+        let timeHash = self.timestamp.hashValue
+        let userHash = self.user.hashValue
+        return timeHash ^ userHash &* 16777619
     }
-    
-    func elementsMissingFrom(_ otherArray: Array<Element>) -> Array<Element> {
-        return otherArray.filter{!Set(self).contains($0)}
-    }
-    
-    static func == (lhs: Array<Element>, rhs: Array<Element>) -> Bool {
-        return lhs.hashValue == rhs.hashValue
-    }
+}
+
+// MARK: - Bundles
+
+typealias InstructionStoreHash = Int
+
+struct InstructionAndHashBundle {
+    let instruction: Instruction
+    let hash: InstructionStoreHash?
+}
+
+struct HashAndSender {
+    let hash: InstructionStoreHash
+    let sender: MCPeerID
+}
+
+struct StampsAndSender {
+    let stamps: [Stamp]
+    let sender: MCPeerID
 }

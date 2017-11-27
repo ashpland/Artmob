@@ -141,24 +141,5 @@ protocol PeerManager {
     func requestInstructions(from peer:MCPeerID, for stampsArray: [Stamp], with hash: InstructionStoreHash)
 }
 
-extension Instruction {
-    func isFromSelf() -> Bool {
-        return self.stamp.user == MPCHandler.sharedInstance.session.myPeerID
-    }
-}
 
-extension Dictionary where Value == Instruction {
-    var hashValue: InstructionStoreHash {
-        return self.stamps.hashValue
-    }
-    
-    var stamps: Array<Stamp> {
-        return self.inOrder.map({ $0.stamp })
-    }
-    
-    var inOrder: Array<Instruction> {
-        return self.map({ $1 }).sorted(by: { $0.stamp < $1.stamp })
-    }
-    
-}
 
