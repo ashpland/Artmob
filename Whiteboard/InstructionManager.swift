@@ -49,7 +49,7 @@ class InstructionManager {
             .subscribe(onNext: {self.processInstructionRequests($0)})
             .disposed(by: self.disposeBag)
         
-        fullRefresh.throttle(1.0, scheduler: MainScheduler.instance)
+        fullRefresh.throttle(0.01, scheduler: MainScheduler.instance)
             .subscribe(onNext: { doRefresh in
                 print("Refreshing Lines")
                 self.refreshLines()
@@ -57,7 +57,7 @@ class InstructionManager {
             })
             .disposed(by: self.disposeBag)
         
-        instructionRepublish.throttle(0.01, scheduler: MainScheduler.instance)
+        instructionRepublish.throttle(0.1, scheduler: MainScheduler.instance)
             .subscribe(onNext: {print("sending missing instruction"); self.broadcastInstructions.onNext($0)})
             .disposed(by: self.disposeBag)
     }
@@ -115,7 +115,7 @@ class InstructionManager {
     }
     
     internal func check(hash: InstructionStoreHash, from peer:MCPeerID, with peerManager: PeerManager) {
-        print("Checked Hash")
+        print("Checked Hash \nmine: \(self.instructionStore.hashValue)\nthem: \(hash)")
         if self.instructionStore.hashValue != hash {
             print("Hash conflict")
             peerManager.requestInstructions(from: peer,
@@ -130,7 +130,8 @@ class InstructionManager {
         
         let myInstructions = self.instructionStore.stamps
         
-        guard myInstructions == theirInstructions else { return }
+//        guard myInstructions == theirInstructions else {
+//            return }
         
         for instruction in theirInstructions.elementsMissingFrom(myInstructions) {
             print("Found instruction they are missing")
