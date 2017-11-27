@@ -49,15 +49,14 @@ class InstructionManager {
             .subscribe(onNext: {self.processInstructionRequests($0)})
             .disposed(by: self.disposeBag)
         
-        fullRefresh.throttle(0.01, scheduler: MainScheduler.instance)
+        fullRefresh.throttle(2.0, scheduler: MainScheduler.instance)
             .subscribe(onNext: { doRefresh in
                 print("Refreshing Lines")
                 self.refreshLines()
-                
             })
             .disposed(by: self.disposeBag)
         
-        instructionRepublish.throttle(0.1, scheduler: MainScheduler.instance)
+        instructionRepublish.throttle(0.01, scheduler: MainScheduler.instance)
             .subscribe(onNext: {print("sending missing instruction"); self.broadcastInstructions.onNext($0)})
             .disposed(by: self.disposeBag)
     }
@@ -98,12 +97,13 @@ class InstructionManager {
         
         self.instructionStore[newInstruction.stamp] = newInstruction
         self.newInstructions.onNext(newInstruction)
-        self.fullRefresh.onNext(true)
         
         if newInstruction.isFromSelf() {
             let newBundle = InstructionAndHashBundle(instruction: newInstruction,
                                                      hash: self.instructionStore.hashValue)
             self.broadcastInstructions.onNext(newBundle)
+        } else {
+            self.fullRefresh.onNext(true)
         }
     }
     
