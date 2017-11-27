@@ -23,7 +23,6 @@ class InstructionManager {
     let stampsStream = PublishSubject<StampsAndSender>()
     let instructionRequests = PublishSubject<Stamp>()
     fileprivate let fullRefresh = PublishSubject<Bool>()
-    fileprivate let instructionRepublish = PublishSubject<InstructionAndHashBundle>()
     fileprivate let disposeBag = DisposeBag()
     fileprivate let peerManager: PeerManager = MPCHandler.sharedInstance
     
@@ -44,7 +43,6 @@ class InstructionManager {
                                            with: self.peerManager)})
             .disposed(by: self.disposeBag)
         
-        
         instructionRequests.buffer(timeSpan: 2.0, count: 50, scheduler: MainScheduler.instance)
             .subscribe(onNext: {self.processInstructionRequests($0)})
             .disposed(by: self.disposeBag)
@@ -54,10 +52,6 @@ class InstructionManager {
                 print("Refreshing Lines")
                 self.refreshLines()
             })
-            .disposed(by: self.disposeBag)
-        
-        instructionRepublish.throttle(0.01, scheduler: MainScheduler.instance)
-            .subscribe(onNext: {print("sending missing instruction"); self.broadcastInstructions.onNext($0)})
             .disposed(by: self.disposeBag)
     }
     
@@ -159,7 +153,7 @@ class InstructionManager {
 
                 let bundle = InstructionAndHashBundle(instruction: instruction,
                                                       hash: self.instructionStore.hashValue)
-                self.instructionRepublish.onNext(bundle)
+                self.broadcastInstructions.onNext(bundle)
             }
         }
     }
