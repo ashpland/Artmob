@@ -39,13 +39,13 @@ class DrawView: UIView {
         //setNeedsDisplayInRect
     }
     
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.lineStream.onNext(self.activeDrawingLine)
+    }
+    
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         print("Ended")
-//        let completeLine = self.activeDrawingLine
         self.lineStream.onNext(self.activeDrawingLine)
-//        DispatchQueue.global(qos: .userInteractive).async {
-//            print("Ended Async")
-//        }
         print("Ended Ended")
     }
     
