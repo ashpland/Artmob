@@ -22,6 +22,7 @@ class InstructionManager {
     let stampsStream = PublishSubject<StampsAndSender>()
     let instructionRequests = PublishSubject<Stamp>()
     fileprivate let fullRefresh = PublishSubject<Bool>()
+    fileprivate let helloPing = PublishSubject<InstructionAndHashBundle>()
     fileprivate let disposeBag = DisposeBag()
     fileprivate let peerManager: PeerManager = MPCHandler.sharedInstance
     
@@ -49,6 +50,10 @@ class InstructionManager {
         fullRefresh.throttle(2.0, scheduler: MainScheduler.instance)
             .subscribe(onNext: { _ in self.refreshLines() })
             .disposed(by: self.disposeBag)
+        
+        helloPing.debounce(2.0, scheduler: MainScheduler.instance)
+            .subscribe(onNext: {self.broadcastInstructions.onNext($0)})
+            .disposed(by: self.disposeBag)
     }
     
     
@@ -73,10 +78,7 @@ class InstructionManager {
             }
         }
     }
-    
-    
-    
-    
+
     private func newInstruction(_ newInstruction: Instruction) {
         if self.instructionStore.contains(where:
             {$0.key == newInstruction.stamp})
@@ -84,10 +86,12 @@ class InstructionManager {
         
         self.instructionStore[newInstruction.stamp] = newInstruction
         self.newInstructions.onNext(newInstruction)
-        
+        let newBundle = InstructionAndHashBundle(instruction: newInstruction,
+                                                 hash: self.instructionStore.hashValue)
+
+        self.helloPing.onNext(newBundle)
+
         if newInstruction.isFromSelf() {
-            let newBundle = InstructionAndHashBundle(instruction: newInstruction,
-                                                     hash: self.instructionStore.hashValue)
             self.broadcastInstructions.onNext(newBundle)
         }
         else { self.fullRefresh.onNext(true) }
