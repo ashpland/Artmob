@@ -151,7 +151,7 @@
                                         <rect key="frame" x="0.0" y="60" width="414" height="60"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ugd-VK-ODt">
-                                                <rect key="frame" x="0.0" y="0.0" width="138" height="60"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="82.666666666666671" height="60"/>
                                                 <state key="normal" title="■">
                                                     <color key="titleColor" red="0.098039217289999994" green="0.098039217289999994" blue="0.098039217289999994" alpha="1" colorSpace="calibratedRGB"/>
                                                 </state>
@@ -160,8 +160,8 @@
                                                 </connections>
                                             </button>
                                             <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d31-Sc-gkv">
-                                                <rect key="frame" x="138" y="0.0" width="138" height="60"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                                <rect key="frame" x="82.666666666666671" y="0.0" width="83.000000000000014" height="60"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
                                                 <state key="normal" title="■">
                                                     <color key="titleColor" red="0.098039217289999994" green="0.098039217289999994" blue="0.098039217289999994" alpha="1" colorSpace="calibratedRGB"/>
                                                 </state>
@@ -170,13 +170,33 @@
                                                 </connections>
                                             </button>
                                             <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vaA-aw-5Vo">
-                                                <rect key="frame" x="276" y="0.0" width="138" height="60"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="45"/>
+                                                <rect key="frame" x="165.66666666666666" y="0.0" width="82.666666666666657" height="60"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="33"/>
                                                 <state key="normal" title="■">
                                                     <color key="titleColor" red="0.098039217289999994" green="0.098039217289999994" blue="0.098039217289999994" alpha="1" colorSpace="calibratedRGB"/>
                                                 </state>
                                                 <connections>
                                                     <action selector="thickness:" destination="BYZ-38-t0r" eventType="touchUpInside" id="kjr-Lo-WsG"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dms-Fn-9N9">
+                                                <rect key="frame" x="248.33333333333337" y="0.0" width="83" height="60"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="42"/>
+                                                <state key="normal" title="■">
+                                                    <color key="titleColor" red="0.098039217289999994" green="0.098039217289999994" blue="0.098039217289999994" alpha="1" colorSpace="calibratedRGB"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="thickness:" destination="BYZ-38-t0r" eventType="touchUpInside" id="09v-lU-eik"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="96b-xU-rsF">
+                                                <rect key="frame" x="331.33333333333331" y="0.0" width="82.666666666666686" height="60"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="51"/>
+                                                <state key="normal" title="■">
+                                                    <color key="titleColor" red="0.098039217289999994" green="0.098039217289999994" blue="0.098039217289999994" alpha="1" colorSpace="calibratedRGB"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="thickness:" destination="BYZ-38-t0r" eventType="touchUpInside" id="L1B-1S-tw2"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -255,6 +275,11 @@
                         <outletCollection property="ColorButtons" destination="WNW-Hr-oAT" collectionClass="NSMutableArray" id="cTZ-ul-DMi"/>
                         <outletCollection property="ColorButtons" destination="xdF-KP-3vn" collectionClass="NSMutableArray" id="kHN-PW-y9D"/>
                         <outletCollection property="ColorButtons" destination="Hhn-qx-1ME" collectionClass="NSMutableArray" id="707-Hc-Jgd"/>
+                        <outletCollection property="ThicknessButtons" destination="ugd-VK-ODt" collectionClass="NSMutableArray" id="6dk-Ks-m0Y"/>
+                        <outletCollection property="ThicknessButtons" destination="d31-Sc-gkv" collectionClass="NSMutableArray" id="9nO-dc-ZCs"/>
+                        <outletCollection property="ThicknessButtons" destination="vaA-aw-5Vo" collectionClass="NSMutableArray" id="TBt-Jp-SWC"/>
+                        <outletCollection property="ThicknessButtons" destination="dms-Fn-9N9" collectionClass="NSMutableArray" id="bZu-gx-s7s"/>
+                        <outletCollection property="ThicknessButtons" destination="96b-xU-rsF" collectionClass="NSMutableArray" id="XvU-fj-IAg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

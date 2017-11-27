@@ -27,6 +27,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     var mpcHandler = MPCHandler.sharedInstance
     var textSelected:Bool!
     
+    @IBOutlet var ThicknessButtons: [UIButton]!
     @IBOutlet weak var content: UIView!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var emojiTextField: UITextField!
@@ -40,18 +41,30 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     override func viewDidLoad() {
         super.viewDidLoad()
         updateColorButtons()
+        updateThicknessButtons()
         setUpMPC()
         setUpModel()
         setUpMenu()
-        self.scrollView.panGestureRecognizer.minimumNumberOfTouches = 2;
-        
-        self.scrollView.maximumZoomScale = 4.0
-        self.scrollView.minimumZoomScale = 0.15
-        self.scrollView.contentSize = CGSize(width: 2000, height: 2000)
-       // self.scrollView.
+        setUpScrollView()
     }
     
     //MARK:Setup
+    func updateThicknessButtons(){
+        let formatLine = LineFormatSettings.sharedInstance
+        for button in ThicknessButtons {
+            button.setTitleColor(LineElement(line: Line(), width: 0, cap: .butt, color: formatLine.color).drawColor, for: UIControlState.normal) //Janky-jank
+        }
+    }
+    func setUpScrollView(){
+        self.scrollView.panGestureRecognizer.minimumNumberOfTouches = 2;
+        self.scrollView.maximumZoomScale = 4.0
+        self.scrollView.contentSize = CGSize(width: 2000, height: 2000)
+        if self.view.frame.size.width < self.view.frame.size.height{
+            self.scrollView.minimumZoomScale = self.view.frame.size.width / 2000
+        } else {
+            self.scrollView.minimumZoomScale = self.view.frame.size.height / 2000
+        }
+    }
     func updateColorButtons(){
         for button in ColorButtons{
             button.backgroundColor = LineElement(line: Line(), width: 69.69, cap: .butt, color: LineColor(rawValue: button.tag)!).drawColor //sooo janky
@@ -100,16 +113,24 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         let formatLine = LineFormatSettings.sharedInstance
         switch sender.tag{
         case 0:
-            formatLine.width = 3.0
-            MainMenuButton.titleLabel?.font = MainMenuButton.titleLabel?.font.withSize(24.0)
+            formatLine.width = 4.0
+            MainMenuButton.titleLabel?.font = MainMenuButton.titleLabel?.font.withSize(15.0)
             break
         case 1:
-            formatLine.width = 5.0
-            MainMenuButton.titleLabel?.font = MainMenuButton.titleLabel?.font.withSize(40.0)
+            formatLine.width = 8.0
+            MainMenuButton.titleLabel?.font = MainMenuButton.titleLabel?.font.withSize(24.0)
+            break
+        case 2:
+            formatLine.width = 16.0
+            MainMenuButton.titleLabel?.font = MainMenuButton.titleLabel?.font.withSize(33.0)
+            break
+        case 3:
+            formatLine.width = 32.0
+            MainMenuButton.titleLabel?.font = MainMenuButton.titleLabel?.font.withSize(42.0)
             break
         default:
-            formatLine.width = 11.0
-            MainMenuButton.titleLabel?.font = MainMenuButton.titleLabel?.font.withSize(56.0)
+            formatLine.width = 64.0
+            MainMenuButton.titleLabel?.font = MainMenuButton.titleLabel?.font.withSize(51.0)
             break
         }
     }
@@ -138,6 +159,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
             formatLine.color = LineColor.black
         }
         MainMenuButton.setTitleColor(LineElement(line: Line(), width: 0, cap: .butt, color: formatLine.color).drawColor, for: UIControlState.normal) //jankness
+        updateThicknessButtons()
     }
     
     @IBAction func Add(_ sender: Any) {
