@@ -27,6 +27,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     var mpcHandler = MPCHandler.sharedInstance
     var textSelected:Bool!
     
+    @IBOutlet weak var content: UIView!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var emojiTextField: UITextField!
     @IBOutlet weak var MainMenuButton: UIButton!
@@ -43,8 +44,11 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         setUpModel()
         setUpMenu()
         self.scrollView.panGestureRecognizer.minimumNumberOfTouches = 2;
-        //self.scrollView.maximumZoomScale = 4
-        //self.scrollView.minimumZoomScale = 0.25
+        
+        self.scrollView.maximumZoomScale = 4.0
+        self.scrollView.minimumZoomScale = 0.15
+        self.scrollView.contentSize = CGSize(width: 2000, height: 2000)
+       // self.scrollView.
     }
     
     //MARK:Setup
@@ -206,4 +210,9 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
             })
         }
     }
+    //MARK: ScrollView
+    func viewForZooming(in scrollView: UIScrollView) -> UIView?{
+        return content
+    }
+    
 }
