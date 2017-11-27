@@ -59,42 +59,42 @@ class ElementModelTests: XCTestCase {
     }
     
     
-    func testElementModelRefreshLines() {
-        let expect = expectation(description: #function)
-        let expectedCount = 5
-        
-        var linesToDraw = [[LineElement]]()
-        
-        ElementModel.sharedInstance.lineSubject
-            .subscribe(onNext: { (lineElements) in
-                linesToDraw.append(lineElements)
-        }).disposed(by: self.disposeBag)
-       
-        var instructionArray = [Instruction]()
-        for _ in 0..<expectedCount {
-            let newInstruction = generateLineInstruction()
-            instructionArray.append(newInstruction)
-        }
-        
-        let insertInstruction = instructionArray[2]
-        instructionArray.remove(at: 2)
-        instructionArray.append(insertInstruction)
-        
-        InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray.withNilHash))
-        
-        expect.fulfill()
-        
-        waitForExpectations(timeout: 1.0) { error in
-            guard error == nil else {
-                XCTFail(error!.localizedDescription)
-                return
-            }
-
-            XCTAssertEqual(expectedCount, linesToDraw.count,
-                           "An array should be sent for each line instruction")
-//            XCTAssert(linesToDraw.last!.count > 1, "Final array should include all previous lines")
-        }
-    }
-    
+//    func testElementModelRefreshLines() {
+//        let expect = expectation(description: #function)
+//        let expectedCount = 5
+//        
+//        var linesToDraw = [[LineElement]]()
+//        
+//        ElementModel.sharedInstance.lineSubject
+//            .subscribe(onNext: { (lineElements) in
+//                linesToDraw.append(lineElements)
+//        }).disposed(by: self.disposeBag)
+//       
+//        var instructionArray = [Instruction]()
+//        for _ in 0..<expectedCount {
+//            let newInstruction = generateLineInstruction()
+//            instructionArray.append(newInstruction)
+//        }
+//        
+//        let insertInstruction = instructionArray[2]
+//        instructionArray.remove(at: 2)
+//        instructionArray.append(insertInstruction)
+//        
+//        InstructionManager.subscribeToInstructionsFrom(Observable.from(instructionArray.withNilHash))
+//        
+//        expect.fulfill()
+//        
+//        waitForExpectations(timeout: 1.0) { error in
+//            guard error == nil else {
+//                XCTFail(error!.localizedDescription)
+//                return
+//            }
+//
+//            XCTAssertEqual(expectedCount, linesToDraw.count,
+//                           "An array should be sent for each line instruction")
+////            XCTAssert(linesToDraw.last!.count > 1, "Final array should include all previous lines")
+//        }
+//    }
+//    
     
 }
