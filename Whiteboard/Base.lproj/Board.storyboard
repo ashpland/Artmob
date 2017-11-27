@@ -18,14 +18,46 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="k2k-vt-RbJ">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                            </imageView>
-                            <view opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gmm-FH-6rc" customClass="DrawView" customModule="Whiteboard" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                            </view>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2Te-He-w1t">
+                                <rect key="frame" x="0.0" y="20" width="414" height="716"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="54n-Ue-WVi" userLabel="Content">
+                                        <rect key="frame" x="-793" y="-642" width="2000" height="2000"/>
+                                        <subviews>
+                                            <imageView opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="k2k-vt-RbJ">
+                                                <rect key="frame" x="0.0" y="0.0" width="2000" height="2000"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            </imageView>
+                                            <view opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gmm-FH-6rc" customClass="DrawView" customModule="Whiteboard" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="2000" height="2000"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            </view>
+                                        </subviews>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstItem="k2k-vt-RbJ" firstAttribute="top" secondItem="54n-Ue-WVi" secondAttribute="top" id="6zs-3U-oyr"/>
+                                            <constraint firstItem="k2k-vt-RbJ" firstAttribute="leading" secondItem="54n-Ue-WVi" secondAttribute="leading" id="Bzi-bg-f83"/>
+                                            <constraint firstItem="gmm-FH-6rc" firstAttribute="top" secondItem="k2k-vt-RbJ" secondAttribute="top" id="FAw-8k-3fs"/>
+                                            <constraint firstAttribute="height" constant="2000" id="HY8-Ku-w2m"/>
+                                            <constraint firstAttribute="bottom" secondItem="k2k-vt-RbJ" secondAttribute="bottom" id="Mgy-KI-eSz"/>
+                                            <constraint firstItem="gmm-FH-6rc" firstAttribute="bottom" secondItem="k2k-vt-RbJ" secondAttribute="bottom" id="Z6P-9m-iVt"/>
+                                            <constraint firstItem="gmm-FH-6rc" firstAttribute="trailing" secondItem="k2k-vt-RbJ" secondAttribute="trailing" id="cNu-VT-kHh"/>
+                                            <constraint firstAttribute="trailing" secondItem="k2k-vt-RbJ" secondAttribute="trailing" id="nfe-SY-4F8"/>
+                                            <constraint firstAttribute="width" constant="2000" id="oQM-59-f4S"/>
+                                            <constraint firstItem="gmm-FH-6rc" firstAttribute="leading" secondItem="k2k-vt-RbJ" secondAttribute="leading" id="rCq-pN-v2r"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="54n-Ue-WVi" firstAttribute="centerX" secondItem="2Te-He-w1t" secondAttribute="centerX" id="Jkz-6V-ndc"/>
+                                    <constraint firstAttribute="trailing" secondItem="54n-Ue-WVi" secondAttribute="trailing" id="U9s-JC-TcS"/>
+                                    <constraint firstAttribute="bottom" secondItem="54n-Ue-WVi" secondAttribute="bottom" id="fVK-b1-ms1"/>
+                                    <constraint firstItem="54n-Ue-WVi" firstAttribute="centerY" secondItem="2Te-He-w1t" secondAttribute="centerY" id="n9z-ZH-DyP"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="4X4-1s-k02"/>
+                                </connections>
+                            </scrollView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BHP-fi-5lz" userLabel="MenuButton">
                                 <rect key="frame" x="356" y="518" width="50" height="50"/>
                                 <constraints>
@@ -200,20 +232,16 @@
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="MqN-Q7-7aO" secondAttribute="bottom" id="2nQ-B5-NSu"/>
+                            <constraint firstItem="2Te-He-w1t" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="4Z9-9s-Pot"/>
+                            <constraint firstItem="2Te-He-w1t" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="59c-EC-vgO"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="MqN-Q7-7aO" secondAttribute="trailing" id="6JM-8p-pbF"/>
                             <constraint firstItem="MqN-Q7-7aO" firstAttribute="top" secondItem="BHP-fi-5lz" secondAttribute="bottom" constant="8" id="RGs-nJ-Tnf"/>
-                            <constraint firstItem="k2k-vt-RbJ" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="XRj-Xd-zeH"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="BHP-fi-5lz" secondAttribute="trailing" constant="8" id="Y8B-WH-sYc"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="gmm-FH-6rc" secondAttribute="bottom" id="YtE-ha-tjr"/>
                             <constraint firstItem="MqN-Q7-7aO" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="bTt-eP-keu"/>
-                            <constraint firstItem="gmm-FH-6rc" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="eCv-kU-23u"/>
                             <constraint firstItem="xca-GD-GI7" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="-8" id="f5t-Kg-BbR"/>
-                            <constraint firstItem="gmm-FH-6rc" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="h1F-SM-grI"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="xca-GD-GI7" secondAttribute="trailing" constant="8" id="jfs-ic-tZC"/>
-                            <constraint firstItem="k2k-vt-RbJ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="oAb-E2-Qan"/>
-                            <constraint firstItem="k2k-vt-RbJ" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="oTe-z0-QLf"/>
-                            <constraint firstItem="k2k-vt-RbJ" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="qow-qb-mVG"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="gmm-FH-6rc" secondAttribute="trailing" id="xNx-JA-oHQ"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="2Te-He-w1t" secondAttribute="bottom" id="n0B-cz-S6o"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="2Te-He-w1t" secondAttribute="trailing" id="yLq-Rl-qCs"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
@@ -223,6 +251,7 @@
                         <outlet property="drawView" destination="gmm-FH-6rc" id="r21-B9-xrM"/>
                         <outlet property="emojiTextField" destination="f2O-NS-T40" id="lfE-ps-V75"/>
                         <outlet property="lineImageView" destination="k2k-vt-RbJ" id="vdU-t0-qZH"/>
+                        <outlet property="scrollView" destination="2Te-He-w1t" id="IJ8-Rf-2H5"/>
                         <outletCollection property="ColorButtons" destination="f8v-8b-oeT" collectionClass="NSMutableArray" id="9lH-bd-9IT"/>
                         <outletCollection property="ColorButtons" destination="JTw-GB-FcN" collectionClass="NSMutableArray" id="8dv-vn-pTR"/>
                         <outletCollection property="ColorButtons" destination="Sg6-JH-QQa" collectionClass="NSMutableArray" id="X3Z-eH-2qt"/>

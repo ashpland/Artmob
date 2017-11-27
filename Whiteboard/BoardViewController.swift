@@ -19,7 +19,7 @@ class LineFormatSettings {
     var color = LineColor.blue
 }
 
-class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, CloseMenu, UITextFieldDelegate {
+class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, CloseMenu, UITextFieldDelegate, UIScrollViewDelegate {
     
     //MARK: Properties / Outlets
     let viewModel = BoardViewModel()
@@ -27,6 +27,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     var mpcHandler = MPCHandler.sharedInstance
     var textSelected:Bool!
     
+    @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var emojiTextField: UITextField!
     @IBOutlet weak var MainMenuButton: UIButton!
     @IBOutlet weak var MainMenuHeight: NSLayoutConstraint!
@@ -41,6 +42,9 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         setUpMPC()
         setUpModel()
         setUpMenu()
+        self.scrollView.panGestureRecognizer.minimumNumberOfTouches = 2;
+        //self.scrollView.maximumZoomScale = 4
+        //self.scrollView.minimumZoomScale = 0.25
     }
     
     //MARK:Setup
