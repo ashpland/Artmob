@@ -52,7 +52,10 @@ class InstructionManager {
             .disposed(by: self.disposeBag)
         
         helloPing.debounce(2.0, scheduler: MainScheduler.instance)
-            .subscribe(onNext: {self.broadcastInstructions.onNext($0)})
+            .subscribe(onNext: { mostRecentBundle in
+                print("helloPing")
+                self.helloPing.onNext(mostRecentBundle)
+                self.broadcastInstructions.onNext(mostRecentBundle)})
             .disposed(by: self.disposeBag)
     }
     
