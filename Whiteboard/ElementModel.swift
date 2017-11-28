@@ -92,6 +92,28 @@ enum LineColor: Int {
     case green
     case blue
     case purple
+    
+    var uiColor: UIColor {
+        switch self {
+        case .black:
+            return Colour.black
+        case .white:
+            return Colour.white
+        case .red:
+            return Colour.red
+        case .orange:
+            return Colour.orange
+        case .yellow:
+            return Colour.yellow
+        case .green:
+            return Colour.green
+        case .blue:
+            return Colour.blue
+        case .purple:
+            return Colour.purple
+        }
+    }
+    
 }
 
 struct Line {
