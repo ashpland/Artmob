@@ -114,7 +114,10 @@ class MPCHandler: NSObject, MCSessionDelegate, PeerManager{
             newInstruction = lineMessage.toInstruction()
             instructionAndHash = InstructionAndHashBundle(instruction: newInstruction,
                                                           hash: lineMessage.currentHash)
-            self.recievedInstruction.onNext(instructionAndHash)
+            
+            DispatchQueue.main.async {
+                self.recievedInstruction.onNext(instructionAndHash)
+            }
             
         } else if dic["type"] as! Int == 2 {
             print("Recieved Stamps")

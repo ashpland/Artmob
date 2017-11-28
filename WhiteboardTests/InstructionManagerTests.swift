@@ -151,46 +151,46 @@ class InstructionManagerTests: XCTestCase {
     }
     
     
-//    
+//
 //    func testInstructionRequestQueueing() {
 //        let expect = expectation(description: #function)
-//        
+//
 //        var myInstructions = [Instruction]()
 //        for _ in 0..<2 {
 //            let newInstruction = generateLineInstruction()
 //            myInstructions.append(newInstruction)
 //        }
-//        
+//
 //        var theirInstructions = myInstructions
 //        theirInstructions.remove(at: 0)
-//        
+//
 //        InstructionManager.subscribeToInstructionsFrom(Observable.from(myInstructions.withNilHash))
-//        
+//
 //        InstructionManager.sharedInstance.sync(theirInstructions: theirInstructions.stamps,
 //                                               from: self.fakeFriendManager.anotherPeer,
 //                                               with: self.fakeFriendManager)
 //        InstructionManager.sharedInstance.sync(theirInstructions: theirInstructions.stamps,
 //                                               from: self.fakeFriendManager.anotherPeer,
 //                                               with: self.fakeFriendManager)
-//        
+//
 //        // change MPCHandler.sharedInstance bit
-//        
+//
 //        Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { _ in expect.fulfill() }
-//        
+//
 //        waitForExpectations(timeout: 4.0) { error in
 //            guard error == nil else {
 //                XCTFail(error!.localizedDescription)
 //                return
 //            }
-//            
+//
 //            XCTAssert(self.broadcastInstructions.count == 3,
 //                      "Only one instruction should be rebroadcasted")
 ////            XCTAssertEqual(self.broadcastInstructions[0].stamp, self.broadcastInstructions[2].stamp,
 ////                      "The instruction missing from the second and third arrays should be rebroadcast")
 //        }
 //    }
-//    
-//    
+//
+//
     func testRequestMissingLocalInstruction() {
         let expect = expectation(description: #function)
         
