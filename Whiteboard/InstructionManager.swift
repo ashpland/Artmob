@@ -8,243 +8,145 @@
 
 import Foundation
 import RxSwift
+import MultipeerConnectivity
+
 
 class InstructionManager {
     
     static let sharedInstance = InstructionManager()
     
-    private var instructionStore = [Instruction]()
+    fileprivate var instructionStore = [Stamp: Instruction]()
     let newInstructions = PublishSubject<Instruction>()
     let broadcastInstructions = PublishSubject<InstructionAndHashBundle>()
-    private let hashStream = PublishSubject<HashAndSender>()
+    fileprivate let hashStream = PublishSubject<HashAndSender>()
     let stampsStream = PublishSubject<StampsAndSender>()
-    private let disposeBag = DisposeBag()
+    let instructionRequests = PublishSubject<Stamp>()
+    fileprivate let fullRefresh = PublishSubject<Bool>()
+    fileprivate let helloPing = PublishSubject<InstructionAndHashBundle>()
+    fileprivate let disposeBag = DisposeBag()
+    fileprivate let peerManager: PeerManager = MPCHandler.sharedInstance
     
     // MARK: - Methods
     
     init() {
-        let hashCheckInterval = 1.0
-        let stampsCheckInterval = 1.0
+        let hashCheckInterval = 2.0
         
-        _ = hashStream.throttle(hashCheckInterval, scheduler: MainScheduler.instance)
-            .subscribe(onNext: { self.check($0.hash, from: $0.sender) })
+        hashStream.throttle(hashCheckInterval, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { self.check(hash: $0.hash,
+                                            from: $0.sender,
+                                            with: self.peerManager) })
+            .disposed(by: self.disposeBag)
         
-        _ = stampsStream.throttle(stampsCheckInterval, scheduler: MainScheduler.instance)
-            .subscribe(onNext: { self.sync(theirInstructions: $0.stamps, from: $0.sender) })
+        stampsStream
+            .subscribe(onNext: { self.sync(theirInstructions: $0.stamps,
+                                           from: $0.sender,
+                                           with: self.peerManager)})
+            .disposed(by: self.disposeBag)
         
+        instructionRequests.buffer(timeSpan: 2.0, count: 50, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { self.processInstructionRequests($0) })
+            .disposed(by: self.disposeBag)
+        
+        fullRefresh.throttle(2.0, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { _ in self.refreshLines() })
+            .disposed(by: self.disposeBag)
+        
+        helloPing.debounce(2.0, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { mostRecentBundle in
+                print("helloPing")
+                self.helloPing.onNext(mostRecentBundle)
+                self.broadcastInstructions.onNext(mostRecentBundle)})
+            .disposed(by: self.disposeBag)
     }
     
     
     
     class func subscribeToInstructionsFrom(_ newObservable: Observable<InstructionAndHashBundle>) {
-        newObservable.subscribe(onNext: { bundle in
-            InstructionManager.sharedInstance.new(instructionAndHash: bundle)
-        }).disposed(by: InstructionManager.sharedInstance.disposeBag)
+        newObservable.subscribe(onNext:
+            { InstructionManager.sharedInstance.new(instructionAndHash: $0) })
+            .disposed(by: InstructionManager.sharedInstance.disposeBag)
     }
     
     internal func resetInstructionStore() {
-        self.instructionStore = [Instruction]()
+        self.instructionStore = [Stamp: Instruction]()
     }
     
     private func new(instructionAndHash bundle: InstructionAndHashBundle) {
         self.newInstruction(bundle.instruction)
         
         if let theirHash = bundle.hash {
-            if bundle.instruction.stamp.user != MPCHandler.sharedInstance.peerID.displayName {
-                self.hashStream.onNext(HashAndSender(hash: theirHash, 
+            if bundle.instruction.stamp.user != MPCHandler.sharedInstance.peerID {
+                self.hashStream.onNext(HashAndSender(hash: theirHash,
                                                      sender: bundle.instruction.stamp.user))
             }
-            
         }
-        
     }
-    
-    
-    
+
     private func newInstruction(_ newInstruction: Instruction) {
-        if self.instructionStore.isEmpty ||
-            newInstruction.stamp > self.instructionStore.last!.stamp {
-            self.instructionStore.append(newInstruction)
-            self.newInstructions.onNext(newInstruction)
-            let newBundle = InstructionAndHashBundle(instruction: newInstruction,
-                                                     hash: self.instructionStore.hashValue)
+        if self.instructionStore.contains(where:
+            {$0.key == newInstruction.stamp})
+            { return }
+        
+        self.instructionStore[newInstruction.stamp] = newInstruction
+        self.newInstructions.onNext(newInstruction)
+        let newBundle = InstructionAndHashBundle(instruction: newInstruction,
+                                                 hash: self.instructionStore.hashValue)
+
+        self.helloPing.onNext(newBundle)
+
+        if newInstruction.isFromSelf() {
             self.broadcastInstructions.onNext(newBundle)
-            return
-        } else {
-            insertInstruction(newInstruction)
         }
+        else { self.fullRefresh.onNext(true) }
     }
     
-    fileprivate func insertInstruction(_ newInstruction: Instruction) {
-        for (index, currentInstruction) in self.instructionStore.lazy.reversed().enumerated() {
-            guard newInstruction.stamp != currentInstruction.stamp else {
-                return
-            }
-            if newInstruction.stamp > currentInstruction.stamp {
-                self.instructionStore.insert(newInstruction, at: self.instructionStore.count - index)
-                let newInstructionBundle = InstructionAndHashBundle(instruction: newInstruction, hash: self.instructionStore.hashValue)
-                self.broadcastInstructions.onNext(newInstructionBundle)
-                
-                switch newInstruction.element {
-                case .line:
-                    self.refreshLines()
-                    return
-                case .label:
-                    return
-                }
-            }
-        }
-    }
+    
     
     internal func refreshLines() {
-        let lineInstructions = self.instructionStore.filter { if case .line = $0.element { return true }; return false}
+        let lineInstructions = self.instructionStore.inOrder
+            .filter { if case .line = $0.element { return true }; return false}
         ElementModel.sharedInstance.refreshLines(from: lineInstructions)
     }
     
-    internal func check(_ hash: InstructionStoreHash, from user:String) {
+    internal func check(hash: InstructionStoreHash, from peer:MCPeerID, with peerManager: PeerManager) {
         if self.instructionStore.hashValue != hash {
-            MPCHandler.sharedInstance.sendStamps(self.instructionStore.stamps,
-                                                 to: user,
-                                                 with: self.instructionStore.hashValue)
+            peerManager.requestInstructions(from: peer,
+                                            for: self.instructionStore.stamps,
+                                            with: self.instructionStore.hashValue)
         }
     }
     
-    internal func sync(theirInstructions: Array<Stamp>, from user: String) {
+    internal func sync(theirInstructions: Array<Stamp>, from peer: MCPeerID, with peerManager: PeerManager) {
         let myInstructions = self.instructionStore.stamps
         
-        for stamp in myInstructions.elementsNotIn(theirInstructions) {
-            if let instruction = self.instructionStore.instruction(for: stamp) {
+        for instruction in theirInstructions.elementsMissingFrom(myInstructions) {
+            self.instructionRequests.onNext(instruction)
+        }
+        
+        if myInstructions.elementsMissingFrom(theirInstructions).count > 0 {
+            peerManager.requestInstructions(from: peer,
+                                            for: self.instructionStore.stamps,
+                                            with: self.instructionStore.hashValue)
+        }
+    }
+    
+    internal func processInstructionRequests(_ requests: Array<Stamp>) {
+        guard !requests.isEmpty else {return}
+        let instructionStamps = Array(Set(requests))
+        
+        for stamp in instructionStamps {
+            if let instruction = self.instructionStore[stamp] {
                 let bundle = InstructionAndHashBundle(instruction: instruction,
                                                       hash: self.instructionStore.hashValue)
                 self.broadcastInstructions.onNext(bundle)
             }
         }
-        if theirInstructions.elementsNotIn(myInstructions).count > 0 {
-            MPCHandler.sharedInstance.sendStamps(self.instructionStore.stamps,
-                                                 to: user,
-                                                 with: self.instructionStore.hashValue)
-        }
     }
 }
 
-// MARK: - Instruction components
-
-typealias InstructionStoreHash = Int
-
-struct InstructionAndHashBundle {
-    let instruction: Instruction
-    let hash: InstructionStoreHash?
-}
-
-struct HashAndSender {
-    let hash: InstructionStoreHash
-    let sender: String
-}
-
-struct Instruction {
-    let type: InstructionType
-    let element: InstructionPayload
-    let stamp: Stamp
-}
-
-enum InstructionType {
-    case new
-    case edit(Stamp)
-    case delete(Stamp)
-    var stamp: Stamp? {
-        guard case .edit(let value) = self else {
-            return nil
-        }
-        guard case .delete(value) = self else {
-            return nil
-        }
-        return value
-    }
-}
-
-enum InstructionPayload {
-    case line (LineElement)
-    case label (LabelElement)
-    
-    var lineElement: LineElement? {
-        guard case .line(let value) = self else {
-            return nil
-        }
-        return value
-    }
-    var labelElement: LabelElement? {
-        guard case .label(let value) = self else {
-            return nil
-        }
-        return value
-    }
-}
-
-struct StampsAndSender {
-    let stamps: Array<Stamp>
-    let sender: String
-}
-
-struct Stamp: Comparable, Hashable {
-    let user: String
-    let timestamp: Date
-    
-    var hashValue: Int {
-        let timeHash = self.timestamp.hashValue
-        let userHash = self.user.hashValue
-        return timeHash ^ userHash &* 16777619
-    }
-    
-    static func < (lhs: Stamp, rhs: Stamp) -> Bool {
-        if lhs.timestamp < rhs.timestamp {
-            return true
-        }
-        if lhs.timestamp == rhs.timestamp && lhs.user < rhs.user {
-            return true
-        }
-        return false
-    }
-    
-    static func == (lhs: Stamp, rhs: Stamp) -> Bool {
-        return ((lhs.user == rhs.user) && (lhs.timestamp == rhs.timestamp))
-    }
+protocol PeerManager {
+    func requestInstructions(from peer:MCPeerID, for stampsArray: [Stamp], with hash: InstructionStoreHash)
 }
 
 
-extension Array where Element == Instruction
-{
-    var hashValue: InstructionStoreHash {
-        return self.stamps.hashValue
-    }
-    
-    var stamps: Array<Stamp> {
-        return self.map({ $0.stamp })
-    }
-    
-    func instruction(for stamp: Stamp) -> Instruction? {
-        return self.filter{$0.stamp == stamp}.first
-    }
-    
-    
-    //helper method for testing
-    var withNilHash: Array<InstructionAndHashBundle> {
-        return self.map{InstructionAndHashBundle(instruction: $0, hash: nil)}
-    }
-    
-}
 
-
-extension Array where Element:Hashable
-{
-    var hashValue: Int {
-        return self.reduce(16777619) {$0 ^ $1.hashValue}
-    }
-    
-    func elementsNotIn(_ otherArray: Array<Element>) -> Array<Element> {
-        return otherArray.filter{!Set(self).contains($0)}
-    }
-    
-    static func == (lhs: Array<Element>, rhs: Array<Element>) -> Bool {
-        return lhs.hashValue == rhs.hashValue
-    }
-}

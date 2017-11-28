@@ -7,13 +7,25 @@
 //
 
 import XCTest
+import MultipeerConnectivity
 @testable import Whiteboard
+
+
+class FakeFriendManager: PeerManager {
+    let anotherPeer = MCPeerID(displayName: "Someone Else")
+    var instructionRequested = false
+    func requestInstructions(from peer: MCPeerID, for stampsArray: [Stamp], with hash: InstructionStoreHash) {
+        instructionRequested = true
+    }
+}
 
 
 class MPCHandlerTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
+        
+        
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
     
@@ -23,16 +35,6 @@ class MPCHandlerTests: XCTestCase {
     }
     
     //test peerFromUser
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
     
 }

@@ -28,7 +28,8 @@ class BoardViewModel {
     }
     
     fileprivate func makeClearImage() -> UIImage {
-        UIGraphicsBeginImageContextWithOptions(UIScreen.main.bounds.size, false, 0.0)
+        //UIGraphicsBeginImageContextWithOptions(UIScreen.main.bounds.size, false, 0.0)
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: 2000, height: 2000), false, 0.0)
         UIColor.clear.setFill()
         UIRectFill(UIScreen.main.bounds)
         guard let lineImage = UIGraphicsGetImageFromCurrentImageContext() else {
@@ -40,15 +41,33 @@ class BoardViewModel {
     
     // MARK: - Creating Elements
     
-    internal func recieveLine(_ subject: Observable<LineSegment>) {
-        let _ = subject.reduce(Line(), accumulator: {
-            currentLine, nextSegment in
-            return currentLine + nextSegment
-        }).subscribe(onNext: { line in
+    internal func recieveLine(_ subject: Observable<Line>) {
+        print("Recieve Start")
+
+        
+        //.observeOn(SerialDispatchQueueScheduler.init(qos: .userInteractive))
+        
+        
+        let _ = subject.subscribe(onNext: { (line) in
             let newInstructionBundle = InstructionAndHashBundle(instruction: self.makeInstruction(for: line), hash: nil)
             self.submitInstruction.onNext(newInstructionBundle)
+            print("Line Receieved")
+        }, onCompleted: {
+            print("Recieve Complete\n")
         })
     }
+    
+    
+    /*
+ 
+     onNext: { line in
+     let newInstructionBundle = InstructionAndHashBundle(instruction: self.makeInstruction(for: line), hash: nil)
+     self.submitInstruction.onNext(newInstructionBundle)
+     }, onComplete: { print("Recieve Complete") }
+ 
+     */
+    
+    
     
     fileprivate func makeInstruction(for line: Line) -> Instruction {
         let newLineElement = LineElement(line: line, width: settings.width, cap: settings.cap, color: settings.color)
@@ -61,7 +80,7 @@ class BoardViewModel {
     }
     
     fileprivate func buildInstruction(type: InstructionType, from payload: InstructionPayload) -> Instruction {
-        let stamp = Stamp(user: UIDevice.current.name, timestamp: Date())
+        let stamp = Stamp(user: MPCHandler.sharedInstance.session.myPeerID, timestamp: Date())
         return Instruction(type: type, element: payload, stamp: stamp)
     }
     
@@ -90,10 +109,20 @@ class BoardViewModel {
     
  
     fileprivate func drawLines(_ linesToDraw: [LineElement]) {
+        
+        var newImage: UIImage
+        
         if linesToDraw.count > 1 {
-            self.lineImage.value = self.makeClearImage()
+            newImage = self.makeClearImage()
+        } else {
+            newImage = self.lineImage.value
         }
-        self.lineImage.value = drawLineOnImage(existingImage: self.lineImage.value, lines: linesToDraw)
+        newImage = self.drawLineOnImage(existingImage: self.lineImage.value, lines: linesToDraw)
+        self.lineImage.value = newImage
+        
+//        DispatchQueue.global(qos: .default).async {
+//            print("Ended Async")
+//        }
     }
     
     fileprivate func drawLineOnImage(existingImage: UIImage, lines: [LineElement]) -> UIImage{
@@ -104,10 +133,10 @@ class BoardViewModel {
             path.lineWidth = lineToDraw.width
             path.lineCapStyle = lineToDraw.cap
             lineToDraw.drawColor.setStroke()
-            
+
             if !lineToDraw.line.segments.isEmpty {
                 path.move(to: lineToDraw.line.segments.first!.firstPoint)
-                
+
                 for segment in lineToDraw.line.segments {
                     path.addLine(to: segment.firstPoint)
                     path.addLine(to: segment.secondPoint)

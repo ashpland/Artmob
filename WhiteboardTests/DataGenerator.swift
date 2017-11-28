@@ -9,6 +9,7 @@
 import XCTest
 import RxSwift
 import RxTest
+import MultipeerConnectivity
 @testable import Whiteboard
 
 
@@ -40,6 +41,25 @@ internal func generateLineInstruction() -> Instruction {
 
 fileprivate func buildInstruction(type: InstructionType,
                                   from payload: InstructionPayload) -> Instruction {
-    let stamp = Stamp(user: "User", timestamp: Date())
+    let stamp = Stamp(user: getUser(), timestamp: Date())
     return Instruction(type: type, element: payload, stamp: stamp)
 }
+
+fileprivate func getUser() -> MCPeerID {
+    let choice = arc4random_uniform(2)
+
+    switch choice {
+    case 0:
+        return MPCHandler.sharedInstance.session.myPeerID
+    default:
+        return MCPeerID(displayName: "Another Person")
+    }
+    
+    
+    
+}
+
+
+
+
+
