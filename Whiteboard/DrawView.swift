@@ -23,7 +23,6 @@ class DrawView: UIView {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         print("Began")
         closeMenuDelagate?.closeMenu()
-        self.activeDrawingLine = Line()
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -44,8 +43,9 @@ class DrawView: UIView {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("Ended")
+        print("Touch Ended")
         self.lineStream.onNext(self.activeDrawingLine)
+        self.activeDrawingLine = Line()
         print("Ended Ended")
     }
     
