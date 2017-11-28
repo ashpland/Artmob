@@ -59,6 +59,8 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         self.scrollView.panGestureRecognizer.minimumNumberOfTouches = 2;
         self.scrollView.maximumZoomScale = 4.0
         self.scrollView.contentSize = CGSize(width: 2000, height: 2000)
+        self.scrollView.delaysContentTouches = false
+        self.scrollView.canCancelContentTouches = true
         if self.view.frame.size.width < self.view.frame.size.height{
             self.scrollView.minimumZoomScale = self.view.frame.size.width / 2000
         } else {
