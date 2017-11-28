@@ -43,7 +43,6 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         super.viewDidLoad()
         updateColorButtons()
         updateThicknessButtons()
-        setUpMPC()
         setUpModel()
         setUpMenu()
         setUpScrollView()
@@ -72,12 +71,6 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         for button in ColorButtons{
             button.backgroundColor = LineElement(line: Line(), width: 69.69, cap: .butt, color: LineColor(rawValue: button.tag)!).drawColor //sooo janky
         }
-    }
-    func setUpMPC(){
-        mpcHandler.setupPeerWithDisplayName(displayName: UIDevice.current.name)
-        mpcHandler.setupSession()
-        mpcHandler.advertiseSelf(advertise: true)
-        mpcHandler.setupSubscribe()
     }
     func setUpModel(){
         self.drawView.closeMenuDelagate = self

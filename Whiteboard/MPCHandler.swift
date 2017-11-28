@@ -11,7 +11,12 @@ import MultipeerConnectivity
 import RxSwift
 
 class MPCHandler: NSObject, MCSessionDelegate, PeerManager{
-    
+    func setUp(){
+        self.setupPeerWithDisplayName(displayName: UIDevice.current.name)
+        self.setupSession()
+        self.advertiseSelf(advertise: true)
+        self.setupSubscribe()
+    }
     
     static let sharedInstance = MPCHandler()
     //MARK: Properties
