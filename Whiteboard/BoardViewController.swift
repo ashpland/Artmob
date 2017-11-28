@@ -168,8 +168,11 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     }
     
     @IBAction func Share(_ sender: UIButton) {
-        let activityViewController = UIActivityViewController(activityItems: [snapshot(of: lineImageView)], applicationActivities: nil)
-        self.present(activityViewController, animated: true)
+        if let image = snapshot(of: lineImageView) {
+            let activityViewController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+            self.present(activityViewController, animated: true)
+        }
+        Settings(sender)
     }
     @IBAction func Clear(_ sender: UIButton) {
         let alert = UIAlertController(title: "Clear", message: "Are you sure you want to clear the canvas?", preferredStyle: UIAlertControllerStyle.alert)
@@ -179,6 +182,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
             self.viewModel.clear()
         }))
         self.present(alert, animated: true, completion: nil)
+        Settings(sender)
     }
     @IBAction func Add(_ sender: Any) {
         if mpcHandler.session != nil{
@@ -186,9 +190,10 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
             mpcHandler.browser.delegate = self
             self.present(mpcHandler.browser, animated: true, completion: nil)
         }
+        Settings(sender)
     }
     
-    @IBAction func Settings(_ sender: UIButton) {
+    @IBAction func Settings(_ sender: Any) {
         if SettingsMenuHeight.constant == -66{
             UIView.animate(withDuration: 0.5, animations: {
                 self.SettingsMenuHeight.constant = 0
