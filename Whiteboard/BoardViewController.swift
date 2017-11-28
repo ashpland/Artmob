@@ -167,6 +167,10 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         updateThicknessButtons()
     }
     
+    @IBAction func Share(_ sender: UIButton) {
+        let activityViewController = UIActivityViewController(activityItems: [snapshot(of: lineImageView)], applicationActivities: nil)
+        self.present(activityViewController, animated: true)
+    }
     @IBAction func Clear(_ sender: UIButton) {
         let alert = UIAlertController(title: "Clear", message: "Are you sure you want to clear the canvas?", preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default, handler: nil))
@@ -264,6 +268,16 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     //MARK: ScrollView
     func viewForZooming(in scrollView: UIScrollView) -> UIView?{
         return content
+    }
+    
+    //MARK: Snap
+    private func snapshot(of view:UIView) -> UIImage? {
+        UIGraphicsBeginImageContext(view.bounds.size)
+        view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
+        let snapshot = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return snapshot
     }
     
 }

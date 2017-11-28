@@ -98,6 +98,9 @@
                                                 <rect key="frame" x="137" y="0.0" width="134" height="60"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="45"/>
                                                 <state key="normal" title="📷"/>
+                                                <connections>
+                                                    <action selector="Share:" destination="BYZ-38-t0r" eventType="touchUpInside" id="01J-fO-luC"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qfF-fZ-4mI">
                                                 <rect key="frame" x="274" y="0.0" width="134" height="60"/>
