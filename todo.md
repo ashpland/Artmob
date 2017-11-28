@@ -1,12 +1,14 @@
 # Todo
 
-1. clean up rebuilt instruction manager
-2. scroll view
+1. multitouch conflict
+2. memory bloat
+    - Backsync redraw
 3. network resilience
 4. testing
+5. icon
+6. Screenshots / app store description
 
-### Instruction Manager Cleanup
-- add last instruction ping
+
 - add first connect ping
 
 - add buffer for recent instructions

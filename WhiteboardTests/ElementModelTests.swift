@@ -5,13 +5,13 @@
 ////  Created by Andrew on 2017-11-20.
 ////  Copyright © 2017 hearthedge. All rights reserved.
 ////
-//
-//import XCTest
-//import RxSwift
-//import RxTest
-//@testable import Whiteboard
-//
-//class ElementModelTests: XCTestCase {
+
+import XCTest
+import RxSwift
+import RxTest
+@testable import Whiteboard
+
+class ElementModelTests: XCTestCase {
 //
 //    var disposeBag = DisposeBag()
 //
@@ -97,5 +97,5 @@
 ////    }
 ////
 //
-//}
+}
 

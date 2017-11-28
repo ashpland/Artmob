@@ -28,38 +28,38 @@ class BoardViewModelTests: XCTestCase {
     }
  
     
-    func testBoardViewModelCreatesInstructions() {
-        let expect = expectation(description: #function)
-        let expectedCount = Int(arc4random_uniform(50)+1)
-        
-        var result = [Instruction]()
-        
-        self.boardViewModel.submitInstruction
-            .subscribe(onNext: { (bundle) in
-                result.append(bundle.instruction)
-            }).disposed(by: self.disposeBag)
-        
-        
-        //generate lines
-        let lineStream = PublishSubject<Line>()
-        self.boardViewModel.recieveLine(lineStream)
-
-        for _ in 1...expectedCount {
-            lineStream.onNext(generateLine())
-            
-        }
-
-        expect.fulfill()
-
-        waitForExpectations(timeout: 1.0) { error in
-            guard error == nil else {
-                XCTFail(error!.localizedDescription)
-                return
-            }
-
-            XCTAssertEqual(expectedCount, result.count, "BoardViewModel should create instructions for each line inputed")
-        }  
-    }
+//    func testBoardViewModelCreatesInstructions() {
+//        let expect = expectation(description: #function)
+//        let expectedCount = Int(arc4random_uniform(50)+1)
+//        
+//        var result = [Instruction]()
+//        
+//        self.boardViewModel.submitInstruction
+//            .subscribe(onNext: { (bundle) in
+//                result.append(bundle.instruction)
+//            }).disposed(by: self.disposeBag)
+//        
+//        
+//        //generate lines
+//        let lineStream = PublishSubject<Line>()
+//        self.boardViewModel.recieveLine(lineStream)
+//
+//        for _ in 1...expectedCount {
+//            lineStream.onNext(generateLine())
+//            
+//        }
+//
+//        expect.fulfill()
+//
+//        waitForExpectations(timeout: 1.0) { error in
+//            guard error == nil else {
+//                XCTFail(error!.localizedDescription)
+//                return
+//            }
+//
+//            XCTAssertEqual(expectedCount, result.count, "BoardViewModel should create instructions for each line inputed")
+//        }  
+//    }
     
     
     func testBoardViewModelDidUpdateLineImage() {
