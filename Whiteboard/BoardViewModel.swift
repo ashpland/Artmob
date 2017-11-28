@@ -106,7 +106,9 @@ class BoardViewModel {
         }.disposed(by: disposeBag)
     }
     
-    
+    func clear(){
+        self.lineImage.value = self.makeClearImage()
+    }
  
     fileprivate func drawLines(_ linesToDraw: [LineElement]) {
         

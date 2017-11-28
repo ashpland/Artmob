@@ -30,9 +30,10 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     @IBOutlet var ThicknessButtons: [UIButton]!
     @IBOutlet weak var content: UIView!
     @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var emojiTextField: UITextField!
+    @IBOutlet weak var SettingsMenuButton: UIButton!
     @IBOutlet weak var MainMenuButton: UIButton!
     @IBOutlet weak var MainMenuHeight: NSLayoutConstraint!
+    @IBOutlet weak var SettingsMenuHeight: NSLayoutConstraint!
     @IBOutlet weak var drawView: DrawView!
     @IBOutlet weak var lineImageView: UIImageView!
     @IBOutlet var ColorButtons: [UIButton]!
@@ -101,6 +102,8 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         MainMenuButton.titleLabel?.font = MainMenuButton.titleLabel?.font.withSize(40.0)
         MainMenuHeight.constant = -120
         
+        SettingsMenuHeight.constant = -66
+        
 //        NotificationCenter.default.addObserver(
 //            self,
 //            selector: #selector(keyboardWillShow),
@@ -164,6 +167,15 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         updateThicknessButtons()
     }
     
+    @IBAction func Clear(_ sender: UIButton) {
+        let alert = UIAlertController(title: "Clear", message: "Are you sure you want to clear the canvas?", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Clear", style: UIAlertActionStyle.destructive, handler: {action in
+            InstructionManager.sharedInstance.resetInstructionStore()
+            self.viewModel.clear()
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
     @IBAction func Add(_ sender: Any) {
         if mpcHandler.session != nil{
             mpcHandler.setupBrowser()
@@ -172,6 +184,21 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         }
     }
     
+    @IBAction func Settings(_ sender: UIButton) {
+        if SettingsMenuHeight.constant == -66{
+            UIView.animate(withDuration: 0.5, animations: {
+                self.SettingsMenuHeight.constant = 0
+                self.SettingsMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+                self.view.layoutIfNeeded()
+            })
+        } else if SettingsMenuHeight.constant == 0{
+            UIView.animate(withDuration: 0.4, animations: {
+                self.SettingsMenuHeight.constant = -66
+                self.SettingsMenuButton.transform = CGAffineTransform(rotationAngle: 0)
+                self.view.layoutIfNeeded()
+            })
+        }
+    }
     @IBAction func Menu(_ sender: UIButton) {
         
         if MainMenuHeight.constant == -120{
