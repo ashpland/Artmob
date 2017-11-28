@@ -30,9 +30,10 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     @IBOutlet var ThicknessButtons: [UIButton]!
     @IBOutlet weak var content: UIView!
     @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var emojiTextField: UITextField!
+    @IBOutlet weak var SettingsMenuButton: UIButton!
     @IBOutlet weak var MainMenuButton: UIButton!
     @IBOutlet weak var MainMenuHeight: NSLayoutConstraint!
+    @IBOutlet weak var SettingsMenuHeight: NSLayoutConstraint!
     @IBOutlet weak var drawView: DrawView!
     @IBOutlet weak var lineImageView: UIImageView!
     @IBOutlet var ColorButtons: [UIButton]!
@@ -42,7 +43,6 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         super.viewDidLoad()
         updateColorButtons()
         updateThicknessButtons()
-        setUpMPC()
         setUpModel()
         setUpMenu()
         setUpScrollView()
@@ -59,6 +59,8 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         self.scrollView.panGestureRecognizer.minimumNumberOfTouches = 2;
         self.scrollView.maximumZoomScale = 4.0
         self.scrollView.contentSize = CGSize(width: 2000, height: 2000)
+        self.scrollView.delaysContentTouches = false
+        self.scrollView.canCancelContentTouches = true
         if self.view.frame.size.width < self.view.frame.size.height{
             self.scrollView.minimumZoomScale = self.view.frame.size.width / 2000
         } else {
@@ -69,12 +71,6 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         for button in ColorButtons{
             button.backgroundColor = LineElement(line: Line(), width: 69.69, cap: .butt, color: LineColor(rawValue: button.tag)!).drawColor //sooo janky
         }
-    }
-    func setUpMPC(){
-        mpcHandler.setupPeerWithDisplayName(displayName: UIDevice.current.name)
-        mpcHandler.setupSession()
-        mpcHandler.advertiseSelf(advertise: true)
-        mpcHandler.setupSubscribe()
     }
     func setUpModel(){
         self.drawView.closeMenuDelagate = self
@@ -98,6 +94,8 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         MainMenuButton.setTitleColor(LineElement(line: Line(), width: 0, cap: .butt, color: LineFormatSettings.sharedInstance.color).drawColor, for: UIControlState.normal) //jankness
         MainMenuButton.titleLabel?.font = MainMenuButton.titleLabel?.font.withSize(40.0)
         MainMenuHeight.constant = -120
+        
+        SettingsMenuHeight.constant = -66
         
 //        NotificationCenter.default.addObserver(
 //            self,
@@ -162,14 +160,56 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         updateThicknessButtons()
     }
     
+    @IBAction func Share(_ sender: UIButton) {
+        if let image = snapshot(of: lineImageView) {
+            let activityViewController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+            
+            if let popoverController = activityViewController.popoverPresentationController {
+                popoverController.sourceView = self.view
+                popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                popoverController.permittedArrowDirections = []
+                
+            }
+            
+            self.present(activityViewController, animated: true)
+            
+        }
+        Settings(sender)
+    }
+    @IBAction func Clear(_ sender: UIButton) {
+        let alert = UIAlertController(title: "Clear", message: "Are you sure you want to clear the canvas?", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Clear", style: UIAlertActionStyle.destructive, handler: {action in
+            InstructionManager.sharedInstance.resetInstructionStore()
+            self.viewModel.clear()
+        }))
+        self.present(alert, animated: true, completion: nil)
+        Settings(sender)
+    }
     @IBAction func Add(_ sender: Any) {
         if mpcHandler.session != nil{
             mpcHandler.setupBrowser()
             mpcHandler.browser.delegate = self
             self.present(mpcHandler.browser, animated: true, completion: nil)
         }
+        Settings(sender)
     }
     
+    @IBAction func Settings(_ sender: Any) {
+        if SettingsMenuHeight.constant == -66{
+            UIView.animate(withDuration: 0.5, animations: {
+                self.SettingsMenuHeight.constant = 0
+                self.SettingsMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+                self.view.layoutIfNeeded()
+            })
+        } else if SettingsMenuHeight.constant == 0{
+            UIView.animate(withDuration: 0.4, animations: {
+                self.SettingsMenuHeight.constant = -66
+                self.SettingsMenuButton.transform = CGAffineTransform(rotationAngle: 0)
+                self.view.layoutIfNeeded()
+            })
+        }
+    }
     @IBAction func Menu(_ sender: UIButton) {
         
         if MainMenuHeight.constant == -120{
@@ -235,6 +275,16 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     //MARK: ScrollView
     func viewForZooming(in scrollView: UIScrollView) -> UIView?{
         return content
+    }
+    
+    //MARK: Snap
+    private func snapshot(of view:UIView) -> UIImage? {
+        UIGraphicsBeginImageContext(view.bounds.size)
+        view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
+        let snapshot = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return snapshot
     }
     
 }

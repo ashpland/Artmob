@@ -19,9 +19,12 @@ class DrawView: UIView {
     public var lineStream = PublishSubject<Line>()
     public var viewModel : BoardViewModel!
     
-    
+    func cancelLine(){
+        activeDrawingLine = Line()
+    }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         print("Began")
+//        self.activeDrawingLine = Line()
         closeMenuDelagate?.closeMenu()
     }
     
@@ -39,7 +42,9 @@ class DrawView: UIView {
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.lineStream.onNext(self.activeDrawingLine)
+        print("Canceled")
+        self.activeDrawingLine = Line()
+        self.setNeedsDisplay()
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -47,6 +52,7 @@ class DrawView: UIView {
         self.lineStream.onNext(self.activeDrawingLine)
         self.activeDrawingLine = Line()
         print("Ended Ended")
+        self.setNeedsDisplay()
     }
     
     override func draw(_ rect: CGRect) {
