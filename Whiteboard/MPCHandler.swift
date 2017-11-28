@@ -72,12 +72,12 @@ class MPCHandler: NSObject, MCSessionDelegate, PeerManager{
     func sendLine(lineMessage: LineMessage){
         let messageData = NSKeyedArchiver.archivedData(withRootObject: lineMessage)
         let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 0])
-        try! session.send(data, toPeers: session.connectedPeers, with: MCSessionSendDataMode.unreliable)
+        try? session.send(data, toPeers: session.connectedPeers, with: MCSessionSendDataMode.unreliable)
     }
     func sendLabel(labelMessage: LabelMessage){
         let messageData = NSKeyedArchiver.archivedData(withRootObject: labelMessage)
         let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 1])
-        try! session.send(data, toPeers: session.connectedPeers, with: MCSessionSendDataMode.unreliable)
+        try? session.send(data, toPeers: session.connectedPeers, with: MCSessionSendDataMode.unreliable)
     }
     func peerFromUser(user: String) -> [MCPeerID] {
         let conPeers = self.session.connectedPeers
