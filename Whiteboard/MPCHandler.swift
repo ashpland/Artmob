@@ -10,28 +10,37 @@ import UIKit
 import MultipeerConnectivity
 import RxSwift
 
-class MPCHandler: NSObject, MCSessionDelegate{
+class MPCHandler: NSObject, MCSessionDelegate, PeerManager{
+    func setUp(){
+        self.setupPeerWithDisplayName(displayName: UIDevice.current.name)
+        self.setupSession()
+        self.advertiseSelf(advertise: true)
+        self.setupSubscribe()
+    }
+    
     static let sharedInstance = MPCHandler()
     //MARK: Properties
     var peerID:MCPeerID!
     var session:MCSession!
     var browser:MCBrowserViewController!
     var advertiser:MCAdvertiserAssistant? = nil
-
+    
     var state:MCSessionState!
     
-    let recievedInstruction = PublishSubject<Instruction>()
+    let recievedInstruction = PublishSubject<InstructionAndHashBundle>()
     
-    //MARK: Setup
+    //MARK:- Setup
     func setupSubscribe(){
         InstructionManager.subscribeToInstructionsFrom(self.recievedInstruction)
         
-        _ = InstructionManager.sharedInstance.newInstructions
-            .subscribe(onNext: { (instruction) in
+        _ = InstructionManager.sharedInstance.broadcastInstructions
+            .subscribe(onNext: { (bundle) in
                 if self.state == MCSessionState.connected {
-                    self.sendLine(lineMessage: LineMessage(instruction: instruction))
+                    let newMessage = LineMessage(instruction: bundle.instruction)
+                    newMessage.currentHash = bundle.hash
+                    self.sendLine(lineMessage: newMessage)
                 }
-        })
+            })
     }
     
     func setupPeerWithDisplayName (displayName:String){
@@ -53,26 +62,81 @@ class MPCHandler: NSObject, MCSessionDelegate{
             advertiser = nil
         }
     }
-
-    //MARK: Send message
-//    func sendInstruction(instruction:Instruction){
-//        let messageDict = ["message":message, "player":UIDevice.current.name] as [String : Any]
-//        let messageData = try! JSONSerialization.data(withJSONObject: messageDict, options: JSONSerialization.WritingOptions.prettyPrinted)
-//        try! session.send(messageData, toPeers: session.connectedPeers, with: MCSessionSendDataMode.reliable)
-//    }
+    
+    //MARK: - Send message
+    //    func sendInstruction(instruction:Instruction){
+    //        let messageDict = ["message":message, "player":UIDevice.current.name] as [String : Any]
+    //        let messageData = try! JSONSerialization.data(withJSONObject: messageDict, options: JSONSerialization.WritingOptions.prettyPrinted)
+    //        try! session.send(messageData, toPeers: session.connectedPeers, with: MCSessionSendDataMode.reliable)
+    //    }
     func sendLine(lineMessage: LineMessage){
         let messageData = NSKeyedArchiver.archivedData(withRootObject: lineMessage)
-        try! session.send(messageData, toPeers: session.connectedPeers, with: MCSessionSendDataMode.reliable)
+        let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 0])
+        try? session.send(data, toPeers: session.connectedPeers, with: MCSessionSendDataMode.unreliable)
     }
-
-    //MARK: MCSessionDelegate
+    func sendLabel(labelMessage: LabelMessage){
+        let messageData = NSKeyedArchiver.archivedData(withRootObject: labelMessage)
+        let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 1])
+        try? session.send(data, toPeers: session.connectedPeers, with: MCSessionSendDataMode.unreliable)
+    }
+    func peerFromUser(user: String) -> [MCPeerID] {
+        let conPeers = self.session.connectedPeers
+        let userPeerID = conPeers.filter{$0.displayName == user}
+        return userPeerID
+    }
+    
+    func requestInstructions(from peer: MCPeerID, for stampsArray: [Stamp], with hash: InstructionStoreHash) {
+        if self.state == MCSessionState.connected {
+            let stampMessage = StampMessage(stamps: stampsArray)
+            stampMessage.currentHash = hash
+            self.sendStamps(stampMessage: stampMessage, peer: peer)
+        }
+    }
+    
+    
+    func sendStamps(stampMessage: StampMessage, peer:MCPeerID){
+        let messageData = NSKeyedArchiver.archivedData(withRootObject: stampMessage)
+        let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 2])
+        try? session.send(data, toPeers: [peer], with: MCSessionSendDataMode.reliable)
+    }
+    
+    //MARK:- MCSessionDelegate
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
-        self.state = state
+        if state == MCSessionState.connected {
+            self.state = state
+        }
     }
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        let lineMessage = NSKeyedUnarchiver.unarchiveObject(with: data) as! LineMessage
-        let newInstruction = lineMessage.toInstruction()
-        self.recievedInstruction.onNext(newInstruction)
+        
+        //data.
+        let dic = NSKeyedUnarchiver.unarchiveObject(with: data) as! Dictionary<String, Any>
+        let newInstruction: Instruction
+        let instructionAndHash: InstructionAndHashBundle
+        
+        if dic["type"] as! Int == 0 {
+            let lineMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! LineMessage
+            newInstruction = lineMessage.toInstruction()
+            instructionAndHash = InstructionAndHashBundle(instruction: newInstruction,
+                                                          hash: lineMessage.currentHash)
+            
+            DispatchQueue.main.async {
+                self.recievedInstruction.onNext(instructionAndHash)
+            }
+            
+        } else if dic["type"] as! Int == 2 {
+            let stampMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! StampMessage
+            
+            InstructionManager.sharedInstance.stampsStream
+                .onNext(StampsAndSender(stamps: stampMessage.toStamps(),
+                                        sender: peerID))
+            
+        } else {
+            let labelMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! LabelMessage
+            newInstruction = labelMessage.toInstruction()
+            instructionAndHash = InstructionAndHashBundle(instruction: newInstruction,
+                                                          hash: labelMessage.currentHash)
+            self.recievedInstruction.onNext(instructionAndHash)
+        }
     }
     func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
     }
@@ -80,6 +144,6 @@ class MPCHandler: NSObject, MCSessionDelegate{
     }
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
     }
-
+    
 }
 

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		490E6C2D1FC60F2E00A5649A /* ASHColourHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490E6C2C1FC60F2E00A5649A /* ASHColourHelper.swift */; };
+		490E6C2F1FC630F100A5649A /* MessagesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490E6C2E1FC630F100A5649A /* MessagesTests.swift */; };
 		494487B91FBCFF3B00AE2C2F /* BoardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494487B81FBCFF3B00AE2C2F /* BoardViewModel.swift */; };
 		4949DC1F1FBCFA430062691C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4949DC1E1FBCFA430062691C /* AppDelegate.swift */; };
 		4949DC211FBCFA430062691C /* BoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4949DC201FBCFA430062691C /* BoardViewController.swift */; };
@@ -17,9 +19,12 @@
 		495F109B1FBE2F4800BF33FE /* InstructionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495F109A1FBE2F4800BF33FE /* InstructionManager.swift */; };
 		495F109D1FBE3C1200BF33FE /* ElementModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495F109C1FBE3C1200BF33FE /* ElementModel.swift */; };
 		496B676F1FBD06FB0002A2F2 /* DrawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496B676E1FBD06FB0002A2F2 /* DrawView.swift */; };
+		49907F451FC76BB900982087 /* InstructionComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49907F441FC76BB900982087 /* InstructionComponents.swift */; };
+		49B880C71FC65A2F00A5BB35 /* MPCHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B880C61FC65A2F00A5BB35 /* MPCHandlerTests.swift */; };
 		49BE285C1FC3A80A00FD7B8A /* DataGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BE285B1FC3A80A00FD7B8A /* DataGenerator.swift */; };
 		49BE285E1FC3C3F800FD7B8A /* InstructionManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BE285D1FC3C3F800FD7B8A /* InstructionManagerTests.swift */; };
 		49BE28601FC3D0FB00FD7B8A /* ElementModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BE285F1FC3D0FB00FD7B8A /* ElementModelTests.swift */; };
+		9324827A1FC4F921004ED705 /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 932482791FC4F921004ED705 /* Messages.swift */; };
 		9393855E1FBFAE75002F7486 /* MultipeerConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9393855D1FBFAE75002F7486 /* MultipeerConnectivity.framework */; };
 		939385601FBFAEB7002F7486 /* MPCHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9393855F1FBFAEB6002F7486 /* MPCHandler.swift */; };
 		A82B5FF3EA5DCF2DD8E24305 /* Pods_Whiteboard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19C7E7C83D070CAC297DD0BE /* Pods_Whiteboard.framework */; };
@@ -41,6 +46,8 @@
 		19C7E7C83D070CAC297DD0BE /* Pods_Whiteboard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Whiteboard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DA2CDD772086609A7B07201 /* Pods-WhiteboardTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WhiteboardTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WhiteboardTests/Pods-WhiteboardTests.debug.xcconfig"; sourceTree = "<group>"; };
 		213248CB49223F7549B7B3B4 /* Pods-Whiteboard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Whiteboard.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Whiteboard/Pods-Whiteboard.debug.xcconfig"; sourceTree = "<group>"; };
+		490E6C2C1FC60F2E00A5649A /* ASHColourHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASHColourHelper.swift; sourceTree = "<group>"; };
+		490E6C2E1FC630F100A5649A /* MessagesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesTests.swift; sourceTree = "<group>"; };
 		494487B81FBCFF3B00AE2C2F /* BoardViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardViewModel.swift; sourceTree = "<group>"; };
 		4949DC1B1FBCFA430062691C /* Whiteboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Whiteboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4949DC1E1FBCFA430062691C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -55,9 +62,12 @@
 		495F109A1FBE2F4800BF33FE /* InstructionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionManager.swift; sourceTree = "<group>"; };
 		495F109C1FBE3C1200BF33FE /* ElementModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementModel.swift; sourceTree = "<group>"; };
 		496B676E1FBD06FB0002A2F2 /* DrawView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawView.swift; sourceTree = "<group>"; };
+		49907F441FC76BB900982087 /* InstructionComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionComponents.swift; sourceTree = "<group>"; };
+		49B880C61FC65A2F00A5BB35 /* MPCHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MPCHandlerTests.swift; sourceTree = "<group>"; };
 		49BE285B1FC3A80A00FD7B8A /* DataGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataGenerator.swift; sourceTree = "<group>"; };
 		49BE285D1FC3C3F800FD7B8A /* InstructionManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionManagerTests.swift; sourceTree = "<group>"; };
 		49BE285F1FC3D0FB00FD7B8A /* ElementModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementModelTests.swift; sourceTree = "<group>"; };
+		932482791FC4F921004ED705 /* Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Messages.swift; sourceTree = "<group>"; };
 		9393855D1FBFAE75002F7486 /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
 		9393855F1FBFAEB6002F7486 /* MPCHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MPCHandler.swift; sourceTree = "<group>"; };
 		CCB8AA3EB739CEAF12F5F39D /* Pods_WhiteboardTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WhiteboardTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -114,6 +124,9 @@
 				4949DC201FBCFA430062691C /* BoardViewController.swift */,
 				494487B81FBCFF3B00AE2C2F /* BoardViewModel.swift */,
 				495F109A1FBE2F4800BF33FE /* InstructionManager.swift */,
+				49907F441FC76BB900982087 /* InstructionComponents.swift */,
+				490E6C2C1FC60F2E00A5649A /* ASHColourHelper.swift */,
+				932482791FC4F921004ED705 /* Messages.swift */,
 				495F109C1FBE3C1200BF33FE /* ElementModel.swift */,
 				9393855F1FBFAEB6002F7486 /* MPCHandler.swift */,
 				4949DC251FBCFA430062691C /* Assets.xcassets */,
@@ -129,6 +142,8 @@
 				4949DC331FBCFA440062691C /* BoardViewModelTests.swift */,
 				49BE285D1FC3C3F800FD7B8A /* InstructionManagerTests.swift */,
 				49BE285F1FC3D0FB00FD7B8A /* ElementModelTests.swift */,
+				490E6C2E1FC630F100A5649A /* MessagesTests.swift */,
+				49B880C61FC65A2F00A5BB35 /* MPCHandlerTests.swift */,
 				49BE285B1FC3A80A00FD7B8A /* DataGenerator.swift */,
 				4949DC351FBCFA440062691C /* Info.plist */,
 			);
@@ -375,11 +390,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				495F109D1FBE3C1200BF33FE /* ElementModel.swift in Sources */,
+				9324827A1FC4F921004ED705 /* Messages.swift in Sources */,
 				939385601FBFAEB7002F7486 /* MPCHandler.swift in Sources */,
 				495F109B1FBE2F4800BF33FE /* InstructionManager.swift in Sources */,
+				49907F451FC76BB900982087 /* InstructionComponents.swift in Sources */,
 				4949DC211FBCFA430062691C /* BoardViewController.swift in Sources */,
 				496B676F1FBD06FB0002A2F2 /* DrawView.swift in Sources */,
 				494487B91FBCFF3B00AE2C2F /* BoardViewModel.swift in Sources */,
+				490E6C2D1FC60F2E00A5649A /* ASHColourHelper.swift in Sources */,
 				4949DC1F1FBCFA430062691C /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -389,7 +407,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				49BE28601FC3D0FB00FD7B8A /* ElementModelTests.swift in Sources */,
+				49B880C71FC65A2F00A5BB35 /* MPCHandlerTests.swift in Sources */,
 				49BE285E1FC3C3F800FD7B8A /* InstructionManagerTests.swift in Sources */,
+				490E6C2F1FC630F100A5649A /* MessagesTests.swift in Sources */,
 				4949DC341FBCFA440062691C /* BoardViewModelTests.swift in Sources */,
 				49BE285C1FC3A80A00FD7B8A /* DataGenerator.swift in Sources */,
 			);
@@ -541,8 +561,9 @@
 				DEVELOPMENT_TEAM = T5E8L2XP69;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Whiteboard/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = land.ashp.Whiteboard;
+				PRODUCT_BUNDLE_IDENTIFIER = land.ashp.Artmob;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_REFLECTION_METADATA_LEVEL = none;
 				SWIFT_VERSION = 4.0;
@@ -559,8 +580,9 @@
 				DEVELOPMENT_TEAM = T5E8L2XP69;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Whiteboard/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = land.ashp.Whiteboard;
+				PRODUCT_BUNDLE_IDENTIFIER = land.ashp.Artmob;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_REFLECTION_METADATA_LEVEL = none;
 				SWIFT_VERSION = 4.0;
@@ -572,8 +594,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1DA2CDD772086609A7B07201 /* Pods-WhiteboardTests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_CODE_COVERAGE = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = T5E8L2XP69;
 				INFOPLIST_FILE = WhiteboardTests/Info.plist;
@@ -590,8 +612,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EAB871D93390FA32D1D1068B /* Pods-WhiteboardTests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_CODE_COVERAGE = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = T5E8L2XP69;
 				INFOPLIST_FILE = WhiteboardTests/Info.plist;

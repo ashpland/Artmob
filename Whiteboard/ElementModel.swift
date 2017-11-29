@@ -30,7 +30,7 @@ class ElementModel {
                     switch instruction.element {
                     case .line(let lineToDraw):
                         self.lineSubject.onNext([lineToDraw])
-                    case .emoji:
+                    case .label:
                         self.processLabel(instruction)
                     }
 
@@ -47,7 +47,7 @@ class ElementModel {
         let lineElements = lineInstructions.map { return $0.element.lineElement! }
         self.lineSubject.onNext(lineElements)
     }
-    
+
     internal func processLabel(_ labelInstruction: Instruction) {
 
     }
@@ -59,7 +59,61 @@ struct LineElement {
     let line: Line
     let width: CGFloat
     let cap: CGLineCap
-    let color: UIColor
+    let color: LineColor
+
+    var drawColor: UIColor {
+        switch self.color {
+        case .black:
+            return Colour.black
+        case .white:
+            return Colour.white
+        case .red:
+            return Colour.red
+        case .orange:
+            return Colour.orange
+        case .yellow:
+            return Colour.yellow
+        case .green:
+            return Colour.green
+        case .blue:
+            return Colour.blue
+        case .purple:
+            return Colour.purple
+        }
+    }
+}
+
+enum LineColor: Int {
+    case black
+    case white
+    case red
+    case orange
+    case yellow
+    case green
+    case blue
+    case purple
+    
+    var uiColor: UIColor {
+        switch self {
+        case .black:
+            return Colour.black
+        case .white:
+            return Colour.white
+        case .red:
+            return Colour.red
+        case .orange:
+            return Colour.orange
+        case .yellow:
+            return Colour.yellow
+        case .green:
+            return Colour.green
+        case .blue:
+            return Colour.blue
+        case .purple:
+            return Colour.purple
+        }
+    }
+    
 }
 
 struct Line {
@@ -84,5 +138,8 @@ struct LineSegment {
 // MARK: - Labels
 
 struct LabelElement {
-    let stamp: Stamp
+    let pos: CGPoint!
+    let text: String!
+    let size: CGRect!
+    let rotation: Float!
 }

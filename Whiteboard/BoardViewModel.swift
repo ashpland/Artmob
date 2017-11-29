@@ -13,8 +13,9 @@ class BoardViewModel {
     
     fileprivate let settings = LineFormatSettings.sharedInstance
     fileprivate let disposeBag = DisposeBag()
-        
-    let submitInstruction = PublishSubject<Instruction>()
+    
+    
+    let submitInstruction = PublishSubject<InstructionAndHashBundle>()
     
     internal lazy var lineImage : Variable<UIImage> = Variable<UIImage>(makeClearImage())
     
@@ -27,7 +28,7 @@ class BoardViewModel {
     }
     
     fileprivate func makeClearImage() -> UIImage {
-        UIGraphicsBeginImageContextWithOptions(UIScreen.main.bounds.size, false, 0.0)
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: 2000, height: 2000), false, 0.0)
         UIColor.clear.setFill()
         UIRectFill(UIScreen.main.bounds)
         guard let lineImage = UIGraphicsGetImageFromCurrentImageContext() else {
@@ -39,13 +40,12 @@ class BoardViewModel {
     
     // MARK: - Creating Elements
     
-    internal func recieveLine(_ subject: Observable<LineSegment>) {
-        let _ = subject.reduce(Line(), accumulator: {
-            currentLine, nextSegment in
-            return currentLine + nextSegment
-        }).subscribe(onNext: { line in
-            let newInstruction = self.makeInstruction(for: line)
-            self.submitInstruction.onNext(newInstruction)
+    internal func recieveLine(_ subject: Observable<Line>) {
+        let _ = subject.subscribe(onNext: { (line) in
+            let newInstructionBundle = InstructionAndHashBundle(instruction: self.makeInstruction(for: line), hash: nil)
+            self.submitInstruction.onNext(newInstructionBundle)
+        }, onCompleted: {
+            print("Recieve Complete\n")
         })
     }
     
@@ -60,19 +60,19 @@ class BoardViewModel {
     }
     
     fileprivate func buildInstruction(type: InstructionType, from payload: InstructionPayload) -> Instruction {
-        let stamp = Stamp(user: UIDevice.current.name, timestamp: Date())
+        let stamp = Stamp(user: MPCHandler.sharedInstance.session.myPeerID, timestamp: Date())
         return Instruction(type: type, element: payload, stamp: stamp)
     }
     
     fileprivate func setupInstructionBroadcast() {
         InstructionManager.subscribeToInstructionsFrom(self.submitInstruction)
     }
-   
+    
     
     // MARK: - Displaying Elements
     
     fileprivate func setupDisplaySubscriptions() {
-    
+        
         let _ /* New Lines Subscription */ = ElementModel.sharedInstance.lineSubject
             .subscribe { event in
                 switch event{
@@ -83,37 +83,47 @@ class BoardViewModel {
                 case .completed:
                     print("Line Subscription Completed")
                 }
-        }.disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
     }
     
+    func clear(){
+        self.lineImage.value = self.makeClearImage()
+    }
     
- 
     fileprivate func drawLines(_ linesToDraw: [LineElement]) {
+        
+        print("Draw Lines: " + linesToDraw.count.description)
+        
+        var newImage: UIImage
+        
         if linesToDraw.count > 1 {
-            self.lineImage.value = self.makeClearImage()
+            newImage = self.makeClearImage()
+        } else {
+            newImage = self.lineImage.value
         }
-        self.lineImage.value = drawLineOnImage(existingImage: self.lineImage.value, lines: linesToDraw)
+        newImage = self.drawLineOnImage(existingImage: newImage, lines: linesToDraw)
+        self.lineImage.value = newImage
     }
+    
     
     fileprivate func drawLineOnImage(existingImage: UIImage, lines: [LineElement]) -> UIImage{
-        UIGraphicsBeginImageContextWithOptions(existingImage.size, false, 0.0)
-        existingImage.draw(at: CGPoint(x: 0, y: 0))
+        let newImageCALayer = CALayer()
+        newImageCALayer.frame = CGRect(origin: CGPoint(x: 0, y: 0), size: existingImage.size)
+        
+        let existingImageLayer = CALayer()
+        existingImageLayer.frame = newImageCALayer.frame
+        existingImageLayer.contents = existingImage.cgImage
+        newImageCALayer.addSublayer(existingImageLayer)
+        
+        
         for lineToDraw in lines {
-            let path = UIBezierPath()
-            path.lineWidth = lineToDraw.width
-            path.lineCapStyle = lineToDraw.cap
-            lineToDraw.color.setStroke()
-            
-            if !lineToDraw.line.segments.isEmpty {
-                path.move(to: lineToDraw.line.segments.first!.firstPoint)
-                
-                for segment in lineToDraw.line.segments {
-                    path.addLine(to: segment.firstPoint)
-                    path.addLine(to: segment.secondPoint)
-                }
-                path.stroke()
-            }
+            newImageCALayer.addSublayer(self.drawLine(lineToDraw))
         }
+        
+        UIGraphicsBeginImageContextWithOptions(existingImage.size, false, 0.0)
+        
+        newImageCALayer.render(in: UIGraphicsGetCurrentContext()!)
+        
         guard let image = UIGraphicsGetImageFromCurrentImageContext() else {
             fatalError("Line was not able to be drawn on image")
         }
@@ -121,5 +131,28 @@ class BoardViewModel {
         return image
     }
     
-    
+    func drawLine(_ lineElement: LineElement) -> CALayer {
+        guard !lineElement.line.segments.isEmpty else {
+            return CALayer()
+        }
+        
+        let shapeLayer = CAShapeLayer()
+        
+        let linePath = UIBezierPath()
+        
+        linePath.move(to: lineElement.line.segments.first!.firstPoint)
+        
+        for segment in lineElement.line.segments {
+            linePath.addLine(to: segment.secondPoint)
+        }
+        
+        shapeLayer.path = linePath.cgPath
+        shapeLayer.strokeColor = lineElement.color.uiColor.cgColor
+        shapeLayer.lineWidth = lineElement.width
+        shapeLayer.lineJoin = kCALineJoinRound
+        shapeLayer.lineCap = kCALineCapRound
+        shapeLayer.fillColor = nil
+        
+        return shapeLayer
+    }
 }

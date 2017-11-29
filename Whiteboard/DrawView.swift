@@ -9,16 +9,52 @@
 import UIKit
 import RxSwift
 
+protocol CloseMenu {
+    func closeMenu()
+}
 class DrawView: UIView {
-
+    var closeMenuDelagate:CloseMenu?
     private var activeDrawingLine = Line()
     private let lineFormatSettings = LineFormatSettings.sharedInstance
-    public var lineStream : PublishSubject<LineSegment>!
+    public var lineStream = PublishSubject<Line>()
     public var viewModel : BoardViewModel!
+    private lazy var shapeLayer = setupShapeLayer()
+    
+    
+    func setupShapeLayer() -> CAShapeLayer {
+        let newShapeLayer = CAShapeLayer()
+        newShapeLayer.frame = self.bounds
+        
+        self.layer.addSublayer(newShapeLayer)
+  
+        return newShapeLayer
+    }
+    
+    func updateLine() {
+        let linePath = UIBezierPath()
+       
+        if !activeDrawingLine.segments.isEmpty {
+            linePath.move(to: activeDrawingLine.segments.first!.firstPoint)
+            
+            for segment in activeDrawingLine.segments {
+                linePath.addLine(to: segment.secondPoint)
+            }
+        }
+        
+        
+        
+        self.shapeLayer.path = linePath.cgPath
+        self.shapeLayer.strokeColor = lineFormatSettings.color.uiColor.cgColor
+        self.shapeLayer.lineWidth = lineFormatSettings.width
+        self.shapeLayer.lineJoin = kCALineJoinRound
+        self.shapeLayer.lineCap = kCALineCapRound
+        self.shapeLayer.fillColor = nil
+    }
+    
+    
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.lineStream = PublishSubject<LineSegment>()
-        self.viewModel.recieveLine(self.lineStream)
+        closeMenuDelagate?.closeMenu()
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -27,34 +63,20 @@ class DrawView: UIView {
             let second = touch?.location(in: self) {
             let lineSegment = LineSegment(firstPoint: first, secondPoint: second)
             self.activeDrawingLine = self.activeDrawingLine + lineSegment
-            self.lineStream.onNext(lineSegment)
         }
-        self.setNeedsDisplay()
+        
+        self.updateLine()
+    }
+    
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.activeDrawingLine = Line()
+        self.updateLine()
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.lineStream.onCompleted()
-        activeDrawingLine = Line()
-        self.setNeedsDisplay()
-    }
-    
-    override func draw(_ rect: CGRect) {
-        
-        let path = UIBezierPath()
-        path.lineWidth = lineFormatSettings.width
-        path.lineCapStyle = lineFormatSettings.cap
-        lineFormatSettings.color.setStroke()
-        
-        if !activeDrawingLine.segments.isEmpty {
-            
-            path.move(to: activeDrawingLine.segments.first!.firstPoint)
-            
-            for segment in activeDrawingLine.segments {
-                path.addLine(to: segment.firstPoint)
-                path.addLine(to: segment.secondPoint)
-            }
-            path.stroke()
-        }
+        self.lineStream.onNext(self.activeDrawingLine)
+        self.activeDrawingLine = Line()
+        self.updateLine()
     }
 }
 

@@ -8,206 +8,144 @@
 
 import Foundation
 import RxSwift
+import MultipeerConnectivity
+
 
 class InstructionManager {
-
+    
     static let sharedInstance = InstructionManager()
-
-    private var instructionStore = [Instruction]()
+    
+    fileprivate var instructionStore = [Stamp: Instruction]()
     let newInstructions = PublishSubject<Instruction>()
-    let broadcastInstructions = PublishSubject<Instruction>()
-    private let disposeBag = DisposeBag()
-
+    let broadcastInstructions = PublishSubject<InstructionAndHashBundle>()
+    fileprivate let hashStream = PublishSubject<HashAndSender>()
+    let stampsStream = PublishSubject<StampsAndSender>()
+    let instructionRequests = PublishSubject<Stamp>()
+    fileprivate let fullRefresh = PublishSubject<Bool>()
+    fileprivate let helloPing = PublishSubject<InstructionAndHashBundle>()
+    fileprivate let disposeBag = DisposeBag()
+    fileprivate let peerManager: PeerManager = MPCHandler.sharedInstance
+    
     // MARK: - Methods
-
-    class func subscribeToInstructionsFrom(_ newObservable: Observable<Instruction>) {
-        newObservable.subscribe(onNext: { instruction in
-            InstructionManager.sharedInstance.newInstruction(instruction)
-        }).disposed(by: InstructionManager.sharedInstance.disposeBag)
+    
+    init() {
+        let hashCheckInterval = 2.0
+        
+        hashStream.throttle(hashCheckInterval, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { self.check(hash: $0.hash,
+                                            from: $0.sender,
+                                            with: self.peerManager) })
+            .disposed(by: self.disposeBag)
+        
+        stampsStream
+            .subscribe(onNext: { self.sync(theirInstructions: $0.stamps,
+                                           from: $0.sender,
+                                           with: self.peerManager)})
+            .disposed(by: self.disposeBag)
+        
+        instructionRequests.buffer(timeSpan: 2.0, count: 50, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { self.processInstructionRequests($0) })
+            .disposed(by: self.disposeBag)
+        
+        fullRefresh.throttle(2.0, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { _ in self.refreshLines() })
+            .disposed(by: self.disposeBag)
+        
+        helloPing.debounce(2.0, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { mostRecentBundle in
+                self.helloPing.onNext(mostRecentBundle)
+                self.broadcastInstructions.onNext(mostRecentBundle)})
+            .disposed(by: self.disposeBag)
+    }
+    
+    
+    
+    class func subscribeToInstructionsFrom(_ newObservable: Observable<InstructionAndHashBundle>) {
+        newObservable.subscribe(onNext:
+            { InstructionManager.sharedInstance.new(instructionAndHash: $0) })
+            .disposed(by: InstructionManager.sharedInstance.disposeBag)
     }
     
     internal func resetInstructionStore() {
-        self.instructionStore = [Instruction]()
+        self.instructionStore = [Stamp: Instruction]()
     }
-
-    private func newInstruction(_ newInstruction: Instruction) {
-        if self.instructionStore.isEmpty ||
-            newInstruction.stamp > self.instructionStore.last!.stamp {
-            self.instructionStore.append(newInstruction)
-            self.newInstructions.onNext(newInstruction)
-            self.broadcastInstructions.onNext(newInstruction)
-            return
-        } else {
-            for (index, currentInstruction) in self.instructionStore.lazy.reversed().enumerated() {
-                guard newInstruction.stamp != currentInstruction.stamp else {
-                    return
-                }
-                if newInstruction.stamp > currentInstruction.stamp {
-                    self.instructionStore.insert(newInstruction, at: self.instructionStore.count - index)
-                    self.broadcastInstructions.onNext(newInstruction)
-
-                    switch newInstruction.element {
-                    case .line:
-                        self.refreshLines()
-                        return
-                    case .emoji:
-                        return
-                    }
-                }
+    
+    private func new(instructionAndHash bundle: InstructionAndHashBundle) {
+        self.newInstruction(bundle.instruction)
+        
+        if let theirHash = bundle.hash {
+            if bundle.instruction.stamp.user != MPCHandler.sharedInstance.peerID {
+                self.hashStream.onNext(HashAndSender(hash: theirHash,
+                                                     sender: bundle.instruction.stamp.user))
             }
         }
     }
 
-    private func refreshLines() {
-        let lineInstructions = self.instructionStore.filter { if case .line = $0.element { return true }; return false}
+    private func newInstruction(_ newInstruction: Instruction) {
+        if self.instructionStore.contains(where:
+            {$0.key == newInstruction.stamp})
+            { return }
+        
+        self.instructionStore[newInstruction.stamp] = newInstruction
+        self.newInstructions.onNext(newInstruction)
+        let newBundle = InstructionAndHashBundle(instruction: newInstruction,
+                                                 hash: self.instructionStore.hashValue)
+
+        self.helloPing.onNext(newBundle)
+
+        if newInstruction.isFromSelf() {
+            self.broadcastInstructions.onNext(newBundle)
+        }
+        else { self.fullRefresh.onNext(true) }
+    }
+    
+    
+    
+    internal func refreshLines() {
+        let lineInstructions = self.instructionStore.inOrder
+            .filter { if case .line = $0.element { return true }; return false}
         ElementModel.sharedInstance.refreshLines(from: lineInstructions)
     }
-}
-
-// MARK: - Instruction components
-
-struct Instruction {
-    let type: InstructionType
-    let element: InstructionPayload
-    let stamp: Stamp
-}
-
-enum InstructionType {
-    case new
-    case edit(Stamp)
-    case delete(Stamp)
-}
-
-enum InstructionPayload {
-    case line (LineElement)
-    case emoji (LabelElement)
-
-    var lineElement: LineElement? {
-        guard case .line(let value) = self else {
-            return nil
+    
+    internal func check(hash: InstructionStoreHash, from peer:MCPeerID, with peerManager: PeerManager) {
+        if self.instructionStore.hashValue != hash {
+            peerManager.requestInstructions(from: peer,
+                                            for: self.instructionStore.stamps,
+                                            with: self.instructionStore.hashValue)
         }
-        return value
+    }
+    
+    internal func sync(theirInstructions: Array<Stamp>, from peer: MCPeerID, with peerManager: PeerManager) {
+        let myInstructions = self.instructionStore.stamps
+        
+        for instruction in theirInstructions.elementsMissingFrom(myInstructions) {
+            self.instructionRequests.onNext(instruction)
+        }
+        
+        if myInstructions.elementsMissingFrom(theirInstructions).count > 0 {
+            peerManager.requestInstructions(from: peer,
+                                            for: self.instructionStore.stamps,
+                                            with: self.instructionStore.hashValue)
+        }
+    }
+    
+    internal func processInstructionRequests(_ requests: Array<Stamp>) {
+        guard !requests.isEmpty else {return}
+        let instructionStamps = Array(Set(requests))
+        
+        for stamp in instructionStamps {
+            if let instruction = self.instructionStore[stamp] {
+                let bundle = InstructionAndHashBundle(instruction: instruction,
+                                                      hash: self.instructionStore.hashValue)
+                self.broadcastInstructions.onNext(bundle)
+            }
+        }
     }
 }
 
-struct Stamp: Comparable, Hashable {
-    var hashValue: Int {
-            let timeHash = self.timestamp.hashValue
-            let userHash = self.user.hashValue
-            return timeHash ^ userHash &* 16777619
-    }
-
-    static func < (lhs: Stamp, rhs: Stamp) -> Bool {
-        if lhs.timestamp < rhs.timestamp {
-            return true
-        }
-        if lhs.timestamp == rhs.timestamp && lhs.user < rhs.user {
-            return true
-        }
-        return false
-    }
-
-    static func == (lhs: Stamp, rhs: Stamp) -> Bool {
-        return ((lhs.user == rhs.user) && (lhs.timestamp == rhs.timestamp))
-    }
-
-    let user: String
-    let timestamp: Date
+protocol PeerManager {
+    func requestInstructions(from peer:MCPeerID, for stampsArray: [Stamp], with hash: InstructionStoreHash)
 }
 
-//MARK: Instruction to data
 
-class LineMessage:NSObject, NSCoding{
-    var segmentsData:Array<Array<CGFloat>>!
-    var colorData:Int!
-    var capData:Int!
-    var widthData:CGFloat!
-    var userData:String!
-    var timestampData:String!
-    override init() {
-        super.init()
-    }
-    init(instruction: Instruction){
-        guard let lineElement = instruction.element.lineElement else {
-            //bad things
-            return
-        }
-        segmentsData = Array<Array<CGFloat>>()
-        for segment:LineSegment in lineElement.line.segments{
-            segmentsData.append([segment.firstPoint.x, segment.firstPoint.y, segment.secondPoint.x, segment.secondPoint.y])
-        }
-        switch lineElement.color{
-        case UIColor.black:
-            colorData = 1
-            break
-        case UIColor.blue:
-            colorData = 2
-            break
-        default:
-            colorData = 0
-        }
-        switch lineElement.cap{
-        case .butt:
-            capData = 0
-        case .round:
-            capData = 1
-        case .square:
-            capData = 2
-        }
-        widthData = lineElement.width
-        userData = instruction.stamp.user
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        timestampData = formatter.string(from: instruction.stamp.timestamp)
-    }
-    func toInstruction() -> Instruction{
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        let date = formatter.date(from: timestampData)
-        var line = Line()
-        for segment:Array<CGFloat> in segmentsData{
-            line = Line(with: line, and: LineSegment(firstPoint:CGPoint(x: segment[0], y: segment[1]), secondPoint: CGPoint(x: segment[2], y: segment[3])))
-        }
-        var elementColor = UIColor()
-        switch colorData{
-        case 1:
-            elementColor = UIColor.black
-            break
-        case 2:
-            elementColor = UIColor.blue
-            break
-        default:
-            elementColor = UIColor.black
-        }
-        var elementCap = CGLineCap(rawValue: 0)
-        switch capData{
-        case 0:
-            elementCap = .butt
-        case 1:
-            elementCap = .round
-        case 2:
-            elementCap = .square
-        default:
-            elementCap = .round
-        }
-        let lineElement = LineElement(line: line, width: widthData, cap: elementCap!, color: elementColor)
-        let payload:InstructionPayload = .line(lineElement)
-        return Instruction(type: .new, element: payload, stamp: Stamp(user: userData, timestamp: date!))
-    }
-    func encode(with aCoder: NSCoder) {
-        aCoder.encode(self.segmentsData, forKey: "segments")
-        aCoder.encode(self.colorData, forKey: "color")
-        aCoder.encode(self.capData, forKey: "cap")
-        aCoder.encode(self.widthData, forKey: "width")
-        aCoder.encode(self.userData, forKey: "user")
-        aCoder.encode(self.timestampData, forKey: "timestamp")
-    }
-    required init?(coder aDecoder: NSCoder) {
-        segmentsData = aDecoder.decodeObject(forKey: "segments") as! Array<Array<CGFloat>>
-        colorData = aDecoder.decodeObject(forKey: "color") as! Int
-        capData = aDecoder.decodeObject(forKey: "cap") as! Int
-        widthData = aDecoder.decodeObject(forKey: "width") as! CGFloat
-        userData = aDecoder.decodeObject(forKey: "user") as! String
-        timestampData = aDecoder.decodeObject(forKey: "timestamp") as! String
-    }
-}
+
