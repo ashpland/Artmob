@@ -41,6 +41,8 @@ class DrawView: UIView {
             }
         }
         
+        
+        
         self.shapeLayer.path = linePath.cgPath
         self.shapeLayer.strokeColor = lineFormatSettings.color.uiColor.cgColor
         self.shapeLayer.lineWidth = lineFormatSettings.width
@@ -83,31 +85,5 @@ class DrawView: UIView {
         print("Ended Ended")
         self.updateLine()
     }
-    
-   
-    
-//    override func draw(_ rect: CGRect) {
-//
-//        let path = UIBezierPath()
-//        let drawMe = LineElement(line: activeDrawingLine, width: lineFormatSettings.width, cap: lineFormatSettings.cap, color: lineFormatSettings.color)
-//        path.lineWidth = drawMe.width
-//        path.lineCapStyle = drawMe.cap
-//        drawMe.drawColor.setStroke()
-//
-//        if !drawMe.line.segments.isEmpty {
-//
-//            path.move(to: drawMe.line.segments.first!.firstPoint)
-//
-//            for segment in drawMe.line.segments {
-//                path.addLine(to: segment.firstPoint)
-//                path.addLine(to: segment.secondPoint)
-//            }
-//            path.stroke()
-//        }
-//    }
-    
-    
-    
-    
 }
 
