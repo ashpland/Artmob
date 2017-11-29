@@ -143,7 +143,7 @@ extension Line: Equatable {
         if lhs.segments.count != rhs.segments.count {
             return false
         }
-        for i in 0...lhs.segments.count {
+        for i in 0..<lhs.segments.count {
             if lhs.segments[i] != rhs.segments[i] {
                 return false
             }
