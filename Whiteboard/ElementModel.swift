@@ -15,6 +15,7 @@ class ElementModel {
     static let sharedInstance = ElementModel()
 
     var lineSubject = PublishSubject<[LineElement]>()
+    fileprivate let incomingThrottle = PublishSubject<Instruction>()
     fileprivate var labels = [Stamp: LabelElement]()
     fileprivate let disposeBag = DisposeBag()
 
@@ -29,7 +30,11 @@ class ElementModel {
                 case .next(let instruction):
                     switch instruction.element {
                     case .line(let lineToDraw):
-                        self.lineSubject.onNext([lineToDraw])
+                        if instruction.isFromSelf() {
+                            self.lineSubject.onNext([lineToDraw])
+                        } else {
+                            self.incomingThrottle.onNext(instruction)
+                        }
                     case .label:
                         self.processLabel(instruction)
                     }
@@ -41,9 +46,12 @@ class ElementModel {
 
                 }
         }
+        
+        _ = self.incomingThrottle.buffer(timeSpan: 0.1, count: 100, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { self.drawMultipleLines(from: $0) })
     }
 
-    public func refreshLines(from lineInstructions: [Instruction]) {
+    public func drawMultipleLines(from lineInstructions: [Instruction]) {
         let lineElements = lineInstructions.map { return $0.element.lineElement! }
         self.lineSubject.onNext(lineElements)
     }
@@ -130,10 +138,34 @@ struct Line {
     }
 }
 
+extension Line: Equatable {
+    static func ==(lhs: Line, rhs: Line) -> Bool {
+        if lhs.segments.count != rhs.segments.count {
+            return false
+        }
+        for i in 0..<lhs.segments.count {
+            if lhs.segments[i] != rhs.segments[i] {
+                return false
+            }
+        }
+        return true
+    }
+}
+
 struct LineSegment {
     let firstPoint: CGPoint
     let secondPoint: CGPoint
 }
+
+extension LineSegment: Equatable {
+    static func ==(lhs: LineSegment, rhs: LineSegment) -> Bool {
+        return lhs.firstPoint == rhs.firstPoint && lhs.secondPoint == rhs.secondPoint
+    }
+    
+    
+}
+
+
 
 // MARK: - Labels
 

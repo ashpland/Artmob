@@ -12,20 +12,36 @@ import RxTest
 @testable import Whiteboard
 
 class ElementModelTests: XCTestCase {
-//
-//    var disposeBag = DisposeBag()
-//
-//    override func setUp() {
-//        super.setUp()
-//        self.disposeBag = DisposeBag()
-//        InstructionManager.sharedInstance.resetInstructionStore()
-//    }
-//
-//    override func tearDown() {
-//        super.tearDown()
-//    }
-//
-//
+
+    var disposeBag = DisposeBag()
+
+    override func setUp() {
+        super.setUp()
+        self.disposeBag = DisposeBag()
+        InstructionManager.sharedInstance.resetInstructionStore()
+    }
+
+    override func tearDown() {
+        super.tearDown()
+    }
+    
+    func testLineSegmentEquatable() {
+        let testSegment1 = generateLineSegment()
+        let testSegment2 = generateLineSegment()
+
+        XCTAssertTrue(testSegment1 == testSegment1, "Identical line segments should be equal")
+        XCTAssertFalse(testSegment1 == testSegment2, "Different line segments should not be equal")
+    }
+    
+    func testLineEquatable() {
+        let testLine1 = generateLine()
+        let testLine2 = generateLine()
+        
+        XCTAssertTrue(testLine1 == testLine1, "Identical lines should be equal")
+        XCTAssertFalse(testLine1 == testLine2, "Different lines should not be equal")
+    }
+
+
 ////    func testElementModelPassingLines() {
 ////        let expect = expectation(description: #function)
 ////        let expectedCount = Int(arc4random_uniform(10)+1)
