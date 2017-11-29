@@ -138,10 +138,34 @@ struct Line {
     }
 }
 
+extension Line: Equatable {
+    static func ==(lhs: Line, rhs: Line) -> Bool {
+        if lhs.segments.count != rhs.segments.count {
+            return false
+        }
+        for i in 0...lhs.segments.count {
+            if lhs.segments[i] != rhs.segments[i] {
+                return false
+            }
+        }
+        return true
+    }
+}
+
 struct LineSegment {
     let firstPoint: CGPoint
     let secondPoint: CGPoint
 }
+
+extension LineSegment: Equatable {
+    static func ==(lhs: LineSegment, rhs: LineSegment) -> Bool {
+        return lhs.firstPoint == rhs.firstPoint && lhs.secondPoint == rhs.secondPoint
+    }
+    
+    
+}
+
+
 
 // MARK: - Labels
 
