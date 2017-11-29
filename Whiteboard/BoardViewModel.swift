@@ -96,7 +96,10 @@ class BoardViewModel {
         
         var newImage: UIImage
         
-        if linesToDraw.count > 1 {
+        let count = linesToDraw.count
+        
+        //last two items being the same triggers a full redraw
+        if count > 2 && (linesToDraw[count].line == linesToDraw[count-1].line) {
             newImage = self.makeClearImage()
         } else {
             newImage = self.lineImage.value

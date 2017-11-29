@@ -102,9 +102,13 @@ class InstructionManager {
     
     
     internal func refreshLines() {
-        let lineInstructions = self.instructionStore.inOrder
+        var lineInstructions = self.instructionStore.inOrder
             .filter { if case .line = $0.element { return true }; return false}
-        ElementModel.sharedInstance.refreshLines(from: lineInstructions)
+        if lineInstructions.count > 0 {
+            //full redraw is triggered by the last instruction being duplicated
+            lineInstructions.append(lineInstructions.last!)
+            ElementModel.sharedInstance.drawMultipleLines(from: lineInstructions)
+        }
     }
     
     internal func check(hash: InstructionStoreHash, from peer:MCPeerID, with peerManager: PeerManager) {
