@@ -95,11 +95,9 @@ class MPCHandler: NSObject, MCSessionDelegate, PeerManager{
     
     
     func sendStamps(stampMessage: StampMessage, peer:MCPeerID){
-        
         let messageData = NSKeyedArchiver.archivedData(withRootObject: stampMessage)
         let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 2])
         try? session.send(data, toPeers: [peer], with: MCSessionSendDataMode.reliable)
-        print("Instructions requested")
     }
     
     //MARK:- MCSessionDelegate
@@ -116,7 +114,6 @@ class MPCHandler: NSObject, MCSessionDelegate, PeerManager{
         let instructionAndHash: InstructionAndHashBundle
         
         if dic["type"] as! Int == 0 {
-            print("Recieved Line")
             let lineMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! LineMessage
             newInstruction = lineMessage.toInstruction()
             instructionAndHash = InstructionAndHashBundle(instruction: newInstruction,
@@ -127,8 +124,6 @@ class MPCHandler: NSObject, MCSessionDelegate, PeerManager{
             }
             
         } else if dic["type"] as! Int == 2 {
-            print("Recieved Stamps")
-
             let stampMessage = NSKeyedUnarchiver.unarchiveObject(with: dic["data"] as! Data) as! StampMessage
             
             InstructionManager.sharedInstance.stampsStream

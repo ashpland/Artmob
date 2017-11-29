@@ -54,14 +54,10 @@ class DrawView: UIView {
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("Began")
         closeMenuDelagate?.closeMenu()
-        
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("Moved")
-
         let touch = touches.first
         if let first = touch?.previousLocation(in: self),
             let second = touch?.location(in: self) {
@@ -73,16 +69,13 @@ class DrawView: UIView {
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("Canceled")
         self.activeDrawingLine = Line()
         self.updateLine()
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("Touch Ended")
         self.lineStream.onNext(self.activeDrawingLine)
         self.activeDrawingLine = Line()
-        print("Ended Ended")
         self.updateLine()
     }
 }

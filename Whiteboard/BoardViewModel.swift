@@ -41,12 +41,9 @@ class BoardViewModel {
     // MARK: - Creating Elements
     
     internal func recieveLine(_ subject: Observable<Line>) {
-        print("Recieve Start")
-        
         let _ = subject.subscribe(onNext: { (line) in
             let newInstructionBundle = InstructionAndHashBundle(instruction: self.makeInstruction(for: line), hash: nil)
             self.submitInstruction.onNext(newInstructionBundle)
-            print("Line Receieved")
         }, onCompleted: {
             print("Recieve Complete\n")
         })
@@ -94,6 +91,8 @@ class BoardViewModel {
     }
     
     fileprivate func drawLines(_ linesToDraw: [LineElement]) {
+        
+        print("Draw Lines: " + linesToDraw.description)
         
         var newImage: UIImage
         
