@@ -1,23 +1,9 @@
 # Todo
 
-2. memory bloat
-3. network resilience
 4. testing
 5. icon
 6. Screenshots / app store description
 
-
-drawRect Constraints
-
-let origin_x = lowerOf(first.x, second.x) - lineFormatSettings.width
-            let origin_y = lowerOf(first.y, second.y) - lineFormatSettings.width
-            let width = (higherOf(first.x, second.x) - lowerOf(first.x, second.x)) + (2 * lineFormatSettings.width)
-            let height = (higherOf(first.y, second.y) - lowerOf(first.y, second.y)) + (2 * lineFormatSettings.width)
-
-            self.setNeedsDisplay(CGRect(x: origin_x,
-                                        y: origin_y,
-                                        width: width,
-                                        height: height))
 
 
 
@@ -39,6 +25,3 @@ let origin_x = lowerOf(first.x, second.x) - lineFormatSettings.width
 - test insert function in playground
 
 
-## Multipeer Resiliency
-- something for when a peer disconnects?
-- does sending a message to a peer that doesn't exist anymore cause problems?
