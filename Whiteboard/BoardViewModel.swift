@@ -92,7 +92,7 @@ class BoardViewModel {
     
     fileprivate func drawLines(_ linesToDraw: [LineElement]) {
         
-        print("Draw Lines: " + linesToDraw.description)
+        print("Draw Lines: " + linesToDraw.count.description)
         
         var newImage: UIImage
         
@@ -111,9 +111,10 @@ class BoardViewModel {
         newImageCALayer.frame = CGRect(origin: CGPoint(x: 0, y: 0), size: existingImage.size)
         
         let existingImageLayer = CALayer()
+        existingImageLayer.frame = newImageCALayer.frame
         existingImageLayer.contents = existingImage.cgImage
-        
         newImageCALayer.addSublayer(existingImageLayer)
+        
         
         for lineToDraw in lines {
             newImageCALayer.addSublayer(self.drawLine(lineToDraw))
