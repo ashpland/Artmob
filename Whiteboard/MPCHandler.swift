@@ -28,19 +28,43 @@ class MPCHandler: NSObject, MCSessionDelegate, PeerManager{
     var state:MCSessionState!
     
     let recievedInstruction = PublishSubject<InstructionAndHashBundle>()
+    let outgoingMessages = PublishSubject<InstructionAndHashBundle>()
+    let disposeBag = DisposeBag()
     
     //MARK:- Setup
     func setupSubscribe(){
         InstructionManager.subscribeToInstructionsFrom(self.recievedInstruction)
         
         _ = InstructionManager.sharedInstance.broadcastInstructions
-            .subscribe(onNext: { (bundle) in
+            .subscribe(onNext: { self.outgoingMessages.onNext($0) })
+        
+        
+        let bufferRate = 0.25
+        let messagesPerSecond = 30.0
+        let messagesPerInterval = Int(messagesPerSecond * bufferRate)
+        
+        outgoingMessages.buffer(timeSpan: bufferRate, count: Int.max, scheduler: MainScheduler.instance)
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { (bundleArray) in
+                if bundleArray.isEmpty { return }
+
+                print("\nOutgoing Buffer: \(bundleArray.count)")
+                
                 if self.state == MCSessionState.connected {
-                    let newMessage = LineMessage(instruction: bundle.instruction)
-                    newMessage.currentHash = bundle.hash
-                    self.sendLine(lineMessage: newMessage)
+                    for (index, bundle) in bundleArray.enumerated() {
+                        if index < messagesPerInterval {
+                            
+                            print("Send: \(bundle.instruction.stamp)")
+                            
+                            let newMessage = LineMessage(instruction: bundle.instruction)
+                            newMessage.currentHash = bundle.hash
+                            self.sendLine(lineMessage: newMessage)
+                        } else {
+                            self.outgoingMessages.onNext(bundle)
+                        }
+                    }
                 }
-            })
+            }).disposed(by: self.disposeBag)
     }
     
     func setupPeerWithDisplayName (displayName:String){
@@ -70,9 +94,16 @@ class MPCHandler: NSObject, MCSessionDelegate, PeerManager{
     //        try! session.send(messageData, toPeers: session.connectedPeers, with: MCSessionSendDataMode.reliable)
     //    }
     func sendLine(lineMessage: LineMessage){
-        let messageData = NSKeyedArchiver.archivedData(withRootObject: lineMessage)
-        let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 0])
-        try? session.send(data, toPeers: session.connectedPeers, with: MCSessionSendDataMode.unreliable)
+        
+        DispatchQueue.global().async {
+            let messageData = NSKeyedArchiver.archivedData(withRootObject: lineMessage)
+            let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 0])
+            try? self.session.send(data,
+                                   toPeers: self.session.connectedPeers,
+                                   with: MCSessionSendDataMode.unreliable)
+        }
+        
+        
     }
     func sendLabel(labelMessage: LabelMessage){
         let messageData = NSKeyedArchiver.archivedData(withRootObject: labelMessage)
