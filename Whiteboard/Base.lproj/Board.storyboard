@@ -75,7 +75,7 @@
                                     <constraint firstAttribute="height" constant="50" id="Jkc-fp-cd0"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="45"/>
-                                <state key="normal" backgroundImage="001-cogwheel">
+                                <state key="normal" backgroundImage="settings">
                                     <color key="titleColor" red="0.29803922770000002" green="0.29803922770000002" blue="0.29803922770000002" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                                 <connections>
@@ -93,7 +93,7 @@
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="DfF-r5-UTo" secondAttribute="height" multiplier="1:1" id="YKF-sf-0SL"/>
                                                 </constraints>
-                                                <state key="normal" image="004-close"/>
+                                                <state key="normal" image="delete"/>
                                                 <connections>
                                                     <action selector="Clear:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Fh0-ON-Qkv"/>
                                                 </connections>
@@ -103,7 +103,7 @@
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="cpd-bI-FPH" secondAttribute="height" multiplier="1:1" id="7Kl-br-9Jg"/>
                                                 </constraints>
-                                                <state key="normal" image="003-arrow"/>
+                                                <state key="normal" image="share"/>
                                                 <connections>
                                                     <action selector="Share:" destination="BYZ-38-t0r" eventType="touchUpInside" id="01J-fO-luC"/>
                                                 </connections>
@@ -113,7 +113,7 @@
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="qfF-fZ-4mI" secondAttribute="height" multiplier="1:1" id="Xgq-kX-BSg"/>
                                                 </constraints>
-                                                <state key="normal" image="002-user">
+                                                <state key="normal" image="users">
                                                     <color key="titleColor" red="0.20000000300000001" green="0.20000000300000001" blue="0.20000000300000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 </state>
                                                 <connections>
@@ -318,10 +318,10 @@
         </scene>
     </scenes>
     <resources>
-        <image name="001-cogwheel" width="256" height="256"/>
-        <image name="002-user" width="256" height="256"/>
-        <image name="003-arrow" width="256" height="256"/>
-        <image name="004-close" width="256" height="256"/>
+        <image name="delete" width="512" height="512"/>
+        <image name="settings" width="512" height="512"/>
+        <image name="share" width="512" height="512"/>
         <image name="tri-1" width="512" height="512"/>
+        <image name="users" width="512" height="512"/>
     </resources>
 </document>
