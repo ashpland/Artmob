@@ -72,12 +72,12 @@ class MPCHandler: NSObject, MCSessionDelegate, PeerManager{
     func sendLine(lineMessage: LineMessage){
         let messageData = NSKeyedArchiver.archivedData(withRootObject: lineMessage)
         let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 0])
-        try! session.send(data, toPeers: session.connectedPeers, with: MCSessionSendDataMode.unreliable)
+        try? session.send(data, toPeers: session.connectedPeers, with: MCSessionSendDataMode.unreliable)
     }
     func sendLabel(labelMessage: LabelMessage){
         let messageData = NSKeyedArchiver.archivedData(withRootObject: labelMessage)
         let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 1])
-        try! session.send(data, toPeers: session.connectedPeers, with: MCSessionSendDataMode.unreliable)
+        try? session.send(data, toPeers: session.connectedPeers, with: MCSessionSendDataMode.unreliable)
     }
     func peerFromUser(user: String) -> [MCPeerID] {
         let conPeers = self.session.connectedPeers
@@ -98,13 +98,15 @@ class MPCHandler: NSObject, MCSessionDelegate, PeerManager{
         
         let messageData = NSKeyedArchiver.archivedData(withRootObject: stampMessage)
         let data = NSKeyedArchiver.archivedData(withRootObject:["data":messageData, "type": 2])
-        try! session.send(data, toPeers: [peer], with: MCSessionSendDataMode.reliable)
+        try? session.send(data, toPeers: [peer], with: MCSessionSendDataMode.reliable)
         print("Instructions requested")
     }
     
     //MARK:- MCSessionDelegate
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
-        self.state = state
+        if state == MCSessionState.connected {
+            self.state = state
+        }
     }
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         
@@ -140,10 +142,6 @@ class MPCHandler: NSObject, MCSessionDelegate, PeerManager{
                                                           hash: labelMessage.currentHash)
             self.recievedInstruction.onNext(instructionAndHash)
         }
-        
-        
-
-        
     }
     func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
     }
