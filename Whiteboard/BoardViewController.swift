@@ -94,7 +94,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
         MainMenuButton.titleLabel?.font = MainMenuButton.titleLabel?.font.withSize(40.0)
         MainMenuHeight.constant = -120
         
-        SettingsMenuHeight.constant = -66
+        SettingsMenuHeight.constant = -76
     }
     
     //MARK: Actions
@@ -187,7 +187,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
     }
     
     @IBAction func Settings(_ sender: Any) {
-        if SettingsMenuHeight.constant == -66{
+        if SettingsMenuHeight.constant == -76{
             UIView.animate(withDuration: 0.5, animations: {
                 self.SettingsMenuHeight.constant = 0
                 self.SettingsMenuButton.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
@@ -195,7 +195,7 @@ class BoardViewController: UIViewController, MCBrowserViewControllerDelegate, Cl
             })
         } else {
             UIView.animate(withDuration: 0.4, animations: {
-                self.SettingsMenuHeight.constant = -66
+                self.SettingsMenuHeight.constant = -76
                 self.SettingsMenuButton.transform = CGAffineTransform(rotationAngle: 0)
                 self.view.layoutIfNeeded()
             })
