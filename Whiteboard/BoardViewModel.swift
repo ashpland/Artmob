@@ -28,7 +28,7 @@ class BoardViewModel {
     }
     
     fileprivate func makeClearImage() -> UIImage {
-        UIGraphicsBeginImageContextWithOptions(CGSize(width: 2000, height: 2000), false, 0.0)
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: 3556, height: 2000), false, 0.0)
         UIColor.clear.setFill()
         UIRectFill(UIScreen.main.bounds)
         guard let lineImage = UIGraphicsGetImageFromCurrentImageContext() else {

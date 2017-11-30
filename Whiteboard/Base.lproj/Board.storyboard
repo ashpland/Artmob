@@ -44,7 +44,7 @@
                                             <constraint firstAttribute="height" constant="2000" id="HY8-Ku-w2m"/>
                                             <constraint firstItem="gmm-FH-6rc" firstAttribute="top" secondItem="54n-Ue-WVi" secondAttribute="top" id="Hjm-Rl-Y42"/>
                                             <constraint firstItem="k2k-vt-RbJ" firstAttribute="leading" secondItem="54n-Ue-WVi" secondAttribute="leading" id="g6j-BT-KL3"/>
-                                            <constraint firstAttribute="width" constant="2000" id="oQM-59-f4S"/>
+                                            <constraint firstAttribute="width" constant="3556" id="oQM-59-f4S"/>
                                             <constraint firstAttribute="bottom" secondItem="gmm-FH-6rc" secondAttribute="bottom" id="qB7-L3-8D2"/>
                                             <constraint firstItem="gmm-FH-6rc" firstAttribute="leading" secondItem="54n-Ue-WVi" secondAttribute="leading" id="vqj-Lo-sWJ"/>
                                         </constraints>
