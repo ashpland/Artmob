@@ -92,11 +92,19 @@ class BoardViewModel {
     
     fileprivate func drawLines(_ linesToDraw: [LineElement]) {
         
-        print("Draw Lines: " + linesToDraw.count.description)
+        guard !linesToDraw.isEmpty else {
+            return
+        }
         
+        let count = linesToDraw.count
+        
+        print("Draw Lines: " + count.description)
+
         var newImage: UIImage
+
         
-        if linesToDraw.count > 1 {
+        //last two items being the same triggers a full redraw
+        if count > 2 && (linesToDraw[count-1].line == linesToDraw[count-2].line) {
             newImage = self.makeClearImage()
         } else {
             newImage = self.lineImage.value

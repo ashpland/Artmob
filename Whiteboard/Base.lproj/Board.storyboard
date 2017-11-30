@@ -6,7 +6,9 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -67,13 +69,13 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xca-GD-GI7">
-                                <rect key="frame" x="356" y="94" width="50" height="50"/>
+                                <rect key="frame" x="356" y="104" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="EN7-pP-Xlf"/>
                                     <constraint firstAttribute="height" constant="50" id="Jkc-fp-cd0"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="45"/>
-                                <state key="normal" title="⚙">
+                                <state key="normal" backgroundImage="settings">
                                     <color key="titleColor" red="0.29803922770000002" green="0.29803922770000002" blue="0.29803922770000002" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                                 <connections>
@@ -81,31 +83,37 @@
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bjg-rl-OFi" userLabel="SettingsMenu">
-                                <rect key="frame" x="0.0" y="20" width="414" height="66"/>
+                                <rect key="frame" x="0.0" y="20" width="414" height="76"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="3" translatesAutoresizingMaskIntoConstraints="NO" id="lwP-vm-Bm6">
-                                        <rect key="frame" x="3" y="3" width="408" height="60"/>
+                                    <stackView opaque="NO" contentMode="center" distribution="equalCentering" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="lwP-vm-Bm6">
+                                        <rect key="frame" x="25" y="16" width="364" height="42"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DfF-r5-UTo">
-                                                <rect key="frame" x="0.0" y="0.0" width="134" height="60"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="45"/>
-                                                <state key="normal" title="☠"/>
+                                            <button opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DfF-r5-UTo">
+                                                <rect key="frame" x="0.0" y="0.0" width="42" height="42"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" secondItem="DfF-r5-UTo" secondAttribute="height" multiplier="1:1" id="YKF-sf-0SL"/>
+                                                </constraints>
+                                                <state key="normal" image="delete"/>
                                                 <connections>
                                                     <action selector="Clear:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Fh0-ON-Qkv"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cpd-bI-FPH">
-                                                <rect key="frame" x="137" y="0.0" width="134" height="60"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="45"/>
-                                                <state key="normal" title="📲"/>
+                                            <button opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cpd-bI-FPH">
+                                                <rect key="frame" x="161" y="0.0" width="42" height="42"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" secondItem="cpd-bI-FPH" secondAttribute="height" multiplier="1:1" id="7Kl-br-9Jg"/>
+                                                </constraints>
+                                                <state key="normal" image="share"/>
                                                 <connections>
                                                     <action selector="Share:" destination="BYZ-38-t0r" eventType="touchUpInside" id="01J-fO-luC"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qfF-fZ-4mI">
-                                                <rect key="frame" x="274" y="0.0" width="134" height="60"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="45"/>
-                                                <state key="normal" title="👥">
+                                            <button opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qfF-fZ-4mI">
+                                                <rect key="frame" x="322" y="0.0" width="42" height="42"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" secondItem="qfF-fZ-4mI" secondAttribute="height" multiplier="1:1" id="Xgq-kX-BSg"/>
+                                                </constraints>
+                                                <state key="normal" image="users">
                                                     <color key="titleColor" red="0.20000000300000001" green="0.20000000300000001" blue="0.20000000300000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 </state>
                                                 <connections>
@@ -117,11 +125,11 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.94580096010000003" green="0.92270988229999995" blue="0.85159271960000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstItem="lwP-vm-Bm6" firstAttribute="top" secondItem="bjg-rl-OFi" secondAttribute="top" constant="3" id="NS2-NS-ep3"/>
-                                    <constraint firstItem="lwP-vm-Bm6" firstAttribute="leading" secondItem="bjg-rl-OFi" secondAttribute="leading" constant="3" id="NcY-Wo-1Cs"/>
-                                    <constraint firstAttribute="bottom" secondItem="lwP-vm-Bm6" secondAttribute="bottom" constant="3" id="rCJ-IJ-yQp"/>
-                                    <constraint firstAttribute="trailing" secondItem="lwP-vm-Bm6" secondAttribute="trailing" constant="3" id="sA7-0E-JYY"/>
-                                    <constraint firstAttribute="height" constant="66" id="tfV-l5-DuY"/>
+                                    <constraint firstItem="lwP-vm-Bm6" firstAttribute="top" secondItem="bjg-rl-OFi" secondAttribute="top" constant="16" id="NS2-NS-ep3"/>
+                                    <constraint firstItem="lwP-vm-Bm6" firstAttribute="leading" secondItem="bjg-rl-OFi" secondAttribute="leading" constant="25" id="NcY-Wo-1Cs"/>
+                                    <constraint firstAttribute="bottom" secondItem="lwP-vm-Bm6" secondAttribute="bottom" constant="18" id="rCJ-IJ-yQp"/>
+                                    <constraint firstAttribute="trailing" secondItem="lwP-vm-Bm6" secondAttribute="trailing" constant="25" id="sA7-0E-JYY"/>
+                                    <constraint firstAttribute="height" constant="76" id="tfV-l5-DuY"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MqN-Q7-7aO" userLabel="MainMenu">
@@ -310,6 +318,10 @@
         </scene>
     </scenes>
     <resources>
+        <image name="delete" width="512" height="512"/>
+        <image name="settings" width="512" height="512"/>
+        <image name="share" width="512" height="512"/>
         <image name="tri-1" width="512" height="512"/>
+        <image name="users" width="512" height="512"/>
     </resources>
 </document>
